@@ -34,6 +34,7 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y) {
                 this.spriteSheet = this.assetManager.getAsset("./img/knightidleright.png");
                 this.frameWidth = 192;
                 this.sheetWidth = 4;
+                this.frameDuration = 0.1;
                 this.frames = 14;
                 this.totalTime = this.frameDuration * this.frames;
                 this.loop = true;
@@ -45,6 +46,7 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y) {
                 this.spriteSheet = this.assetManager.getAsset("./img/gunwomanidleright.png");
                 this.frameWidth = 192;
                 this.sheetWidth = 5;
+                this.frameDuration = 0.1;
                 this.frames = 22;
                 this.totalTime = this.frameDuration * this.frames;
                 this.loop = true;
@@ -76,7 +78,7 @@ Animation.prototype.isDone = function () {
 }
 
 function Knight(game, spritesheet) {
-	this.animation = new Animation(this, spritesheet, 192, 192, 4, 0.10, 14, true, 1);
+	this.animation = new Animation(this, spritesheet, 192, 192, 4, 0.1, 14, true, 1);
 	this.state = "idleRight";
     this.x = 0;
     this.y = 0;
@@ -102,7 +104,7 @@ Knight.prototype.update = function() {
 }
 
 function Gunwoman(game, spritesheet) {
-    this.animation = new Animation(this, spritesheet, 192, 192, 5, 0.10, 22, true, 1);
+    this.animation = new Animation(this, spritesheet, 192, 192, 5, 0.1, 22, true, 1);
     this.state = "idleRight";
     this.x = 0;
     this.y = 0;
@@ -168,11 +170,11 @@ AM.downloadAll(function () {
 
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/background.jpg")));
     
-    //gameEngine.addEntity(new Knight(gameEngine, AM.getAsset("./img/knightidleright.png")));
-    gameEngine.addEntity(new Gunwoman(gameEngine, AM.getAsset("./img/gunwomanidleright.png")));
+    gameEngine.addEntity(new Knight(gameEngine, AM.getAsset("./img/knightidleright.png")));
+    //gameEngine.addEntity(new Gunwoman(gameEngine, AM.getAsset("./img/gunwomanidleright.png")));
     
-    //gameEngine.curCharacter = "knight";
-    gameEngine.curCharacter = "gunwoman";
+    gameEngine.curCharacter = "knight";
+    //gameEngine.curCharacter = "gunwoman";
 
     console.log("All Done!");
 });
