@@ -19,7 +19,7 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y) {
 	//console.log('drawFrame');
 	//console.log(this);
 
-    this.elapsedTime += tick;
+    this.elapsedTime += tick; 
     if (this.isDone()) {
         if (this.loop) {	//restart animation
         	this.elapsedTime = 0;
