@@ -1,0 +1,11 @@
+/* to remove the top and left whitespace */
+* { 
+	margin:0; 
+	padding:0; 
+}
+
+
+/* To remove the scrollbars */
+canvas { 
+	display:block; 
+} 
