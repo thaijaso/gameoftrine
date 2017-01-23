@@ -18,6 +18,7 @@ function GameEngine() {
     this.assetManager = null;
     this.d = false;
     this.a = false;
+    this.space = false;
     this.didLeftClick = false;
     this.curCharacter = null;
 }
@@ -118,131 +119,173 @@ GameEngine.prototype.startInput = function() {
     }, false);
 
     this.ctx.canvas.addEventListener("keydown", function(e) {
-            console.log("key: " + e.code);
-            if (e.code === "KeyD" && !that.d && !that.didLeftClick) {
-                that.d = true;
+        console.log("key: " + e.code);
+        if (e.code === "KeyD" && !that.d && !that.didLeftClick) {
+            that.d = true;
 
-                if (that.curCharacter === "knight") {
-                    var knight = that.entities[1];
-                    knight.state = "walkRight";
-                    //change animation
-                    knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightwalkright.png");
-                    knight.animation.frames = 12;
-                    knight.animation.elapsedTime = 0;
-                    knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
-                } else if (that.curCharacter === "gunwoman") {
-                    var gunwoman = that.entities[1];
-                    gunwoman.state = "walkRight";
-                    gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanwalkright.png");
-                    gunwoman.animation.sheetWidth = 4;
-                    gunwoman.animation.frames = 14;
-                    gunwoman.animation.elapsedTime = 0;
-                    gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
-                }
+            if (that.curCharacter === "knight") {
+                var knight = that.entities[1];
+                knight.state = "walkRight";
+                //change animation
+                knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightwalkright.png");
+                knight.animation.frames = 12;
+                knight.animation.elapsedTime = 0;
+                knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
+            } else if (that.curCharacter === "gunwoman") {
+                var gunwoman = that.entities[1];
+                gunwoman.state = "walkRight";
+                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanwalkright.png");
+                gunwoman.animation.sheetWidth = 4;
+                gunwoman.animation.frames = 14;
+                gunwoman.animation.elapsedTime = 0;
+                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
             }
 
-            else if (e.code === "KeyA" && !that.a && !that.didLeftClick) {
-                that.a = true;
+            // FOR MAGE
+            // else { code }
+        }
 
-                var characters = ["gunwoman", "knight", "mage"];
-                var i = 0
+        // Switch character
+        else if (e.code === "KeyA" && !that.a && !that.didLeftClick) {
+            that.a = true;
 
-                if(that.curCharacter === characters[0]) {
-                    that.curCharacter = characters[1];
+            var characters = ["gunwoman", "knight", "mage"];
+            var i = 0
+
+            if (that.curCharacter === characters[0]) {
+                that.curCharacter = characters[1];
 
 
-                } else if(that.curCharacter === characters[1]) {
-                    that.curCharacter = characters[0]; // change to 2 once mage is added
-                } 
-                // FOR MAGE
-                // else {
-                //     that.curCharacter = characters[0];
-                // }
+            } else if (that.curCharacter === characters[1]) {
+                that.curCharacter = characters[0]; // change to 2 once mage is added
+            }
+            // FOR MAGE
+            // else {
+            //     that.curCharacter = characters[0];
+            // }
 
-                console.log(that.curCharacter);
+            console.log(that.curCharacter);
 
         }
-        //console.log(that.chars[e.code]);
-        //console.log(e);
-        //console.log("Key Down Event - Char " + e.code + " Code " + e.keyCode);
-        //console.log(that.chars);
+        // jUMP!
+        else if (e.code === "Space" && !that.space && !that.didLeftClick) {
+            that.space = true;
 
+            /*if (that.curCharacter === "knight") {
+                var knight = that.entities[1];
+                knight.state = "walkRight";
+                //change animation
+                knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightwalkright.png");
+                knight.animation.frames = 12;
+                knight.animation.elapsedTime = 0;
+                knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
+            } else */
+
+            if (that.curCharacter === "gunwoman") {
+                var gunwoman = that.entities[1];
+                gunwoman.state = "jumpRight";
+                gunwoman.jumping = true;
+                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanjumpright.png");
+                gunwoman.animation.sheetWidth = 4;
+                gunwoman.animation.frames = 12;
+                gunwoman.animation.elapsedTime = 0;
+                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
+            }
+
+            // FOR MAGE
+            // else { code }
+
+
+        }
 
     }, false);
 
-this.ctx.canvas.addEventListener("keypress", function(e) {
-    if (e.code === "KeyD") that.d = true;
-    if (e.code === "KeyA") that.a = true;
-    //that.chars[e.code] = true;
-    //console.log(e);
-    //console.log("Key Pressed Event - Char " + e.charCode + " Code " + e.keyCode);
-}, false);
+    this.ctx.canvas.addEventListener("keypress", function(e) {
+        if (e.code === "KeyD") that.d = true;
+        if (e.code === "KeyA") that.a = true;
+        if (e.code === "Space") that.space = true;
+        //that.chars[e.code] = true;
+        //console.log(e);
+        //console.log("Key Pressed Event - Char " + e.charCode + " Code " + e.keyCode);
+    }, false);
 
-this.ctx.canvas.addEventListener("keyup", function(e) {
-    //that.chars[e.code] = false;
-    console.log(e);
+    this.ctx.canvas.addEventListener("keyup", function(e) {
+        //that.chars[e.code] = false;
+        console.log(e.keyCode);
 
-    if (e.keyCode === 68 && !that.didLeftClick) { //D button released (for some reason e.code isn't working)
-        that.d = false;
-        if (that.curCharacter === "knight") {
-            var knight = that.entities[1];
-            knight.state = "idleRight";
-            //change animation
-            knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightidleright.png");
-            knight.animation.frames = 14;
-            knight.animation.elapsedTime = 0;
-            knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
-        } else if (that.curCharacter === "gunwoman") {
-            var gunwoman = that.entities[1];
-            //change animation
-            gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanidleright.png");
-            gunwoman.animation.frames = 22;
-            gunwoman.animation.sheetWidth = 5;
-            gunwoman.animation.elapsedTime = 0;
-            gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
+        if (e.keyCode === 68 && !that.didLeftClick) { //D button released (for some reason e.code isn't working)
+            that.d = false;
+            if (that.curCharacter === "knight") {
+                var knight = that.entities[1];
+                knight.state = "idleRight";
+                //change animation
+                knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightidleright.png");
+                knight.animation.frames = 14;
+                knight.animation.elapsedTime = 0;
+                knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
+            } else if (that.curCharacter === "gunwoman") {
+                var gunwoman = that.entities[1];
+                //change animation
+                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanidleright.png");
+                gunwoman.animation.frames = 22;
+                gunwoman.animation.sheetWidth = 5;
+                gunwoman.animation.elapsedTime = 0;
+                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
+            }
+            // FOR MAGE
+            /* else {
+
+             }
+
+             */
+        } else if (e.keyCode === 65 && !that.didLeftClick) { // A is released
+            that.a = false;
+            if (that.curCharacter === "knight") {
+                var knight = that.entities[1];
+                knight.state = "idleRight";
+                //change animation
+                knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightidleright.png");
+                knight.animation.frames = 14;
+                knight.animation.elapsedTime = 0;
+                knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
+            } else if (that.curCharacter === "gunwoman") {
+                var gunwoman = that.entities[1];
+                //change animation
+                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanidleright.png");
+                gunwoman.animation.frames = 22;
+                gunwoman.animation.sheetWidth = 5;
+                gunwoman.animation.elapsedTime = 0;
+                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
+            }
+
+            // FOR MAGE
+            /* else {
+
+             }
+
+             */
+
+        } else if (e.keyCode === 32 && !that.didLeftClick) { // when jump is released
+
+            if (that.curCharacter === "gunwoman") {
+                that.space = false;
+                var gunwoman = that.entities[1];
+                //change animation
+                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanidleright.png");
+                gunwoman.animation.frames = 22;
+                gunwoman.animation.sheetWidth = 5;
+                gunwoman.animation.elapsedTime = 0;
+                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
+            }
         }
-         // FOR MAGE
-       /* else {
 
-        }
+        console.log(that);
+        //console.log(that.chars);
+        //console.log(e);
+        //console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
+    }, false);
 
-        */ 
-    } else if(e.keyCode === 65 && !that.didLeftClick) {  // A is released
-        that.a = false;
-         if (that.curCharacter === "knight") {
-            var knight = that.entities[1];
-            knight.state = "idleRight";
-            //change animation
-            knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightidleright.png");
-            knight.animation.frames = 14;
-            knight.animation.elapsedTime = 0;
-            knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
-        } else if (that.curCharacter === "gunwoman") {
-            var gunwoman = that.entities[1];
-            //change animation
-            gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanidleright.png");
-            gunwoman.animation.frames = 22;
-            gunwoman.animation.sheetWidth = 5;
-            gunwoman.animation.elapsedTime = 0;
-            gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
-        }
-
-        // FOR MAGE
-       /* else {
-
-        }
-
-        */ 
-
-    }
-
-    console.log(that);
-    //console.log(that.chars);
-    //console.log(e);
-    //console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
-}, false);
-
-console.log('Input started');
+    console.log('Input started');
 }
 
 GameEngine.prototype.addEntity = function(entity) {

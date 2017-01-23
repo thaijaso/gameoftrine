@@ -108,19 +108,52 @@ function Gunwoman(game, spritesheet) {
     this.y = 0;
     this.speed = 100;
     this.game = game;
+    this.jumping = false
     this.ctx = game.ctx;
 }
+
+
+
+Gunwoman.prototype.update = function() {
+
+    console.log("jumping " + this.jumping);
+    if (this.game.space) {
+        this.jumping = true;
+    } 
+     if (this.jumping) {
+        if (this.animation.isDone()) {
+            console.log("HERE");
+            this.animation.elapsedTime = 0;
+            this.state = "idleRight";
+            this.jumping = false;
+        }
+
+        var e = this.animation.elapsedTime;
+        var t = this.animation.totalTime;
+
+        var jumpDistance = e/ t;
+        var totalHeight = 200;
+        var ground = 200;
+
+        if (jumpDistance > 0.5)
+            jumpDistance = 1 - jumpDistance;
+
+        //var height = jumpDistance * 2 * totalHeight;
+        var height = totalHeight*(-4 * (jumpDistance * jumpDistance - jumpDistance));
+        this.y = ground - height;
+
+    }
+    Entity.prototype.update.call(this);
+}
+
 
 Gunwoman.prototype.draw = function() {
     if (this.state === "attackRight") {
         this.animation.drawFrame(this.game.clockTick, this.ctx, this.x - 95, this.y);
-    } else {
+    } 
+     else {
         this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
     }
-}
-
-Gunwoman.prototype.update = function() {
-    Entity.prototype.update.call(this);
 }
 
 // no inheritance
@@ -154,6 +187,8 @@ AM.queueDownload("./img/knightwalkright.png");
 AM.queueDownload("./img/gunwomanidleright.png");
 AM.queueDownload("./img/gunwomanwalkright.png");
 AM.queueDownload("./img/gunwomanattackright.png");
+AM.queueDownload("./img/gunwomanjumpright.png");
+
 
 
 AM.downloadAll(function () {
