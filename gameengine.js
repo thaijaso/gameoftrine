@@ -12,6 +12,7 @@ window.requestAnimFrame = (function() {
 function GameEngine() {
     this.entities = [];
     this.playableCharacters = [];
+    this.playableCharacterIndex = 0;
     this.ctx = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
@@ -20,7 +21,7 @@ function GameEngine() {
     this.a = false;
     this.space = false;
     this.didLeftClick = false;
-    this.curCharacter = null;
+    this.currentCharacter = null;
 }
 
 GameEngine.prototype.init = function(ctx, assetManager) {
@@ -32,6 +33,43 @@ GameEngine.prototype.init = function(ctx, assetManager) {
     this.chars = []; //events aren't being stored in here
     this.startInput();
     console.log('game initialized');
+}
+
+GameEngine.prototype.getGameEngine = function() {
+    return this;
+}
+
+//sets current character playing
+GameEngine.prototype.setCurrentCharacter = function(character) {
+    this.currentCharacter = character;
+}
+
+//get the current character playing
+GameEngine.prototype.getCurrentCharacter = function() {
+    return this.currentCharacter;
+}
+
+GameEngine.prototype.changeCharacter = function() {
+    var oldCharacter = this.getCurrentCharacter();
+
+    //removes the old character from the entities array
+    for (var i = 0; i < this.entities.length; i++) {    //perhaps make entities a map to find the old character faster??
+        if (oldCharacter === this.entities[i]) {
+            this.entities.splice(i, 1);
+            //console.log(this.entities);
+        }
+    }
+    
+    if (this.playableCharacterIndex >= this.playableCharacters.length - 1) { //if on last character, change to first index
+        this.playableCharacterIndex = 0;
+    } else {
+        this.playableCharacterIndex++;
+    }
+
+    var newCharacter = this.playableCharacters[this.playableCharacterIndex];
+    this.entities.push(newCharacter);
+    this.setCurrentCharacter(newCharacter);
+    //console.log(this);
 }
 
 GameEngine.prototype.start = function() {
@@ -62,49 +100,58 @@ GameEngine.prototype.startInput = function() {
 
     // event listeners are added here
 
-    this.ctx.canvas.addEventListener("click", function(e) {
+                                    //attack
+    this.ctx.canvas.addEventListener("mousedown", function(e) {
+        var currentCharacter = that.getCurrentCharacter(); 
+        
         that.click = getXandY(e);
 
-        console.log(e);
-        console.log("Left Click Event - X,Y " + e.clientX + ", " + e.clientY);
+        //console.log(e.which);
 
-        if (!that.didLeftClick) {
+        if (e.which === 1 && !that.didLeftClick) { //Left Mouse button pressed
             that.didLeftClick = true;
+            currentCharacter.setAttackRightAnimation();
 
-            if (that.curCharacter === "knight") {
-                var knight = that.entities[1];
-                knight.state = "attackRight";
-                //change animation
-                knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightattackright.png");
-                knight.animation.frameWidth = 384;
-                knight.animation.sheetWidth = 3;
-                knight.animation.frames = 14;
-                knight.animation.elapsedTime = 0;
-                knight.animation.loop = false;
-                knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
-            } else if (that.curCharacter === "gunwoman") {
-                var gunwoman = that.entities[1];
-                gunwoman.state = "attackRight";
-                //change animation
-                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanattackright.png");
-                gunwoman.animation.frameWidth = 384;
-                gunwoman.animation.sheetWidth = 4;
-                gunwoman.animation.frames = 23;
-                gunwoman.animation.elapsedTime = 0;
-                gunwoman.animation.loop = false;
-                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
-                console.log(gunwoman);
-            }
+        } else if (e.which === 2) { //Middle Mouse button pressed     
+            console.log('Middle Mouse button pressed');
+        } else if (e.which === 3) { //Right Mouse button pressed
+            console.log('Right mouse button pressed');
+        } else {
+            console.log('Mouse button undetected');
         }
-
+        
+        //console.log(e);
+        //console.log("Left Click Event - X,Y " + e.clientX + ", " + e.clientY);
 
     }, false);
 
-    this.ctx.canvas.addEventListener("contextmenu", function(e) {
-        that.click = getXandY(e);
-        console.log(e);
-        console.log("Right Click Event - X,Y " + e.clientX + ", " + e.clientY);
-        e.preventDefault();
+    this.ctx.canvas.addEventListener("keydown", function (e) {
+        var currentCharacter = that.getCurrentCharacter();
+
+        if (e.code === "KeyD" && !that.d  && !that.didLeftClick) {
+            that.d = true;
+
+            currentCharacter.setWalkRightAnimation();
+            
+        } else if (e.code === "KeyF" && !that.didLeftClick) {
+
+                console.log("F pressed");
+                that.changeCharacter();
+
+        }
+
+    }, false);
+
+    this.ctx.canvas.addEventListener("keyup", function(e) {
+        
+        var currentCharacter = that.getCurrentCharacter();
+
+        if (e.code === "KeyD" && !that.didLeftClick) {
+            
+            that.d = false;
+            currentCharacter.setIdleRightAnimation();
+
+        }
     }, false);
 
     this.ctx.canvas.addEventListener("mousemove", function(e) {
@@ -118,179 +165,33 @@ GameEngine.prototype.startInput = function() {
         console.log("Click Event - X,Y " + e.clientX + ", " + e.clientY + " Delta " + e.deltaY);
     }, false);
 
-    this.ctx.canvas.addEventListener("keydown", function(e) {
-        console.log("key: " + e.code);
-        if (e.code === "KeyD" && !that.d && !that.didLeftClick) {
-            that.d = true;
-
-            if (that.curCharacter === "knight") {
-                var knight = that.entities[1];
-                knight.state = "walkRight";
-                //change animation
-                knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightwalkright.png");
-                knight.animation.frames = 12;
-                knight.animation.elapsedTime = 0;
-                knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
-            } else if (that.curCharacter === "gunwoman") {
-                var gunwoman = that.entities[1];
-                gunwoman.state = "walkRight";
-                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanwalkright.png");
-                gunwoman.animation.sheetWidth = 4;
-                gunwoman.animation.frames = 14;
-                gunwoman.animation.elapsedTime = 0;
-                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
-            }
-
-            // FOR MAGE
-            // else { code }
-        }
-
-        // Switch character
-        else if (e.code === "KeyA" && !that.a && !that.didLeftClick) {
-            that.a = true;
-
-            var characters = ["gunwoman", "knight", "mage"];
-            var i = 0
-
-            if (that.curCharacter === characters[0]) {
-                that.curCharacter = characters[1];
-
-
-            } else if (that.curCharacter === characters[1]) {
-                that.curCharacter = characters[0]; // change to 2 once mage is added
-            }
-            // FOR MAGE
-            // else {
-            //     that.curCharacter = characters[0];
-            // }
-
-            console.log(that.curCharacter);
-
-        }
-        // jUMP!
-        else if (e.code === "Space" && !that.space && !that.didLeftClick) {
-            that.space = true;
-
-            /*if (that.curCharacter === "knight") {
-                var knight = that.entities[1];
-                knight.state = "walkRight";
-                //change animation
-                knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightwalkright.png");
-                knight.animation.frames = 12;
-                knight.animation.elapsedTime = 0;
-                knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
-            } else */
-
-            if (that.curCharacter === "gunwoman") {
-                var gunwoman = that.entities[1];
-                gunwoman.state = "jumpRight";
-                gunwoman.jumping = true;
-                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanjumpright.png");
-                gunwoman.animation.sheetWidth = 4;
-                gunwoman.animation.frames = 12;
-                gunwoman.animation.elapsedTime = 0;
-                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
-            }
-
-            // FOR MAGE
-            // else { code }
-
-
-        }
-
-    }, false);
 
     this.ctx.canvas.addEventListener("keypress", function(e) {
-        if (e.code === "KeyD") that.d = true;
-        if (e.code === "KeyA") that.a = true;
-        if (e.code === "Space") that.space = true;
-        //that.chars[e.code] = true;
         //console.log(e);
         //console.log("Key Pressed Event - Char " + e.charCode + " Code " + e.keyCode);
     }, false);
 
-    this.ctx.canvas.addEventListener("keyup", function(e) {
-        //that.chars[e.code] = false;
-        console.log(e.keyCode);
-
-        if (e.keyCode === 68 && !that.didLeftClick) { //D button released (for some reason e.code isn't working)
-            that.d = false;
-            if (that.curCharacter === "knight") {
-                var knight = that.entities[1];
-                knight.state = "idleRight";
-                //change animation
-                knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightidleright.png");
-                knight.animation.frames = 14;
-                knight.animation.elapsedTime = 0;
-                knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
-            } else if (that.curCharacter === "gunwoman") {
-                var gunwoman = that.entities[1];
-                //change animation
-                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanidleright.png");
-                gunwoman.animation.frames = 22;
-                gunwoman.animation.sheetWidth = 5;
-                gunwoman.animation.elapsedTime = 0;
-                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
-            }
-            // FOR MAGE
-            /* else {
-
-             }
-
-             */
-        } else if (e.keyCode === 65 && !that.didLeftClick) { // A is released
-            that.a = false;
-            if (that.curCharacter === "knight") {
-                var knight = that.entities[1];
-                knight.state = "idleRight";
-                //change animation
-                knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightidleright.png");
-                knight.animation.frames = 14;
-                knight.animation.elapsedTime = 0;
-                knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
-            } else if (that.curCharacter === "gunwoman") {
-                var gunwoman = that.entities[1];
-                //change animation
-                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanidleright.png");
-                gunwoman.animation.frames = 22;
-                gunwoman.animation.sheetWidth = 5;
-                gunwoman.animation.elapsedTime = 0;
-                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
-            }
-
-            // FOR MAGE
-            /* else {
-
-             }
-
-             */
-
-        } else if (e.keyCode === 32 && !that.didLeftClick) { // when jump is released
-
-            if (that.curCharacter === "gunwoman") {
-                that.space = false;
-                var gunwoman = that.entities[1];
-                //change animation
-                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanidleright.png");
-                gunwoman.animation.frames = 22;
-                gunwoman.animation.sheetWidth = 5;
-                gunwoman.animation.elapsedTime = 0;
-                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
-            }
-        }
-
-        console.log(that);
-        //console.log(that.chars);
-        //console.log(e);
-        //console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
+    this.ctx.canvas.addEventListener("contextmenu", function(e) {
+        that.click = getXandY(e);
+        console.log(e);
+        console.log("Right Click Event - X,Y " + e.clientX + ", " + e.clientY);
+        e.preventDefault();
     }, false);
+
 
     console.log('Input started');
 }
 
+//entities are drawn on the map
 GameEngine.prototype.addEntity = function(entity) {
     console.log('added entity');
     this.entities.push(entity);
+}
+
+
+GameEngine.prototype.addPlayableCharacter = function(character) {
+    console.log('added character');
+    this.playableCharacters.push(character);
 }
 
 GameEngine.prototype.draw = function() {
