@@ -1,38 +1,77 @@
-window.requestAnimFrame = (function () {
+window.requestAnimFrame = (function() {
     return window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.oRequestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            function (/* function */ callback, /* DOMElement */ element) {
-                window.setTimeout(callback, 1000 / 60);
-            };
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function( /* function */ callback, /* DOMElement */ element) {
+            window.setTimeout(callback, 1000 / 60);
+        };
 })();
 
 function GameEngine() {
     this.entities = [];
     this.playableCharacters = [];
+    this.playableCharacterIndex = 0;
     this.ctx = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
     this.assetManager = null;
     this.d = false;
+    this.a = false;
     this.didLeftClick = false;
-    this.curCharacter = null;
+    this.currentCharacter = null;
 }
 
-GameEngine.prototype.init = function (ctx, assetManager) {
+GameEngine.prototype.init = function(ctx, assetManager) {
     this.ctx = ctx;
     this.surfaceWidth = this.ctx.canvas.width;
     this.surfaceHeight = this.ctx.canvas.height;
     this.assetManager = assetManager;
     this.timer = new Timer();
-    this.chars = [];    //events aren't being stored in here
+    this.chars = []; //events aren't being stored in here
     this.startInput();
     console.log('game initialized');
 }
 
-GameEngine.prototype.start = function () {
+GameEngine.prototype.getGameEngine = function() {
+    return this;
+}
+
+//sets current character playing
+GameEngine.prototype.setCurrentCharacter = function(character) {
+    this.currentCharacter = character;
+}
+
+//get the current character playing
+GameEngine.prototype.getCurrentCharacter = function() {
+    return this.currentCharacter;
+}
+
+GameEngine.prototype.changeCharacter = function() {
+    var oldCharacter = this.getCurrentCharacter();
+
+    //removes the old character from the entities array
+    for (var i = 0; i < this.entities.length; i++) {    //perhaps make entities a map to find the old character faster??
+        if (oldCharacter === this.entities[i]) {
+            this.entities.splice(i, 1);
+            //console.log(this.entities);
+        }
+    }
+    
+    if (this.playableCharacterIndex >= this.playableCharacters.length - 1) { //if on last character, change to first index
+        this.playableCharacterIndex = 0;
+    } else {
+        this.playableCharacterIndex++;
+    }
+
+    var newCharacter = this.playableCharacters[this.playableCharacterIndex];
+    this.entities.push(newCharacter);
+    this.setCurrentCharacter(newCharacter);
+    //console.log(this);
+}
+
+GameEngine.prototype.start = function() {
     console.log("starting game");
     var that = this;
     (function gameLoop() {
@@ -41,10 +80,10 @@ GameEngine.prototype.start = function () {
     })();
 }
 
-GameEngine.prototype.startInput = function () {
+GameEngine.prototype.startInput = function() {
     console.log('Starting input');
 
-    var getXandY = function (e) {
+    var getXandY = function(e) {
         var x = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
         var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
 
@@ -60,147 +99,100 @@ GameEngine.prototype.startInput = function () {
 
     // event listeners are added here
 
-    this.ctx.canvas.addEventListener("click", function (e) {
+                                    //attack
+    this.ctx.canvas.addEventListener("mousedown", function(e) {
+        var currentCharacter = that.getCurrentCharacter(); 
+        
         that.click = getXandY(e);
 
-        console.log(e);
-        console.log("Left Click Event - X,Y " + e.clientX + ", " + e.clientY);
+        //console.log(e.which);
 
-        if (!that.didLeftClick) {
+        if (e.which === 1 && !that.didLeftClick) { //Left Mouse button pressed
             that.didLeftClick = true;
-            
-            if (that.curCharacter === "knight") {
-                var knight = that.entities[1];
-                knight.state = "attackRight";
-                //change animation
-                knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightattackright.png");
-                knight.animation.frameWidth = 384;
-                knight.animation.sheetWidth = 3;
-                knight.animation.frameDuration = 0.03;
-                knight.animation.frames = 14;
-                knight.animation.elapsedTime = 0;
-                knight.animation.loop = false;
-                knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
-            } else if (that.curCharacter === "gunwoman") {
-                var gunwoman = that.entities[1];
-                gunwoman.state = "attackRight";
-                //change animation
-                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanattackright.png");
-                gunwoman.animation.frameWidth = 384;
-                gunwoman.animation.sheetWidth = 4;
-                gunwoman.animation.frameDuration = 0.05;
-                gunwoman.animation.frames = 23;
-                gunwoman.animation.elapsedTime = 0;
-                gunwoman.animation.loop = false;
-                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
-                console.log(gunwoman);
-            }
-        }
+            currentCharacter.setAttackRightAnimation();
 
+        } else if (e.which === 2) { //Middle Mouse button pressed     
+            console.log('Middle Mouse button pressed');
+        } else if (e.which === 3) { //Right Mouse button pressed
+            console.log('Right mouse button pressed');
+        } else {
+            console.log('Mouse button undetected');
+        }
+        
+        //console.log(e);
+        //console.log("Left Click Event - X,Y " + e.clientX + ", " + e.clientY);
 
     }, false);
 
-    this.ctx.canvas.addEventListener("contextmenu", function (e) {
+    this.ctx.canvas.addEventListener("keydown", function (e) {
+        var currentCharacter = that.getCurrentCharacter();
+
+        if (e.code === "KeyD" && !that.d  && !that.didLeftClick) {
+            that.d = true;
+
+            currentCharacter.setWalkRightAnimation();
+            
+        } else if (e.code === "KeyF" && !that.didLeftClick) {
+
+                console.log("F pressed");
+                that.changeCharacter();
+
+        }
+
+    }, false);
+
+    this.ctx.canvas.addEventListener("keyup", function(e) {
+        
+        var currentCharacter = that.getCurrentCharacter();
+
+        if (e.code === "KeyD" && !that.didLeftClick) {
+            
+            that.d = false;
+            currentCharacter.setIdleRightAnimation();
+
+        }
+    }, false);
+
+    this.ctx.canvas.addEventListener("mousemove", function(e) {
+        //console.log(e);
+        that.mouse = getXandY(e);
+    }, false);
+
+    this.ctx.canvas.addEventListener("mousewheel", function(e) {
+        console.log(e);
+        that.wheel = e;
+        console.log("Click Event - X,Y " + e.clientX + ", " + e.clientY + " Delta " + e.deltaY);
+    }, false);
+
+    this.ctx.canvas.addEventListener("keypress", function(e) {
+        //console.log(e);
+        //console.log("Key Pressed Event - Char " + e.charCode + " Code " + e.keyCode);
+    }, false);
+
+    this.ctx.canvas.addEventListener("contextmenu", function(e) {
         that.click = getXandY(e);
         console.log(e);
         console.log("Right Click Event - X,Y " + e.clientX + ", " + e.clientY);
         e.preventDefault();
     }, false);
 
-    this.ctx.canvas.addEventListener("mousemove", function (e) {
-        //console.log(e);
-        that.mouse = getXandY(e);
-    }, false);
-
-    this.ctx.canvas.addEventListener("mousewheel", function (e) {
-        console.log(e);
-        that.wheel = e;
-        console.log("Click Event - X,Y " + e.clientX + ", " + e.clientY + " Delta " + e.deltaY);
-    }, false);
-
-    this.ctx.canvas.addEventListener("keydown", function (e) {
-        if (e.code === "KeyD" && !that.d  && !that.didLeftClick) {
-            that.d = true;
-
-            if (that.curCharacter === "knight") {
-                var knight = that.entities[1];
-                knight.state = "walkRight";
-                //change animation
-                knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightwalkright.png");
-                knight.animation.frameDuration = 0.07;
-                knight.animation.frames = 12;
-                knight.animation.elapsedTime = 0;
-                knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
-            } else if (that.curCharacter === "gunwoman") {
-                var gunwoman = that.entities[1];
-                gunwoman.state = "walkRight";
-                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanwalkright.png");
-                gunwoman.animation.sheetWidth = 4;
-                gunwoman.animation.frameDuration = 0.05;
-                gunwoman.animation.frames = 14;
-                gunwoman.animation.elapsedTime = 0;
-                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
-            }
-
-            //that.chars[e.code] = true;
-            //console.log(that);
-        } 
-        //console.log(that.chars[e.code]);
-        //console.log(e);
-        //console.log("Key Down Event - Char " + e.code + " Code " + e.keyCode);
-        //console.log(that.chars);
-
-        
-    }, false);
-
-    this.ctx.canvas.addEventListener("keypress", function (e) {
-        if (e.code === "KeyD") that.d = true;
-        //that.chars[e.code] = true;
-        //console.log(e);
-        //console.log("Key Pressed Event - Char " + e.charCode + " Code " + e.keyCode);
-    }, false);
-
-    this.ctx.canvas.addEventListener("keyup", function (e) {
-        //that.chars[e.code] = false;
-        console.log(e);
-
-        if (e.keyCode === 68 && !that.didLeftClick) { //D button released (for some reason e.code isn't working)
-            that.d = false;
-            if (that.curCharacter === "knight") {
-                var knight = that.entities[1];
-                knight.state = "idleRight";
-                //change animation
-                knight.animation.spriteSheet = that.assetManager.getAsset("./img/knightidleright.png");
-                knight.animation.frames = 14;
-                knight.animation.elapsedTime = 0;
-                knight.animation.totalTime = knight.animation.frameDuration * knight.animation.frames;
-            } else if (that.curCharacter === "gunwoman") {
-                var gunwoman = that.entities[1];
-                //change animation
-                gunwoman.animation.spriteSheet = that.assetManager.getAsset("./img/gunwomanidleright.png");
-                gunwoman.animation.frameDuration = 0.1;
-                gunwoman.animation.frames = 22;
-                gunwoman.animation.sheetWidth = 5;
-                gunwoman.animation.elapsedTime = 0;
-                gunwoman.animation.totalTime = gunwoman.animation.frameDuration * gunwoman.animation.frames;
-            }
-        }
-
-        console.log(that);
-        //console.log(that.chars);
-        //console.log(e);
-        //console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
-    }, false);
 
     console.log('Input started');
 }
 
-GameEngine.prototype.addEntity = function (entity) {
+//entities are drawn on the map
+GameEngine.prototype.addEntity = function(entity) {
     console.log('added entity');
     this.entities.push(entity);
 }
 
-GameEngine.prototype.draw = function () {
+
+GameEngine.prototype.addPlayableCharacter = function(character) {
+    console.log('added character');
+    this.playableCharacters.push(character);
+}
+
+GameEngine.prototype.draw = function() {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
     for (var i = 0; i < this.entities.length; i++) {
@@ -209,7 +201,7 @@ GameEngine.prototype.draw = function () {
     this.ctx.restore();
 }
 
-GameEngine.prototype.update = function () {
+GameEngine.prototype.update = function() {
     var entitiesCount = this.entities.length;
 
     for (var i = 0; i < entitiesCount; i++) {
@@ -219,7 +211,7 @@ GameEngine.prototype.update = function () {
     }
 }
 
-GameEngine.prototype.loop = function () {
+GameEngine.prototype.loop = function() {
     this.clockTick = this.timer.tick();
     this.update();
     this.draw();
@@ -231,7 +223,7 @@ function Timer() {
     this.wallLastTimestamp = 0;
 }
 
-Timer.prototype.tick = function () {
+Timer.prototype.tick = function() {
     var wallCurrent = Date.now();
     var wallDelta = (wallCurrent - this.wallLastTimestamp) / 1000;
     this.wallLastTimestamp = wallCurrent;
@@ -248,10 +240,9 @@ function Entity(game, x, y) {
     this.removeFromWorld = false;
 }
 
-Entity.prototype.update = function () {
-}
+Entity.prototype.update = function() {}
 
-Entity.prototype.draw = function (ctx) {
+Entity.prototype.draw = function(ctx) {
     if (this.game.showOutlines && this.radius) {
         this.game.ctx.beginPath();
         this.game.ctx.strokeStyle = "green";
@@ -261,7 +252,7 @@ Entity.prototype.draw = function (ctx) {
     }
 }
 
-Entity.prototype.rotateAndCache = function (image, angle) {
+Entity.prototype.rotateAndCache = function(image, angle) {
     var offscreenCanvas = document.createElement('canvas');
     var size = Math.max(image.width, image.height);
     offscreenCanvas.width = size;
