@@ -213,39 +213,169 @@ function Gunwoman(game) {
     this.ctx = game.ctx;
 }
 
+//Constructor for mage
+function Mage(game) {
 
+    var idleRightAnimationSpriteSheet = AM.getAsset("./img/mageIdleRight.png");
+    var walkRightAnimationSpriteSheet = AM.getAsset("./img/mageWalkRight.png");
+    var attackRightAnimationSpriteSheet = AM.getAsset("./img/mageAttackRight.png");
+    
+    this.name = "mage";
+    
+    this.animationCurrent = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 3, 0.1, 8, true, 1);
+    
+    this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 3, 0.1, 8, true, 1);
+    this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 3, 0.07, 8, true, 1);
+    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 3, 0.03, 17, false, 1);
+    
+    this.state = "idleRight";
+    this.x = 0;
+    this.y = 0;
+    this.speed = 100;
+    this.game = game;
+    this.ctx = game.ctx;
+}
 
-// Gunwoman.prototype.update = function() {
+Mage.prototype.draw = function() {
+    if (this.state === "attackRight") {
+        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 95, this.y);
+    } else {
+        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    }
+}
 
-//     console.log("jumping " + this.jumping);
-//     if (this.game.space) {
-//         this.jumping = true;
-//     } 
-//      if (this.jumping) {
-//         if (this.animation.isDone()) {
-//             console.log("HERE");
-//             this.animation.elapsedTime = 0;
-//             this.state = "idleRight";
-//             this.jumping = false;
-//         }
+Mage.prototype.update = function() {
+    Entity.prototype.update.call(this);
+}
 
-//         var e = this.animation.elapsedTime;
-//         var t = this.animation.totalTime;
+//set current animation properties to idle right animation values
+Mage.prototype.setIdleRightAnimation = function() {
+    console.log("set idle right");
 
-//         var jumpDistance = e/ t;
-//         var totalHeight = 200;
-//         var ground = 200;
+    var idleRightSpriteSheet = this.animationIdleRight.spriteSheet;
+    var frameWidth = this.animationIdleRight.frameWidth;
+    var frameDuration = this.animationIdleRight.frameDuration;
+    var frameHeight = this.animationIdleRight.frameHeight;
+    var sheetWidth = this.animationIdleRight.sheetWidth;
+    var frames = this.animationIdleRight.frames;
+    var totalTime = frameDuration * frames;
+    var elapsedTime = 0;
+    var loop = true;
+    var scale = 1;
 
-//         if (jumpDistance > 0.5)
-//             jumpDistance = 1 - jumpDistance;
+    this.state = "idleRight";
 
-//         //var height = jumpDistance * 2 * totalHeight;
-//         var height = totalHeight*(-4 * (jumpDistance * jumpDistance - jumpDistance));
-//         this.y = ground - height;
+    //set current animation property values
+    this.animationCurrent.spriteSheet = idleRightSpriteSheet;
+    this.animationCurrent.frameWidth = frameWidth;
+    this.animationCurrent.frameDuration = frameDuration;
+    this.animationCurrent.frameHeight = frameHeight;
+    this.animationCurrent.sheetWidth = sheetWidth;
+    this.animationCurrent.frames = frames;
+    this.animationCurrent.totalTime = totalTime;
+    this.animationCurrent.elapsedTime = elapsedTime;
+    this.animationCurrent.loop = loop;
+    this.animationCurrent.scale = scale;
+}
 
-//     }
-//     Entity.prototype.update.call(this);
-// }
+Mage.prototype.setWalkRightAnimation = function() {
+    console.log("set walk right");
+
+    var walkRightSpriteSheet = this.animationWalkRight.spriteSheet;
+    var frameWidth = this.animationWalkRight.frameWidth;
+    var frameDuration = this.animationWalkRight.frameDuration;
+    var frameHeight = this.animationWalkRight.frameHeight;
+    var sheetWidth = this.animationWalkRight.sheetWidth;
+    var frames = this.animationWalkRight.frames;
+    var totalTime = frameDuration * frames;
+    var elapsedTime = 0;
+    var loop = true;
+    var scale = 1;
+
+    this.state = "walkRight";
+
+    //set current animation property values
+    this.animationCurrent.spriteSheet = walkRightSpriteSheet;
+    this.animationCurrent.frameWidth = frameWidth;
+    this.animationCurrent.frameDuration = frameDuration;
+    this.animationCurrent.frameHeight = frameHeight;
+    this.animationCurrent.sheetWidth = sheetWidth;
+    this.animationCurrent.frames = frames;
+    this.animationCurrent.totalTime = totalTime;
+    this.animationCurrent.elapsedTime = elapsedTime;
+    this.animationCurrent.loop = loop;
+    this.animationCurrent.scale = scale;
+}
+
+//set current animation properties to attack right animation values
+Mage.prototype.setAttackRightAnimation = function() {
+    //console.log('setAttackRight');
+
+    //get attack right animation property values
+    var attackRightSpriteSheet = this.animationAttackRight.spriteSheet;
+    var frameWidth = this.animationAttackRight.frameWidth;
+    var frameDuration = this.animationAttackRight.frameDuration;
+    var frameHeight = this.animationAttackRight.frameHeight;
+    var sheetWidth = this.animationAttackRight.sheetWidth;
+    var frames = this.animationAttackRight.frames;
+    var totalTime = frameDuration * frames;
+    var elapsedTime = 0;
+    var loop = false;
+    var scale = 1;
+
+    this.state = "attackRight";
+
+    //set current animation property values
+    this.animationCurrent.spriteSheet = attackRightSpriteSheet;
+    this.animationCurrent.frameWidth = frameWidth;
+    this.animationCurrent.frameDuration = frameDuration;
+    this.animationCurrent.frameHeight = frameHeight;
+    this.animationCurrent.sheetWidth = sheetWidth;
+    this.animationCurrent.frames = frames;
+    this.animationCurrent.totalTime = totalTime;
+    this.animationCurrent.elapsedTime = elapsedTime;
+    this.animationCurrent.loop = loop;
+    this.animationCurrent.scale = scale;
+
+    //console.log(this);
+}
+/*
+    live versian 
+    branch:gh-page
+
+*/
+
+Gunwoman.prototype.update = function() {
+
+    console.log("jumping " + this.jumping);
+    if (this.game.space) {
+        this.jumping = true;
+    } 
+     if (this.jumping) {
+        if (this.animation.isDone()) {
+            console.log("HERE");
+            this.animation.elapsedTime = 0;
+            this.state = "idleRight";
+            this.jumping = false;
+        }
+
+        var e = this.animation.elapsedTime;
+        var t = this.animation.totalTime;
+
+        var jumpDistance = e/ t;
+        var totalHeight = 200;
+        var ground = 200;
+
+        if (jumpDistance > 0.5)
+            jumpDistance = 1 - jumpDistance;
+
+        //var height = jumpDistance * 2 * totalHeight;
+        var height = totalHeight*(-4 * (jumpDistance * jumpDistance - jumpDistance));
+        this.y = ground - height;
+
+    }
+    Entity.prototype.update.call(this);
+}
 
 
 Gunwoman.prototype.draw = function() {
@@ -374,17 +504,22 @@ gameWorld.width = window.innerWidth;
 gameWorld.height = window.innerHeight;
 
 AM.queueDownload("./img/background.jpg");
+
 //knight
 AM.queueDownload("./img/knightidleright.png");
 AM.queueDownload("./img/knightattackright.png");
 AM.queueDownload("./img/knightwalkright.png");
+
 //gunwoman
 AM.queueDownload("./img/gunwomanidleright.png");
 AM.queueDownload("./img/gunwomanwalkright.png");
 AM.queueDownload("./img/gunwomanattackright.png");
 AM.queueDownload("./img/gunwomanjumpright.png");
 
-
+//mage
+AM.queueDownload("./img/mageWalkRight.png");
+AM.queueDownload("./img/mageIdleRight.png");
+AM.queueDownload("./img/mageAttackRight.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -398,17 +533,21 @@ AM.downloadAll(function () {
 
     var knight = new Knight(gameEngine);
     var gunwoman = new Gunwoman(gameEngine);
+    var mage = new Mage(gameEngine);
     
     //an entity is any element drawn on the map
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/background.jpg")));
     gameEngine.addEntity(knight);
-    //gameEngine.addEntity(gunwoman);
+    // gameEngine.addEntity(gunwoman);
+    // gameEngine.addEntity(mage);
     
+
     gameEngine.addPlayableCharacter(knight);
     gameEngine.addPlayableCharacter(gunwoman);
+    gameEngine.addPlayableCharacter(mage);
     
     gameEngine.setCurrentCharacter(knight);
-    //gameEngine.setCurrentCharacter(gunwoman);
+    // gameEngine.setCurrentCharacter(gunwoman);
 
     console.log("All Done!");
 });
