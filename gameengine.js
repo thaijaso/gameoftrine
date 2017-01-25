@@ -20,6 +20,7 @@ function GameEngine() {
     this.assetManager = null;
     this.d = false;
     this.a = false;
+    this.space = false;
     this.didLeftClick = false;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
@@ -173,6 +174,7 @@ GameEngine.prototype.startInput = function() {
         that.wheel = e;
         console.log("Click Event - X,Y " + e.clientX + ", " + e.clientY + " Delta " + e.deltaY);
     }, false);
+
 
     this.ctx.canvas.addEventListener("keypress", function(e) {
         //console.log(e);
