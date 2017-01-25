@@ -10,7 +10,7 @@ window.requestAnimFrame = (function() {
 })();
 
 function GameEngine() {
-    this.setCurrentBackground = null;
+    this.currentBackground = null;
     this.currentCharacter = null;
     this.entities = [];
     this.playableCharacters = [];
@@ -42,7 +42,7 @@ GameEngine.prototype.getGameEngine = function() {
 }
 
 GameEngine.prototype.setCurrentBackground = function(background) {
-    console.log('set background');
+    this.currentBackground = background;
 }
 
 //sets current character playing
@@ -138,7 +138,8 @@ GameEngine.prototype.startInput = function() {
             that.d = true;
 
             currentCharacter.setWalkRightAnimation();
-            console.log(that);
+            //console.log(that);
+            //that.currentBackground.x--;
             
         } else if (e.code === "KeyF" && !that.didLeftClick) {
                 

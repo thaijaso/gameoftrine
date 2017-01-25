@@ -132,7 +132,7 @@ Knight.prototype.update = function() {
 
 //set current animation properties to idle right animation values
 Knight.prototype.setIdleRightAnimation = function() {
-    console.log('setIdleRight');
+    //console.log('setIdleRight');
 
     var idleRightSpriteSheet = this.animationIdleRight.spriteSheet;
     var frameWidth = this.animationIdleRight.frameWidth;
@@ -161,7 +161,7 @@ Knight.prototype.setIdleRightAnimation = function() {
 }
 
 Knight.prototype.setWalkRightAnimation = function() {
-    console.log("set walk right");
+    //console.log("set walk right");
 
     var walkRightSpriteSheet = this.animationWalkRight.spriteSheet;
     var frameWidth = this.animationWalkRight.frameWidth;
@@ -298,10 +298,11 @@ function Mage(game) {
     
     this.state = "idleRight";
     this.x = 0;
-    this.y = 0;
+    this.y = 400;
     this.speed = 100;
     this.game = game;
     this.ctx = game.ctx;
+    //Entity.call(this, this.game, 200, 400);
 }
 
 Mage.prototype.draw = function() {
@@ -438,7 +439,7 @@ Gunwoman.prototype.update = function() {
             jumpDistance = 1 - jumpDistance;
 
         //var height = jumpDistance * 2 * totalHeight;
-        var height = totalHeight*(-4 * (jumpDistance * jumpDistance - jumpDistance));
+        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
         this.y = ground - height;
 
     }
@@ -614,7 +615,10 @@ Background.prototype.draw = function () {
 };
 
 Background.prototype.update = function () {
-    this.x--;
+    var gameEngine = this.game;
+    if(gameEngine.d) {
+        this.x--;
+    }
 };
 
 
@@ -661,14 +665,12 @@ AM.downloadAll(function () {
     gameEngine.addEntity(background);
     gameEngine.addEntity(knight);
 
-    // gameEngine.addEntity(gunwoman);
-    // gameEngine.addEntity(mage);
-
     gameEngine.addPlayableCharacter(knight);
     gameEngine.addPlayableCharacter(gunwoman);
     gameEngine.addPlayableCharacter(mage);
     
     gameEngine.setCurrentCharacter(knight);
+    gameEngine.setCurrentBackground(background);
 
 
     console.log("All Done!");
