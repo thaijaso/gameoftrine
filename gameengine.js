@@ -10,17 +10,20 @@ window.requestAnimFrame = (function() {
 })();
 
 function GameEngine() {
+    this.setCurrentBackground = null;
+    this.currentCharacter = null;
     this.entities = [];
     this.playableCharacters = [];
     this.playableCharacterIndex = 0;
     this.ctx = null;
-    this.surfaceWidth = null;
-    this.surfaceHeight = null;
+    this.keyMap = {};
     this.assetManager = null;
     this.d = false;
     this.a = false;
     this.didLeftClick = false;
-    this.currentCharacter = null;
+    this.surfaceWidth = null;
+    this.surfaceHeight = null;
+    this.space = false;
 }
 
 GameEngine.prototype.init = function(ctx, assetManager) {
@@ -29,13 +32,16 @@ GameEngine.prototype.init = function(ctx, assetManager) {
     this.surfaceHeight = this.ctx.canvas.height;
     this.assetManager = assetManager;
     this.timer = new Timer();
-    this.chars = []; //events aren't being stored in here
     this.startInput();
-    console.log('game initialized');
+    console.log('Game Engine Initialized');
 }
 
 GameEngine.prototype.getGameEngine = function() {
     return this;
+}
+
+GameEngine.prototype.setCurrentBackground = function(background) {
+    console.log('set background');
 }
 
 //sets current character playing
@@ -72,7 +78,7 @@ GameEngine.prototype.changeCharacter = function() {
 }
 
 GameEngine.prototype.start = function() {
-    console.log("starting game");
+    console.log("Starting Game");
     var that = this;
     (function gameLoop() {
         that.loop();
@@ -81,7 +87,7 @@ GameEngine.prototype.start = function() {
 }
 
 GameEngine.prototype.startInput = function() {
-    console.log('Starting input');
+    console.log('Starting Input');
 
     var getXandY = function(e) {
         var x = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
@@ -97,7 +103,7 @@ GameEngine.prototype.startInput = function() {
 
     var that = this;
 
-    // event listeners are added here
+    // event listeners are  here
 
                                     //attack
     this.ctx.canvas.addEventListener("mousedown", function(e) {
@@ -112,11 +118,11 @@ GameEngine.prototype.startInput = function() {
             currentCharacter.setAttackRightAnimation();
 
         } else if (e.which === 2) { //Middle Mouse button pressed     
-            console.log('Middle Mouse button pressed');
+            console.log('Middle Mouse Button Pressed');
         } else if (e.which === 3) { //Right Mouse button pressed
-            console.log('Right mouse button pressed');
+            console.log('Right Mouse Button Pressed');
         } else {
-            console.log('Mouse button undetected');
+            console.log('Mouse Button Undetected');
         }
         
         //console.log(e);
@@ -131,12 +137,16 @@ GameEngine.prototype.startInput = function() {
             that.d = true;
 
             currentCharacter.setWalkRightAnimation();
+            console.log(that);
             
         } else if (e.code === "KeyF" && !that.didLeftClick) {
-
+                
                 console.log("F pressed");
                 that.changeCharacter();
 
+        } else if (e.code === "Space") {
+            that.space = true;
+            currentCharacter.setJumpRightAnimation();
         }
 
     }, false);
@@ -182,13 +192,13 @@ GameEngine.prototype.startInput = function() {
 
 //entities are drawn on the map
 GameEngine.prototype.addEntity = function(entity) {
-    console.log('added entity');
+    console.log('Added Entity ' + entity);
     this.entities.push(entity);
 }
 
 
 GameEngine.prototype.addPlayableCharacter = function(character) {
-    console.log('added character');
+    console.log('Added Character ' + character.name);
     this.playableCharacters.push(character);
 }
 
