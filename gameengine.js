@@ -20,6 +20,9 @@ function GameEngine() {
     this.assetManager = null;
     this.d = false;
     this.a = false;
+
+    this.right = true;
+
     this.space = false;
     this.didLeftClick = false;
     this.surfaceWidth = null;
@@ -116,7 +119,11 @@ GameEngine.prototype.startInput = function() {
 
         if (e.which === 1 && !that.didLeftClick) { //Left Mouse button pressed
             that.didLeftClick = true;
-            currentCharacter.setAttackRightAnimation();
+            if (that.right){
+                currentCharacter.setAttackRightAnimation();
+            } else {
+                currentCharacter.setAttackLeftAnimation();
+            }
 
         } else if (e.which === 2) { //Middle Mouse button pressed     
             console.log('Middle Mouse Button Pressed');
@@ -136,12 +143,20 @@ GameEngine.prototype.startInput = function() {
 
         if (e.code === "KeyD" && !that.d  && !that.didLeftClick) {
             that.d = true;
-
+            that.right = true;
             currentCharacter.setWalkRightAnimation();
             //console.log(that);
             //that.currentBackground.x--;
             
-        } else if (e.code === "KeyF" && !that.didLeftClick) {
+        } else if (e.code === "KeyA" && !that.a  && !that.didLeftClick) {
+            that.a = true;
+
+            that.right = false;
+
+            currentCharacter.setWalkLeftAnimation();
+            // console.log("this is a");
+            
+        }else if (e.code === "KeyF" && !that.didLeftClick) {
                 
                 console.log("F pressed");
                 that.changeCharacter();
@@ -162,6 +177,10 @@ GameEngine.prototype.startInput = function() {
             that.d = false;
             currentCharacter.setIdleRightAnimation();
 
+        }else if (e.code === "KeyA" && !that.didLeftClick) {
+            that.a = false;
+            currentCharacter.setIdleLeftAnimation();
+            
         }
     }, false);
 
