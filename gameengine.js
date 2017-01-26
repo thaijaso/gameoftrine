@@ -21,6 +21,7 @@ function GameEngine() {
     this.d = false;
     this.a = false;
     this.space = false;
+    this.drawWolf = false;
     this.didLeftClick = false;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
@@ -59,13 +60,13 @@ GameEngine.prototype.changeCharacter = function() {
     var oldCharacter = this.getCurrentCharacter();
 
     //removes the old character from the entities array
-    for (var i = 0; i < this.entities.length; i++) {    //perhaps make entities a map to find the old character faster??
+    for (var i = 0; i < this.entities.length; i++) { //perhaps make entities a map to find the old character faster??
         if (oldCharacter === this.entities[i]) {
             this.entities.splice(i, 1);
             //console.log(this.entities);
         }
     }
-    
+
     if (this.playableCharacterIndex >= this.playableCharacters.length - 1) { //if on last character, change to first index
         this.playableCharacterIndex = 0;
     } else {
@@ -77,6 +78,10 @@ GameEngine.prototype.changeCharacter = function() {
     this.setCurrentCharacter(newCharacter);
     //console.log(this);
 }
+
+GameEngine.prototype.addWolf = function(theWolf) {
+    this.wolf = theWolf;
+};
 
 GameEngine.prototype.start = function() {
     console.log("Starting Game");
@@ -106,13 +111,12 @@ GameEngine.prototype.startInput = function() {
 
     // event listeners are  here
 
-                                    //attack
+    //attack
+    var rightClickCount = 0;
     this.ctx.canvas.addEventListener("mousedown", function(e) {
-        var currentCharacter = that.getCurrentCharacter(); 
-        
-        that.click = getXandY(e);
 
-        //console.log(e.which);
+        var currentCharacter = that.getCurrentCharacter();
+        that.click = getXandY(e);
 
         if (e.which === 1 && !that.didLeftClick) { //Left Mouse button pressed
             that.didLeftClick = true;
@@ -120,44 +124,59 @@ GameEngine.prototype.startInput = function() {
 
         } else if (e.which === 2) { //Middle Mouse button pressed     
             console.log('Middle Mouse Button Pressed');
-        } else if (e.which === 3) { //Right Mouse button pressed
+        } else if (e.which === 3 && currentCharacter.name === "gunwoman" ) { //Right Mouse button pressed, add wolf
             console.log('Right Mouse Button Pressed');
+            rightClickCount++;
+
+            that.drawWolf = true;
+
+            if(rightClickCount === 1) {
+                that.addEntity(that.wolf);
+            } else if(rightClickCount === 2) {
+                that.wolf.setAttackRightAnimation();
+            } else if(rightClickCount === 3) {
+
+            } else {
+                rightClickCount = 0;
+            }
+
         } else {
             console.log('Mouse Button Undetected');
         }
-        
-        //console.log(e);
-        //console.log("Left Click Event - X,Y " + e.clientX + ", " + e.clientY);
+
+
+        console.log("rightClickCount: " + rightClickCount);
 
     }, false);
 
-    this.ctx.canvas.addEventListener("keydown", function (e) {
+    this.ctx.canvas.addEventListener("keydown", function(e) {
         var currentCharacter = that.getCurrentCharacter();
 
-        if (e.code === "KeyD" && !that.d  && !that.didLeftClick) {
+        if (e.code === "KeyD" && !that.d && !that.didLeftClick) {
             that.d = true;
 
             currentCharacter.setWalkRightAnimation();
             console.log(that);
-            
+
         } else if (e.code === "KeyF" && !that.didLeftClick) {
-                
-                console.log("F pressed");
-                that.changeCharacter();
+
+            console.log("F pressed");
+            that.changeCharacter();
 
         } else if (e.code === "Space") {
             that.space = true;
+            // that.changeCharacter();
             currentCharacter.setJumpRightAnimation();
         }
 
     }, false);
 
     this.ctx.canvas.addEventListener("keyup", function(e) {
-        
+
         var currentCharacter = that.getCurrentCharacter();
 
         if (e.code === "KeyD" && !that.didLeftClick) {
-            
+
             that.d = false;
             currentCharacter.setIdleRightAnimation();
 
@@ -198,6 +217,9 @@ GameEngine.prototype.addEntity = function(entity) {
     this.entities.push(entity);
 }
 
+GameEngine.prototype.removeEntity = function(entity) {
+    console.log(entity);
+};
 
 GameEngine.prototype.addPlayableCharacter = function(character) {
     console.log('Added Character ' + character.name);
