@@ -1,5 +1,3 @@
-var AM = new AssetManager();
-
 function Animation(entity, spriteSheet, frameWidth, frameHeight, sheetWidth, frameDuration, frames, loop, scale) {
     this.assetManager = AM;
     this.entity = entity;
@@ -19,10 +17,43 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
     var gameEngine = this.entity.game.getGameEngine();
     var currentCharacter = gameEngine.getCurrentCharacter();
 
-    //console.log(this);
-
-
     this.elapsedTime += tick;
+
+    if (gameEngine.d && currentCharacter.state !== "walkRight") {
+        currentCharacter.setWalkRightAnimation();
+    }
+
+    if (!gameEngine.d && currentCharacter.state === "walkRight") {
+        currentCharacter.setIdleRightAnimation();
+    }
+
+    if (gameEngine.a && currentCharacter.state !== "walkLeft") {
+        currentCharacter.setWalkLeftAnimation();
+    }
+
+    if (!gameEngine.a && currentCharacter.state === "walkLeft") {
+        currentCharacter.setIdleLeftAnimation();
+    }
+
+    if (gameEngine.didLeftClick && gameEngine.right && currentCharacter.state !== "attackRight") {
+        currentCharacter.setAttackRightAnimation();
+        x = x - 95; //update x offset coordinate of  attack animation 
+    }
+
+    if (gameEngine.didLeftClick && !gameEngine.right && currentCharacter.state !== "attackLeft") {
+        currentCharacter.setAttackLeftAnimation();
+        x = x - 95; //update x offset coordinate of  attack animation
+    }
+
+    if (currentCharacter.jumping && gameEngine.right && currentCharacter.state !== "jumpRight") {
+        currentCharacter.setJumpRightAnimation();
+    }
+
+    if (gameEngine.f) {
+        gameEngine.f = false;
+        gameEngine.changeCharacter();
+    }
+       
 
     if (this.isDone()) {
 
@@ -34,14 +65,13 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
 
             gameEngine.didLeftClick = false;
             x = 0;
-            //console.log('here');
 
             if(gameEngine.right) {
                 currentCharacter.setIdleRightAnimation();
             } else {
                 currentCharacter.setIdleLeftAnimation()
             }
-            // currentCharacter.setIdleRightAnimation();
+            
             //caution
             currentCharacter.jumping = false;
             gameEngine.space = false;
@@ -49,6 +79,7 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
     }
 
     var frame = this.currentFrame();
+
     var xindex = 0;
     var yindex = 0;
     xindex = frame % this.sheetWidth;
@@ -111,8 +142,7 @@ function Knight(game) {
 }
 
 Knight.prototype.draw = function() {
-
-	//console.log(this);
+	
 	if (this.state === "attackRight") {
 		this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 95, this.y);
 	} else if (this.state === "attackLeft") {
@@ -126,7 +156,12 @@ Knight.prototype.update = function() {
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 800) this.x = -230;
     //this.x = 0;
-    if (this.game.space) this.jumping = true;
+    if (this.game.space) {
+        this.jumping = true;
+        this.animationCurrent.elapsedTime = 0;
+        this.game.space = false;
+    }
+    
     if (this.jumping) {
         //console.log(this.animationCurrent.elapsedTime + " " + this.animationCurrent.totalTime);
         // if (this.animationCurrent.isDone()) {
@@ -135,7 +170,9 @@ Knight.prototype.update = function() {
         //     this.jumping = false;
         // }
 
-        var jumpDistance = this.animationCurrent.elapsedTime / this.animationCurrent.totalTime;
+        var jumpDistance = this.animationCurrent.elapsedTime / 
+                           this.animationCurrent.totalTime;
+        
         var totalHeight = 200;
 
         if (jumpDistance > 0.5)
@@ -145,6 +182,7 @@ Knight.prototype.update = function() {
         var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
         this.y = this.ground - height;
     }
+    
     Entity.prototype.update.call(this);
 }
 
@@ -1061,11 +1099,12 @@ Background.prototype.draw = function() {
 
 Background.prototype.update = function () {
     var gameEngine = this.game;
-    if(gameEngine.d) {
+    if (gameEngine.d) {
         this.x--;
     }
 };
 
+var AM = new AssetManager();
 
 var gameWorld = document.getElementById("gameWorld");
 gameWorld.width = window.innerWidth;
@@ -1139,8 +1178,5 @@ AM.downloadAll(function() {
     gameEngine.setCurrentCharacter(knight);
     gameEngine.setCurrentBackground(background);
 
-
-
-
-    console.log("All Done!");
+    //console.log("All Done!");
 });

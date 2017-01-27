@@ -20,6 +20,7 @@ function GameEngine() {
     this.assetManager = null;
     this.d = false;
     this.a = false;
+    this.f = false;
 
     this.right = true;
 
@@ -123,83 +124,77 @@ GameEngine.prototype.startInput = function() {
 
         if (e.which === 1 && !that.didLeftClick) { //Left Mouse button pressed
             that.didLeftClick = true;
-            if (that.right){
-                currentCharacter.setAttackRightAnimation();
-            } else {
-                currentCharacter.setAttackLeftAnimation();
-            }
 
-        } else if (e.which === 2) { //Middle Mouse button pressed     
+        } else if (e.which === 2) { //Middle Mouse button pressed  
+
             console.log('Middle Mouse Button Pressed');
+
         } else if (e.which === 3 && currentCharacter.name === "gunwoman" ) { //Right Mouse button pressed, add wolf
+
             console.log('Right Mouse Button Pressed');
             rightClickCount++;
 
             that.drawWolf = true;
 
             if(rightClickCount === 1) {
+
                 that.addEntity(that.wolf);
+
             } else if(rightClickCount === 2) {
-                that.wolf.setAttackRightAnimation();
+
+                that.wolf.setAttackRightAnimation();    //Shema: Move this to main once you get this working
+
             } else if(rightClickCount === 3) {
 
             } else {
+
                 rightClickCount = 0;
+
             }
 
         } else {
             console.log('Mouse Button Undetected');
         }
 
-
         console.log("rightClickCount: " + rightClickCount);
 
     }, false);
 
     this.ctx.canvas.addEventListener("keydown", function(e) {
+        
         var currentCharacter = that.getCurrentCharacter();
 
         if (e.code === "KeyD" && !that.d && !that.didLeftClick) {
+
             that.d = true;
             that.right = true;
-            currentCharacter.setWalkRightAnimation();
-             //console.log(that);
-            //that.currentBackground.x--;
-            
-        } else if (e.code === "KeyA" && !that.a  && !that.didLeftClick) {
-            that.a = true;
 
+        } else if (e.code === "KeyA" && !that.a  && !that.didLeftClick) {
+            
+            that.a = true;
             that.right = false;
 
-            currentCharacter.setWalkLeftAnimation();
-            // console.log("this is a");
-            
-        }else if (e.code === "KeyF" && !that.didLeftClick) {
-                
-                console.log("F pressed");
-                that.changeCharacter();
+        } else if (e.code === "KeyF" && !that.didLeftClick) {
+
+            that.f = true;
+            //console.log("F pressed");
 
         } else if (e.code === "Space") {
             that.space = true;
-            // that.changeCharacter();
-            currentCharacter.setJumpRightAnimation();
         }
 
     }, false);
 
     this.ctx.canvas.addEventListener("keyup", function(e) {
 
-        var currentCharacter = that.getCurrentCharacter();
+        //var currentCharacter = that.getCurrentCharacter();
 
         if (e.code === "KeyD" && !that.didLeftClick) {
-
             that.d = false;
-            currentCharacter.setIdleRightAnimation();
 
-        }else if (e.code === "KeyA" && !that.didLeftClick) {
+        } else if (e.code === "KeyA" && !that.didLeftClick) {
             that.a = false;
-            currentCharacter.setIdleLeftAnimation();
-            
+
         }
     }, false);
 
@@ -209,9 +204,9 @@ GameEngine.prototype.startInput = function() {
     }, false);
 
     this.ctx.canvas.addEventListener("mousewheel", function(e) {
-        console.log(e);
+        //console.log(e);
         that.wheel = e;
-        console.log("Click Event - X,Y " + e.clientX + ", " + e.clientY + " Delta " + e.deltaY);
+        //console.log("Click Event - X,Y " + e.clientX + ", " + e.clientY + " Delta " + e.deltaY);
     }, false);
 
 
