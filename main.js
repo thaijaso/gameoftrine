@@ -1,5 +1,3 @@
-
-
 function Animation(entity, spriteSheet, frameWidth, frameHeight, sheetWidth, frameDuration, frames, loop, scale) {
     this.assetManager = AM;
     this.entity = entity;
@@ -22,52 +20,60 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
 
     this.elapsedTime += tick;
 
-    if (gameEngine.d && currentCharacter.state !== "walkRight") {
+    if (currentCharacter.jumping && gameEngine.right &&
+        gameEngine.didLeftClick && currentCharacter.state !== "attackLeft") { //jump + attack
+
+        currentCharacter.setJumpAttackRightAnimation();
+
+        //console.log('jump + attack');
+
+    } else if (gameEngine.d && currentCharacter.state !== "walkRight") {
+
         currentCharacter.setWalkRightAnimation();
+
         if (currentCharacter.name === "gunwoman" && wolf.state !== "walkRight") {
             wolf.setWalkRightAnimation();
         }
-    }
+    } else if (!gameEngine.d && currentCharacter.state === "walkRight") {
 
-    if (!gameEngine.d && currentCharacter.state === "walkRight") {
         currentCharacter.setIdleRightAnimation();
+
         if (currentCharacter.name === "gunwoman" && wolf.state === "walkRight") {
             wolf.setIdleRightAnimation();
         }
-    }
 
-    if (gameEngine.a && currentCharacter.state !== "walkLeft") {
+    } else if (gameEngine.a && currentCharacter.state !== "walkLeft") {
+
         currentCharacter.setWalkLeftAnimation();
-    }
 
-    if (!gameEngine.a && currentCharacter.state === "walkLeft") {
+    } else if (!gameEngine.a && currentCharacter.state === "walkLeft") {
+
         currentCharacter.setIdleLeftAnimation();
-    }
 
 
+    } else if (gameEngine.didLeftClick && gameEngine.right && currentCharacter.state !== "attackRight") {
 
-    if (gameEngine.wolfAttack && gameEngine.wolfIsRight && wolf.state !== "attackRight") {
-
-        wolf.setAttackRightAnimation();
-    }
-
-    if (gameEngine.didLeftClick && gameEngine.right && currentCharacter.state !== "attackRight") {
         currentCharacter.setAttackRightAnimation();
         x = x - 95; //update x offset coordinate of  attack animation 
-    }
 
-    if (gameEngine.didLeftClick && !gameEngine.right && currentCharacter.state !== "attackLeft") {
+        if (gameEngine.wolfAttack && gameEngine.wolfIsRight && wolf.state !== "attackRight") {
+
+            wolf.setAttackRightAnimation();
+        }
+
+    } else if (gameEngine.didLeftClick && !gameEngine.right && currentCharacter.state !== "attackLeft") {
+
         currentCharacter.setAttackLeftAnimation();
         x = x - 95; //update x offset coordinate of  attack animation
-    }
 
-    if (currentCharacter.jumping && gameEngine.right && currentCharacter.state !== "jumpRight") {
+    } else if (currentCharacter.jumping && gameEngine.right && currentCharacter.state !== "jumpRight") {
+
         currentCharacter.setJumpRightAnimation();
-    }
+    } else if (gameEngine.f) {
 
-    if (gameEngine.f) {
         gameEngine.f = false;
         gameEngine.changeCharacter();
+
     }
 
 
@@ -94,6 +100,9 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
 
             //caution
             currentCharacter.jumping = false;
+
+            //gameEngine.space = false;
+
             gameEngine.space = false;
             gameEngine.wolfAttack = false;
         }
@@ -241,6 +250,7 @@ Knight.prototype.setIdleRightAnimation = function() {
 Knight.prototype.setIdleLeftAnimation = function() {
     console.log('set Idle Left');
 
+    debugger;
     left = true;
     right = false;
 
@@ -396,7 +406,7 @@ Knight.prototype.setAttackLeftAnimation = function() {
 }
 
 Knight.prototype.setJumpRightAnimation = function() {
-    console.log('jump right');
+    //console.log('jump right');
 
     var jumpRightSpriteSheet = this.animationJumpRight.spriteSheet;
     var frameWidth = this.animationJumpRight.frameWidth;
@@ -422,6 +432,34 @@ Knight.prototype.setJumpRightAnimation = function() {
     this.animationCurrent.elapsedTime = elapsedTime;
     this.animationCurrent.loop = loop;
     this.animationCurrent.scale = scale;
+}
+
+Knight.prototype.setJumpAttackRightAnimation = function() {
+    console.log('jump + attack');
+
+    var attackRightSpriteSheet = this.animationAttackRight.spriteSheet;
+    var frameWidth = this.animationAttackRight.frameWidth;
+    var frameDuration = this.animationAttackRight.frameDuration;
+    var frameHeight = this.animationAttackRight.frameHeight;
+    var sheetWidth = this.animationAttackRight.sheetWidth;
+    var frames = this.animationAttackRight.frames;
+    var totalTime = frameDuration * frames;
+    var loop = false;
+    var scale = 1;
+
+    this.state = "attackRight";
+
+    this.animationCurrent.spriteSheet = attackRightSpriteSheet;
+    this.animationCurrent.frameWidth = frameWidth;
+    this.animationCurrent.frameDuration = frameDuration;
+    this.animationCurrent.frameHeight = frameHeight;
+    this.animationCurrent.sheetWidth = sheetWidth;
+    this.animationCurrent.frames = frames;
+    this.animationCurrent.totalTime = totalTime;
+    this.animationCurrent.loop = false;
+    this.animationCurrent.scale = scale;
+
+
 }
 
 
@@ -709,38 +747,38 @@ Mage.prototype.setAttackLeftAnimation = function() {
     */
 
 //Constructor for gunwoman
-function Gunwoman(game) {
-    var idleRightSpriteSheet = AM.getAsset("./img/gunwomanidleright.png");
-    var walkRightSpriteSheet = AM.getAsset("./img/gunwomanwalkright.png");
-    var attackRightSpriteSheet = AM.getAsset("./img/gunwomanattackright.png");
-    var jumpRightSpriteSheet = AM.getAsset("./img/gunwomanjumpright.png");
+// function Gunwoman(game) {
+//     var idleRightSpriteSheet = AM.getAsset("./img/gunwomanidleright.png");
+//     var walkRightSpriteSheet = AM.getAsset("./img/gunwomanwalkright.png");
+//     var attackRightSpriteSheet = AM.getAsset("./img/gunwomanattackright.png");
+//     var jumpRightSpriteSheet = AM.getAsset("./img/gunwomanjumpright.png");
 
-    // var wolf = new Wolf();
-    // var wolfidleright = AM.getAsset("./img/wolfidleright.png");
+//     // var wolf = new Wolf();
+//     // var wolfidleright = AM.getAsset("./img/wolfidleright.png");
 
-    this.name = "gunwoman";
+//     this.name = "gunwoman";
 
-    this.animationCurrent = new Animation(this, idleRightSpriteSheet, 192, 192, 5, 0.1, 22, true, 1);
-    this.animationIdleRight = new Animation(this, idleRightSpriteSheet, 192, 192, 5, 0.1, 22, true, 1);
-    this.animationWalkRight = new Animation(this, walkRightSpriteSheet, 192, 192, 4, 0.05, 14, true, 1);
-    this.animationAttackRight = new Animation(this, attackRightSpriteSheet, 384, 192, 4, 0.04, 23, false, 1);
-    this.animationJumpRight = new Animation(this, jumpRightSpriteSheet, 192, 192, 4, 0.04, 12, false, 1);
-    // this.animationWolfidleRight = new Animation(this, wolfidleright, 192, 192, 4, 0.1, 12, false, .5);
+//     this.animationCurrent = new Animation(this, idleRightSpriteSheet, 192, 192, 5, 0.1, 22, true, 1);
+//     this.animationIdleRight = new Animation(this, idleRightSpriteSheet, 192, 192, 5, 0.1, 22, true, 1);
+//     this.animationWalkRight = new Animation(this, walkRightSpriteSheet, 192, 192, 4, 0.05, 14, true, 1);
+//     this.animationAttackRight = new Animation(this, attackRightSpriteSheet, 384, 192, 4, 0.04, 23, false, 1);
+//     this.animationJumpRight = new Animation(this, jumpRightSpriteSheet, 192, 192, 4, 0.04, 12, false, 1);
+//     // this.animationWolfidleRight = new Animation(this, wolfidleright, 192, 192, 4, 0.1, 12, false, .5);
 
-    this.state = "idleRight";
-    //this.x = 0;
-    //this.y = 0;
-    this.speed = 100;
-    this.game = game;
-    this.jumping = false
-    this.ctx = game.ctx;
+//     this.state = "idleRight";
+//     //this.x = 0;
+//     //this.y = 0;
+//     this.speed = 100;
+//     this.game = game;
+//     this.jumping = false
+//     this.ctx = game.ctx;
 
-    this.jumping = false;
-    this.radius = 100;
-    this.ground = 400;
-    Entity.call(this, this.game, 0, 400);
+//     this.jumping = false;
+//     this.radius = 100;
+//     this.ground = 400;
+//     Entity.call(this, this.game, 0, 400);
 
-}
+// }
 
 
 Gunwoman.prototype.draw = function() {
@@ -1149,8 +1187,11 @@ Background.prototype.draw = function() {
 
 Background.prototype.update = function() {
     var gameEngine = this.game;
+    //walking right and left
     if (gameEngine.d) {
         this.x--;
+    } else if (gameEngine.a) {
+        this.x++;
     }
 };
 
@@ -1221,7 +1262,7 @@ AM.downloadAll(function() {
     var mage = new Mage(gameEngine);
     var wolf = new Wolf(gameEngine);
 
-     var tile = new Background(gameEngine, AM.getAsset("./img/tiles/tileset.png"));
+    var tile = new Background(gameEngine, AM.getAsset("./img/tiles/tileset.png"));
     // canvas.drawImage()
 
     //an entity is any element drawn on the map

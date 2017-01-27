@@ -187,8 +187,6 @@ GameEngine.prototype.startInput = function() {
 
     this.ctx.canvas.addEventListener("keyup", function(e) {
 
-        //var currentCharacter = that.getCurrentCharacter();
-
         if (e.code === "KeyD" && !that.didLeftClick) {
             that.d = false;
 
