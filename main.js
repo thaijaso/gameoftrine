@@ -1187,8 +1187,11 @@ Background.prototype.draw = function() {
 
 Background.prototype.update = function() {
     var gameEngine = this.game;
+    //walking right and left
     if (gameEngine.d) {
         this.x--;
+    } else if (gameEngine.a) {
+        this.x++;
     }
 };
 
