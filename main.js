@@ -19,39 +19,46 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
 
     this.elapsedTime += tick;
 
-    if (gameEngine.d && currentCharacter.state !== "walkRight") {
+    if (currentCharacter.jumping && gameEngine.right && 
+        gameEngine.didLeftClick && currentCharacter.state !== "attackLeft") {   //jump + attack
+
+        currentCharacter.setJumpAttackRightAnimation();
+
+        //console.log('jump + attack');
+
+    } else if (gameEngine.d && currentCharacter.state !== "walkRight") {
+
         currentCharacter.setWalkRightAnimation();
-    }
 
-    if (!gameEngine.d && currentCharacter.state === "walkRight") {
+    } else if (!gameEngine.d && currentCharacter.state === "walkRight") {
+
         currentCharacter.setIdleRightAnimation();
-    }
 
-    if (gameEngine.a && currentCharacter.state !== "walkLeft") {
+    } else if (gameEngine.a && currentCharacter.state !== "walkLeft") {
+
         currentCharacter.setWalkLeftAnimation();
-    }
 
-    if (!gameEngine.a && currentCharacter.state === "walkLeft") {
+    } else if (!gameEngine.a && currentCharacter.state === "walkLeft") {
+
         currentCharacter.setIdleLeftAnimation();
-    }
 
-    if (gameEngine.didLeftClick && gameEngine.right && currentCharacter.state !== "attackRight") {
+    } else if (gameEngine.didLeftClick && gameEngine.right && currentCharacter.state !== "attackRight") {
         currentCharacter.setAttackRightAnimation();
         x = x - 95; //update x offset coordinate of  attack animation 
-    }
 
-    if (gameEngine.didLeftClick && !gameEngine.right && currentCharacter.state !== "attackLeft") {
+    } else if (gameEngine.didLeftClick && !gameEngine.right && currentCharacter.state !== "attackLeft") {
+        
         currentCharacter.setAttackLeftAnimation();
         x = x - 95; //update x offset coordinate of  attack animation
-    }
 
-    if (currentCharacter.jumping && gameEngine.right && currentCharacter.state !== "jumpRight") {
+    } else if (currentCharacter.jumping && gameEngine.right && currentCharacter.state !== "jumpRight") {
+        
         currentCharacter.setJumpRightAnimation();
-    }
+    } else if (gameEngine.f) {
 
-    if (gameEngine.f) {
         gameEngine.f = false;
         gameEngine.changeCharacter();
+
     }
        
 
@@ -74,7 +81,7 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
             
             //caution
             currentCharacter.jumping = false;
-            gameEngine.space = false;
+            //gameEngine.space = false;
         }
     }
 
@@ -220,6 +227,7 @@ Knight.prototype.setIdleRightAnimation = function() {
 Knight.prototype.setIdleLeftAnimation = function() {
     console.log('set Idle Left');
 
+    debugger;
     left = true;
     right = false;
 
@@ -375,7 +383,7 @@ Knight.prototype.setAttackLeftAnimation = function() {
 }
 
 Knight.prototype.setJumpRightAnimation = function() {
-    console.log('jump right');
+    //console.log('jump right');
 
     var jumpRightSpriteSheet = this.animationJumpRight.spriteSheet;
     var frameWidth = this.animationJumpRight.frameWidth;
@@ -401,6 +409,34 @@ Knight.prototype.setJumpRightAnimation = function() {
     this.animationCurrent.elapsedTime = elapsedTime;
     this.animationCurrent.loop = loop;
     this.animationCurrent.scale = scale;
+}
+
+Knight.prototype.setJumpAttackRightAnimation = function() {
+    console.log('jump + attack');
+
+    var attackRightSpriteSheet = this.animationAttackRight.spriteSheet;
+    var frameWidth = this.animationAttackRight.frameWidth;
+    var frameDuration = this.animationAttackRight.frameDuration;
+    var frameHeight = this.animationAttackRight.frameHeight;
+    var sheetWidth = this.animationAttackRight.sheetWidth;
+    var frames = this.animationAttackRight.frames;
+    var totalTime = frameDuration * frames;
+    var loop = false;
+    var scale = 1;
+
+    this.state = "attackRight";
+
+    this.animationCurrent.spriteSheet = attackRightSpriteSheet;
+    this.animationCurrent.frameWidth = frameWidth;
+    this.animationCurrent.frameDuration = frameDuration;
+    this.animationCurrent.frameHeight = frameHeight;
+    this.animationCurrent.sheetWidth = sheetWidth;
+    this.animationCurrent.frames = frames;
+    this.animationCurrent.totalTime = totalTime;
+    this.animationCurrent.loop = false;
+    this.animationCurrent.scale = scale;
+
+
 }
 
 
