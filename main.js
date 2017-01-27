@@ -512,10 +512,11 @@ function Mage(game) {
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/mageWalkRight.png");
     var attackRightAnimationSpriteSheet = AM.getAsset("./img/mageAttackRight.png");
 
-
     var idleLeftAnimationSpriteSheet = AM.getAsset("./img/mageIdleLeft.png");
     var walkLeftAnimationSpriteSheet = AM.getAsset("./img/mageWalkLeft.png");
     var attackLeftAnimationSpriteSheet = AM.getAsset("./img/mageAttackLeft.png");
+
+    var jumpRightAnimationSpriteSheet = AM.getAsset("./img/mageJumpRight.png");
 
     this.name = "mage";
 
@@ -528,13 +529,17 @@ function Mage(game) {
     this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 4, 0.07, 8, true, 1);
     this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 2, 0.03, 17, false, 1);
 
+    this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 10, false, 1);
+
     this.state = "idleRight";
-    this.x = 0;
-    this.y = 400;
+    // this.x = 0;
+    // this.y = 400;
+    this.jumping = false;
     this.speed = 100;
     this.game = game;
     this.ctx = game.ctx;
-    //Entity.call(this, this.game, 200, 400);
+    this.ground = 400;
+    Entity.call(this, this.game, 0, 400);
 }
 
 Mage.prototype.draw = function() {
@@ -548,6 +553,33 @@ Mage.prototype.draw = function() {
 }
 
 Mage.prototype.update = function() {
+    if (this.game.space) {
+        this.jumping = true;
+        this.animationCurrent.elapsedTime = 0;
+        this.game.space = false;
+    }
+
+    if (this.jumping) {
+        //console.log(this.animationCurrent.elapsedTime + " " + this.animationCurrent.totalTime);
+        // if (this.animationCurrent.isDone()) {
+        //     console.log('here');
+        //     this.animationCurrent.elapsedTime = 0;
+        //     this.jumping = false;
+        // }
+
+        var jumpDistance = this.animationCurrent.elapsedTime /
+            this.animationCurrent.totalTime;
+
+        var totalHeight = 200;
+
+        if (jumpDistance > 0.5)
+            jumpDistance = 1 - jumpDistance;
+
+        //var height = jumpDistance * 2 * totalHeight;
+        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+        this.y = this.ground - height;
+    }
+
     Entity.prototype.update.call(this);
 }
 
@@ -737,6 +769,35 @@ Mage.prototype.setAttackLeftAnimation = function() {
     this.animationCurrent.scale = scale;
 
     //console.log(this);
+}
+
+Mage.prototype.setJumpRightAnimation = function() {
+    console.log('jump right');
+
+    var jumpRightSpriteSheet = this.animationJumpRight.spriteSheet;
+    var frameWidth = this.animationJumpRight.frameWidth;
+    var frameDuration = this.animationJumpRight.frameDuration;
+    var frameHeight = this.animationJumpRight.frameHeight;
+    var sheetWidth = this.animationJumpRight.sheetWidth;
+    var frames = this.animationJumpRight.frames;
+    var totalTime = frameDuration * frames;
+    var elapsedTime = 0;
+    var loop = false;
+    var scale = 1;
+
+    this.state = "jumpRight";
+
+    //set current animation property values
+    this.animationCurrent.spriteSheet = jumpRightSpriteSheet;
+    this.animationCurrent.frameWidth = frameWidth;
+    this.animationCurrent.frameDuration = frameDuration;
+    this.animationCurrent.frameHeight = frameHeight;
+    this.animationCurrent.sheetWidth = sheetWidth;
+    this.animationCurrent.frames = frames;
+    this.animationCurrent.totalTime = totalTime;
+    this.animationCurrent.elapsedTime = elapsedTime;
+    this.animationCurrent.loop = loop;
+    this.animationCurrent.scale = scale;
 }
 
 
@@ -1244,6 +1305,8 @@ AM.queueDownload("./img/mageAttackRight.png");
 AM.queueDownload("./img/mageWalkLeft.png");
 AM.queueDownload("./img/mageIdleLeft.png");
 AM.queueDownload("./img/mageAttackLeft.png");
+
+AM.queueDownload("./img/mageJumpRight.png");
 
 
 AM.downloadAll(function() {
