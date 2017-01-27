@@ -747,38 +747,38 @@ Mage.prototype.setAttackLeftAnimation = function() {
     */
 
 //Constructor for gunwoman
-function Gunwoman(game) {
-    var idleRightSpriteSheet = AM.getAsset("./img/gunwomanidleright.png");
-    var walkRightSpriteSheet = AM.getAsset("./img/gunwomanwalkright.png");
-    var attackRightSpriteSheet = AM.getAsset("./img/gunwomanattackright.png");
-    var jumpRightSpriteSheet = AM.getAsset("./img/gunwomanjumpright.png");
+// function Gunwoman(game) {
+//     var idleRightSpriteSheet = AM.getAsset("./img/gunwomanidleright.png");
+//     var walkRightSpriteSheet = AM.getAsset("./img/gunwomanwalkright.png");
+//     var attackRightSpriteSheet = AM.getAsset("./img/gunwomanattackright.png");
+//     var jumpRightSpriteSheet = AM.getAsset("./img/gunwomanjumpright.png");
 
-    // var wolf = new Wolf();
-    // var wolfidleright = AM.getAsset("./img/wolfidleright.png");
+//     // var wolf = new Wolf();
+//     // var wolfidleright = AM.getAsset("./img/wolfidleright.png");
 
-    this.name = "gunwoman";
+//     this.name = "gunwoman";
 
-    this.animationCurrent = new Animation(this, idleRightSpriteSheet, 192, 192, 5, 0.1, 22, true, 1);
-    this.animationIdleRight = new Animation(this, idleRightSpriteSheet, 192, 192, 5, 0.1, 22, true, 1);
-    this.animationWalkRight = new Animation(this, walkRightSpriteSheet, 192, 192, 4, 0.05, 14, true, 1);
-    this.animationAttackRight = new Animation(this, attackRightSpriteSheet, 384, 192, 4, 0.04, 23, false, 1);
-    this.animationJumpRight = new Animation(this, jumpRightSpriteSheet, 192, 192, 4, 0.04, 12, false, 1);
-    // this.animationWolfidleRight = new Animation(this, wolfidleright, 192, 192, 4, 0.1, 12, false, .5);
+//     this.animationCurrent = new Animation(this, idleRightSpriteSheet, 192, 192, 5, 0.1, 22, true, 1);
+//     this.animationIdleRight = new Animation(this, idleRightSpriteSheet, 192, 192, 5, 0.1, 22, true, 1);
+//     this.animationWalkRight = new Animation(this, walkRightSpriteSheet, 192, 192, 4, 0.05, 14, true, 1);
+//     this.animationAttackRight = new Animation(this, attackRightSpriteSheet, 384, 192, 4, 0.04, 23, false, 1);
+//     this.animationJumpRight = new Animation(this, jumpRightSpriteSheet, 192, 192, 4, 0.04, 12, false, 1);
+//     // this.animationWolfidleRight = new Animation(this, wolfidleright, 192, 192, 4, 0.1, 12, false, .5);
 
-    this.state = "idleRight";
-    //this.x = 0;
-    //this.y = 0;
-    this.speed = 100;
-    this.game = game;
-    this.jumping = false
-    this.ctx = game.ctx;
+//     this.state = "idleRight";
+//     //this.x = 0;
+//     //this.y = 0;
+//     this.speed = 100;
+//     this.game = game;
+//     this.jumping = false
+//     this.ctx = game.ctx;
 
-    this.jumping = false;
-    this.radius = 100;
-    this.ground = 400;
-    Entity.call(this, this.game, 0, 400);
+//     this.jumping = false;
+//     this.radius = 100;
+//     this.ground = 400;
+//     Entity.call(this, this.game, 0, 400);
 
-}
+// }
 
 
 Gunwoman.prototype.draw = function() {
