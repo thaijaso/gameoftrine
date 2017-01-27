@@ -1,3 +1,5 @@
+
+
 function Animation(entity, spriteSheet, frameWidth, frameHeight, sheetWidth, frameDuration, frames, loop, scale) {
     this.assetManager = AM;
     this.entity = entity;
@@ -22,14 +24,14 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
 
     if (gameEngine.d && currentCharacter.state !== "walkRight") {
         currentCharacter.setWalkRightAnimation();
-        if(currentCharacter.name === "gunwoman" && wolf.state !== "walkRight") {
+        if (currentCharacter.name === "gunwoman" && wolf.state !== "walkRight") {
             wolf.setWalkRightAnimation();
         }
     }
 
     if (!gameEngine.d && currentCharacter.state === "walkRight") {
         currentCharacter.setIdleRightAnimation();
-        if(currentCharacter.name === "gunwoman" && wolf.state === "walkRight") {
+        if (currentCharacter.name === "gunwoman" && wolf.state === "walkRight") {
             wolf.setIdleRightAnimation();
         }
     }
@@ -1158,7 +1160,11 @@ var gameWorld = document.getElementById("gameWorld");
 gameWorld.width = window.innerWidth;
 gameWorld.height = window.innerHeight;
 
+
+// background
 AM.queueDownload("./img/background.jpg");
+AM.queueDownload("./img/tiles/tileset.png");
+
 
 //knight
 AM.queueDownload("./img/knightidleright.png");
@@ -1215,8 +1221,12 @@ AM.downloadAll(function() {
     var mage = new Mage(gameEngine);
     var wolf = new Wolf(gameEngine);
 
+     var tile = new Background(gameEngine, AM.getAsset("./img/tiles/tileset.png"));
+    // canvas.drawImage()
+
     //an entity is any element drawn on the map
     gameEngine.addEntity(background);
+    gameEngine.addEntity(tile);
     gameEngine.addEntity(knight);
 
     gameEngine.addPlayableCharacter(knight);
