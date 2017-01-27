@@ -12,6 +12,7 @@ window.requestAnimFrame = (function() {
 function GameEngine() {
     this.currentBackground = null;
     this.currentCharacter = null;
+    this.wolf = null;
     this.entities = [];
     this.playableCharacters = [];
     this.playableCharacterIndex = 0;
@@ -26,6 +27,8 @@ function GameEngine() {
 
     this.space = false;
     this.drawWolf = false;
+    this.wolfAttack = false;
+    this.wolfIsRight = true;
     this.didLeftClick = false;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
@@ -59,6 +62,11 @@ GameEngine.prototype.setCurrentCharacter = function(character) {
 GameEngine.prototype.getCurrentCharacter = function() {
     return this.currentCharacter;
 }
+//get the wolf
+GameEngine.prototype.getWolf = function() {
+    return this.wolf;
+};
+
 
 GameEngine.prototype.changeCharacter = function() {
     var oldCharacter = this.getCurrentCharacter();
@@ -129,27 +137,19 @@ GameEngine.prototype.startInput = function() {
 
             console.log('Middle Mouse Button Pressed');
 
-        } else if (e.which === 3 && currentCharacter.name === "gunwoman" ) { //Right Mouse button pressed, add wolf
-
+       } else if (e.which === 3 && currentCharacter.name === "gunwoman" && rightClickCount === 0) { //Right Mouse button pressed, add wolf
             console.log('Right Mouse Button Pressed');
             rightClickCount++;
-
             that.drawWolf = true;
+            that.addEntity(that.wolf);
+        } else if(e.which == 3 && currentCharacter.name === "gunwoman" && rightClickCount >= 1) {
 
-            if(rightClickCount === 1) {
-
-                that.addEntity(that.wolf);
-
-            } else if(rightClickCount === 2) {
-
-                that.wolf.setAttackRightAnimation();    //Shema: Move this to main once you get this working
-
-            } else if(rightClickCount === 3) {
-
-            } else {
-
-                rightClickCount = 0;
-
+            rightClickCount++;
+             if (rightClickCount === 2) {
+                that.wolfAttack = true;
+                that.wolfIsRight = true;
+            } else if (rightClickCount >= 2) {
+                rightClickCount = 1;
             }
 
         } else {
