@@ -17,7 +17,7 @@ function GameEngine() {
     this.playableCharacters = [];
     this.playableCharacterIndex = 0;
     this.ctx = null;
-    this.keyMap = {};
+    this.keyMap = {d: false};
     this.assetManager = null;
     this.d = false;
     this.a = false;
@@ -130,70 +130,80 @@ GameEngine.prototype.startInput = function() {
         var currentCharacter = that.getCurrentCharacter();
         that.click = getXandY(e);
 
-        if (e.which === 1 && !that.didLeftClick) { //Left Mouse button pressed
-            that.didLeftClick = true;
+        that.keyMap[e.which] = true;
 
-        } else if (e.which === 2) { //Middle Mouse button pressed  
+       //  if (e.which === 1 && !that.didLeftClick) { //Left Mouse button pressed
+       //      that.didLeftClick = true;
 
-            console.log('Middle Mouse Button Pressed');
+       //  } else if (e.which === 2) { //Middle Mouse button pressed  
 
-       } else if (e.which === 3 && currentCharacter.name === "gunwoman" && rightClickCount === 0) { //Right Mouse button pressed, add wolf
-            console.log('Right Mouse Button Pressed');
-            rightClickCount++;
-            that.drawWolf = true;
-            that.addEntity(that.wolf);
-        } else if(e.which == 3 && currentCharacter.name === "gunwoman" && rightClickCount >= 1) {
+       //      console.log('Middle Mouse Button Pressed');
 
-            rightClickCount++;
-             if (rightClickCount === 2) {
-                that.wolfAttack = true;
-                that.wolfIsRight = true;
-            } else if (rightClickCount >= 2) {
-                rightClickCount = 1;
-            }
+       // } else if (e.which === 3 && currentCharacter.name === "gunwoman" && rightClickCount === 0) { //Right Mouse button pressed, add wolf
+       //      console.log('Right Mouse Button Pressed');
+       //      rightClickCount++;
+       //      that.drawWolf = true;
+       //      that.addEntity(that.wolf);
+       //  } else if (e.which == 3 && currentCharacter.name === "gunwoman" && rightClickCount >= 1) {
 
-        } else {
-            console.log('Mouse Button Undetected');
-        }
+       //      rightClickCount++;
+            
+       //      if (rightClickCount === 2) {
+       //          that.wolfAttack = true;
+       //          that.wolfIsRight = true;
+       //      } else if (rightClickCount >= 2) {
+       //          rightClickCount = 1;
+       //      }
 
-        console.log("rightClickCount: " + rightClickCount);
+       //  } else {
+       //      console.log('Mouse Button Undetected');
+       //  }
+
+         console.log("rightClickCount: " + rightClickCount);
+
+    }, false);
+
+    this.ctx.canvas.addEventListener("mouseup", function(e) {
 
     }, false);
 
     this.ctx.canvas.addEventListener("keydown", function(e) {
         
-        var currentCharacter = that.getCurrentCharacter();
+        that.keyMap[e.code] = true;
 
-        if (e.code === "KeyD" && !that.d && !that.didLeftClick) {
+        // if (e.code === "KeyD" && !that.keyMap[e.code] && !that.didLeftClick) {
 
-            that.d = true;
-            that.right = true;
+        //     that.d = true;
+        //     that.right = true;
 
-        } else if (e.code === "KeyA" && !that.a  && !that.didLeftClick) {
+        // } else if (e.code === "KeyA" && !that.a  && !that.didLeftClick) {
             
-            that.a = true;
-            that.right = false;
+        //     that.a = true;
+        //     that.right = false;
 
-        } else if (e.code === "KeyF" && !that.didLeftClick) {
+        // } else if (e.code === "KeyF" && !that.didLeftClick) {
 
-            that.f = true;
-            //console.log("F pressed");
+        //     that.f = true;
+        //     //console.log("F pressed");
 
-        } else if (e.code === "Space") {
-            that.space = true;
-        }
+        // } else if (e.code === "Space" && !that.space) {
+        //     that.space = true;
+        // }
 
     }, false);
 
     this.ctx.canvas.addEventListener("keyup", function(e) {
 
-        if (e.code === "KeyD" && !that.didLeftClick) {
-            that.d = false;
+        that.keyMap[e.code] = false;
 
-        } else if (e.code === "KeyA" && !that.didLeftClick) {
-            that.a = false;
+        // if (e.code === "KeyD" && !that.didLeftClick) {
+        //     that.d = false;
 
-        }
+        // } else if (e.code === "KeyA" && !that.didLeftClick) {
+        //     that.a = false;
+
+        // }
+
     }, false);
 
     this.ctx.canvas.addEventListener("mousemove", function(e) {

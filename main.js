@@ -19,39 +19,38 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
     var wolf = gameEngine.getWolf();
 
     this.elapsedTime += tick;
-
-    if (currentCharacter.jumping && gameEngine.right && 
-        gameEngine.didLeftClick && currentCharacter.state !== "attackLeft") {   //jump + attack
+                                                                                        //left click
+    if (currentCharacter.jumping && currentCharacter.state !== "walkRight" && gameEngine.keyMap["1"]) {   //jump + attack
 
         currentCharacter.setJumpAttackRightAnimation();
 
-        //console.log('jump + attack');
-
-    } else if (gameEngine.d && currentCharacter.state !== "walkRight") {
+    } else if (gameEngine.keyMap["KeyD"] && currentCharacter.state !== "walkRight") {    //walk right
 
         currentCharacter.setWalkRightAnimation();
 
-        if(currentCharacter.name === "gunwoman" && wolf.state !== "walkRight") {
+        if (currentCharacter.name === "gunwoman" && wolf.state !== "walkRight") {    //idle right
             wolf.setWalkRightAnimation();
         }
-    } else if (!gameEngine.d && currentCharacter.state === "walkRight") {
+    
+    } else if (!gameEngine.keyMap["KeyD"] && currentCharacter.state === "walkRight") {
 
         currentCharacter.setIdleRightAnimation();
 
-        if(currentCharacter.name === "gunwoman" && wolf.state === "walkRight") {
+        if (currentCharacter.name === "gunwoman" && wolf.state === "walkRight") {
             wolf.setIdleRightAnimation();
         }
 
-    } else if (gameEngine.a && currentCharacter.state !== "walkLeft") {
+    } else if (gameEngine.keyMap["KeyA"] && currentCharacter.state !== "walkLeft") {
 
         currentCharacter.setWalkLeftAnimation();
 
-    } else if (!gameEngine.a && currentCharacter.state === "walkLeft") {
+    } else if (!gameEngine.keyMap["KeyA"] && currentCharacter.state === "walkLeft") {
 
         currentCharacter.setIdleLeftAnimation();
 
+                        //left click
+    } else if (gameEngine.keyMap["1"] && gameEngine.right && currentCharacter.state !== "attackRight") {
 
-    } else if (gameEngine.didLeftClick && gameEngine.right && currentCharacter.state !== "attackRight") {
 
         currentCharacter.setAttackRightAnimation();
         x = x - 95; //update x offset coordinate of  attack animation 
@@ -67,11 +66,12 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
         x = x - 95; //update x offset coordinate of  attack animation
 
     } else if (currentCharacter.jumping && gameEngine.right && currentCharacter.state !== "jumpRight") {
-        
+        //debugger;
         currentCharacter.setJumpRightAnimation();
-    } else if (gameEngine.f) {
 
-        gameEngine.f = false;
+    } else if (gameEngine.keyMap["KeyF"]) {
+
+        gameEngine.keyMap["KeyF"] = false;
         gameEngine.changeCharacter();
 
     }
@@ -83,13 +83,14 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
 
             this.elapsedTime = 0; //restart animation
 
-        } else { //go back to idle state
+        } else { //go back to idle state from attack animation
 
             gameEngine.didLeftClick = false;
             x = 0;
 
             if (gameEngine.right) {
                 currentCharacter.setIdleRightAnimation();
+                gameEngine.keyMap["1"] = false;
             } else {
                 currentCharacter.setIdleLeftAnimation()
             }
@@ -100,8 +101,7 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
 
             //caution
             currentCharacter.jumping = false;
-
-            //gameEngine.space = false;
+            gameEngine.space = false;   //this doesn't do anything  if commented out O.o
 
             gameEngine.space = false;
             gameEngine.wolfAttack = false;
@@ -183,10 +183,12 @@ Knight.prototype.draw = function() {
 }
 
 Knight.prototype.update = function() {
+    var gameEngine = this.game;
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 800) this.x = -230;
     //this.x = 0;
-    if (this.game.space) {
+    if (gameEngine.keyMap["Space"] && !this.jumping) { //only jump if not already in mid jump
+
         this.jumping = true;
         this.animationCurrent.elapsedTime = 0;
         this.game.space = false;
@@ -1187,7 +1189,7 @@ Background.prototype.draw = function() {
 
 Background.prototype.update = function() {
     var gameEngine = this.game;
-    if (gameEngine.d) {
+    if (gameEngine.keyMap["KeyD"]) {
         this.x--;
     }
 };
