@@ -1203,8 +1203,8 @@ gameWorld.height = window.innerHeight;
 
 
 // background
-AM.queueDownload("./img/background.jpg");
-AM.queueDownload("./img/tiles/tileset.png");
+AM.queueDownload("./img/tiles/level1.png");
+// AM.queueDownload("./img/tiles/level1.png");
 
 
 //knight
@@ -1256,18 +1256,17 @@ AM.downloadAll(function() {
     gameEngine.init(ctx, AM);
     gameEngine.start();
 
-    var background = new Background(gameEngine, AM.getAsset("./img/background.jpg"));
+    var background = new Background(gameEngine, AM.getAsset("./img/tiles/level1.png"));
     var knight = new Knight(gameEngine);
     var gunwoman = new Gunwoman(gameEngine);
     var mage = new Mage(gameEngine);
     var wolf = new Wolf(gameEngine);
 
-    var tile = new Background(gameEngine, AM.getAsset("./img/tiles/tileset.png"));
+    // var tile = new Background(gameEngine, AM.getAsset("./img/tiles/tileset.png"));
     // canvas.drawImage()
 
     //an entity is any element drawn on the map
     gameEngine.addEntity(background);
-    gameEngine.addEntity(tile);
     gameEngine.addEntity(knight);
 
     gameEngine.addPlayableCharacter(knight);
