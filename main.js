@@ -8,7 +8,8 @@ function Animation(entity, spriteSheet, frameWidth, frameHeight, sheetWidth, fra
     this.sheetWidth = sheetWidth;
     this.frames = frames;
     this.totalTime = frameDuration * frames;
-    this.elapsedTime = 0;
+    this.elapsedTime = 0;   //used for jumping as well as various other animations
+
     this.loop = loop;
     this.scale = scale;
 }
@@ -19,12 +20,54 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
     var wolf = gameEngine.getWolf();
 
     this.elapsedTime += tick;
-                                                                                        //left click
-    if (currentCharacter.jumping && currentCharacter.state !== "walkRight" && gameEngine.keyMap["1"]) {   //jump + attack
+
+    //jump + attack + walk right
+    if (currentCharacter.jumping && gameEngine.keyMap["1"] && gameEngine.keyMap["KeyD"]) {
 
         currentCharacter.setJumpAttackRightAnimation();
 
-    } else if (gameEngine.keyMap["KeyD"] && currentCharacter.state !== "walkRight") {    //walk right
+    //jump + attack + walk left
+    } else if (currentCharacter.jumping && gameEngine.keyMap["1"] && gameEngine.keyMap["KeyA"]) {
+
+        currentCharacter.setJumpAttackLeftAnimation();
+
+    //jump + attack + idle right
+    } else if (currentCharacter.jumping && gameEngine.keyMap["1"] && 
+                currentCharacter.state === "jumpRight") {  
+        
+        currentCharacter.setJumpAttackRightAnimation();
+
+    //jump + attack + idle left
+    } else if (currentCharacter.jumping && gameEngine.keyMap["1"] &&
+                currentCharacter.state === "jumpLeft") {
+
+        currentCharacter.setJumpAttackLeftAnimation();
+
+    //jump + walk right
+    } else if (currentCharacter.jumping && gameEngine.keyMap["KeyD"]) {
+
+        currentCharacter.setJumpForwardRightAnimation();
+
+    //jump + walk left
+    } else if (currentCharacter.jumping && gameEngine.keyMap["KeyA"]) {
+
+        currentCharacter.setJumpForwardLeftAnimation();
+
+    //walk right + attack
+    } else if (gameEngine.keyMap["KeyD"] && gameEngine.keyMap["1"] && currentCharacter.state !== "attackRight") {
+
+        currentCharacter.setAttackRightAnimation(); //walk right + attack
+        x = x - 48;
+
+    //walk left + attack
+    } else if (gameEngine.keyMap["KeyA"] && gameEngine.keyMap["1"] && currentCharacter.state !== "attackLeft") {
+
+        currentCharacter.setAttackLeftAnimation(); //walk right + attack
+        x = x - 48;
+
+    //walk right
+    } else if (gameEngine.keyMap["KeyD"] && currentCharacter.state !== "walkRight" && 
+                currentCharacter.state !== "attackRight") {    //walk right
 
         currentCharacter.setWalkRightAnimation();
 
@@ -32,6 +75,13 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
             wolf.setWalkRightAnimation();
         }
     
+    //walk left
+    } else if (gameEngine.keyMap["KeyA"] && currentCharacter.state !== "walkLeft" && 
+                currentCharacter.state !== "attackLeft") {
+
+        currentCharacter.setWalkLeftAnimation();
+
+    //idle right
     } else if (!gameEngine.keyMap["KeyD"] && currentCharacter.state === "walkRight") {
 
         currentCharacter.setIdleRightAnimation();
@@ -40,42 +90,55 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
             wolf.setIdleRightAnimation();
         }
 
-    } else if (gameEngine.keyMap["KeyA"] && currentCharacter.state !== "walkLeft") {
-
-        currentCharacter.setWalkLeftAnimation();
-
+    //idle left
     } else if (!gameEngine.keyMap["KeyA"] && currentCharacter.state === "walkLeft") {
 
         currentCharacter.setIdleLeftAnimation();
 
-                        //left click
-    } else if (gameEngine.keyMap["1"] && gameEngine.right && currentCharacter.state !== "attackRight") {
-
+    //attack right
+    } else if (gameEngine.keyMap["1"] && 
+        (currentCharacter.state === "idleRight" || currentCharacter.state === "walkRight") && 
+        currentCharacter.state !== "attackRight") {
 
         currentCharacter.setAttackRightAnimation();
-        x = x - 95; //update x offset coordinate of  attack animation 
+        x = x - 48; //update x offset coordinate of  attack animation 
 
         if (gameEngine.wolfAttack && gameEngine.wolfIsRight && wolf.state !== "attackRight") {
 
             wolf.setAttackRightAnimation();
         }
 
-    } else if (gameEngine.didLeftClick && !gameEngine.right && currentCharacter.state !== "attackLeft") {
+    //attack left
+    } else if (gameEngine.keyMap["1"] && 
+        (currentCharacter.state === "idleLeft" || currentCharacter.state === "walkLeft") && 
+        currentCharacter.state !== "attackLeft") {
         
         currentCharacter.setAttackLeftAnimation();
-        x = x - 95; //update x offset coordinate of  attack animation
+        x = x - 48; //update x offset coordinate of  attack animation
 
-    } else if (currentCharacter.jumping && gameEngine.right && currentCharacter.state !== "jumpRight") {
-        //debugger;
+    //jump right
+    } else if (currentCharacter.jumping && currentCharacter.state === "idleRight" 
+        && currentCharacter.state !== "jumpRight") {
+        
         currentCharacter.setJumpRightAnimation();
 
+    //jump left
+    } else if (currentCharacter.jumping && currentCharacter.state === "idleLeft" && 
+               currentCharacter.state !== "jumpLeft") {
+
+        console.log('jump left');
+        
+        currentCharacter.setJumpLeftAnimation();
+
+    //change characters
     } else if (gameEngine.keyMap["KeyF"]) {
 
         gameEngine.keyMap["KeyF"] = false;
         gameEngine.changeCharacter();
 
+    } else if (gameEngine.keyMap["2"]) {
+        console.log('here')
     }
-
 
     if (this.isDone()) {
 
@@ -86,14 +149,24 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
         } else { //go back to idle state from attack animation
 
             gameEngine.didLeftClick = false;
-            x = 0;
+            x = 530;
+            y = 410;
 
-            if (gameEngine.right) {
+
+
+            if (currentCharacter.state === "idleRight" || 
+                currentCharacter.state === "jumpRight" ||
+                currentCharacter.state === "attackRight") {
+                
+
                 currentCharacter.setIdleRightAnimation();
-                gameEngine.keyMap["1"] = false;
+                
             } else {
                 currentCharacter.setIdleLeftAnimation()
             }
+
+            currentCharacter.y = 410;
+            gameEngine.keyMap["1"] = false;
 
             if (gameEngine.wolfIsRight) {
                 wolf.setIdleRightAnimation();
@@ -126,13 +199,31 @@ Animation.prototype.drawFrame = function(tick, ctx, x, y) {
 }
 
 Animation.prototype.currentFrame = function() {
-    return Math.floor(this.elapsedTime / this.frameDuration);
+    return Math.floor(this.elapsedTime / this.frameDuration);  
 }
 
 Animation.prototype.isDone = function() {
     //console.log(this.elapsedTime + " " + this.totalTime);
     return (this.elapsedTime >= this.totalTime);
 }
+
+// no inheritance
+function Portrait(ctx, spritesheet) {
+    this.x = 0;
+    this.y = 0;
+    this.spritesheet = spritesheet;
+    this.ctx = ctx;
+    
+}
+
+Portrait.prototype.draw = function() {
+    //console.log(this);
+    this.ctx.drawImage(this.spritesheet, this.x, this.y);
+};
+
+
+Portrait.prototype.update = function() {
+};
 
 function Knight(game) {
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/knightidleright.png");
@@ -143,40 +234,44 @@ function Knight(game) {
     var attackLeftAnimationSpriteSheet = AM.getAsset("./img/knightattackleft.png");
 
     var jumpRightAnimationSpriteSheet = AM.getAsset("./img/knightjumpright.png");
+    var jumpLeftAnimationSpriteSheet = AM.getAsset("./img/knightjumpleft.png");
 
     this.name = "knight";
 
-    this.animationCurrent = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 14, true, 1);
+    this.ctx = game.ctx;
 
-    this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 14, true, 1);
-    this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.07, 12, true, 1);
-    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 3, 0.03, 14, false, 1);
+    this.animationCurrent = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 14, true, 0.5);
 
-    this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 2, 0.1, 14, true, 1);
-    this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 2, 0.07, 12, true, 1);
-    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 2, 0.03, 14, false, 1);
+    this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 14, true, 0.5);
+    this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.07, 12, true, 0.5);
+    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 3, 0.03, 14, false, 0.5);
 
-    this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 1);
+    this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 2, 0.1, 14, true, 0.5);
+    this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 2, 0.07, 12, true, 0.5);
+    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 2, 0.03, 14, false, 0.5);
+
+    this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
+    this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
+
 
     this.state = "idleRight";
     this.x = 0;
     this.y = 0;
-    this.speed = 100;
+    //this.speed = 100;
     this.game = game;
-    this.ctx = game.ctx;
 
     this.jumping = false;
     this.radius = 100;
-    this.ground = 400;
-    Entity.call(this, this.game, 0, 400);
+    this.ground = 410;
+    Entity.call(this, this.game, 530, 410);
 }
 
 Knight.prototype.draw = function() {
 
     if (this.state === "attackRight") {
-        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 95, this.y);
+        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 48, this.y);
     } else if (this.state === "attackLeft") {
-        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 95, this.y);
+        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 48, this.y);
     } else {
         this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
     }
@@ -205,7 +300,7 @@ Knight.prototype.update = function() {
         var jumpDistance = this.animationCurrent.elapsedTime /
             this.animationCurrent.totalTime;
 
-        var totalHeight = 200;
+        var totalHeight = 150;
 
         if (jumpDistance > 0.5)
             jumpDistance = 1 - jumpDistance;
@@ -213,6 +308,7 @@ Knight.prototype.update = function() {
         //var height = jumpDistance * 2 * totalHeight;
         var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
         this.y = this.ground - height;
+        //console.log(this.y);
     }
 
     Entity.prototype.update.call(this);
@@ -231,7 +327,7 @@ Knight.prototype.setIdleRightAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = true;
-    var scale = 1;
+    var scale = this.animationIdleRight.scale;
 
     this.state = "idleRight";
 
@@ -252,7 +348,7 @@ Knight.prototype.setIdleRightAnimation = function() {
 Knight.prototype.setIdleLeftAnimation = function() {
     console.log('set Idle Left');
 
-    debugger;
+    
     left = true;
     right = false;
 
@@ -265,7 +361,7 @@ Knight.prototype.setIdleLeftAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = true;
-    var scale = 1;
+    var scale = this.animationIdleLeft.scale;
 
     this.state = "idleLeft";
 
@@ -295,7 +391,7 @@ Knight.prototype.setWalkRightAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = true;
-    var scale = 1;
+    var scale = this.animationWalkRight.scale;
 
     this.state = "walkRight";
 
@@ -324,7 +420,7 @@ Knight.prototype.setWalkLeftAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = true;
-    var scale = 1;
+    var scale = this.animationWalkLeft.scale;
 
     this.state = "walkLeft";
 
@@ -355,7 +451,7 @@ Knight.prototype.setAttackRightAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = false;
-    var scale = 1;
+    var scale = this.animationAttackRight.scale;
 
     this.state = "attackRight";
 
@@ -388,7 +484,7 @@ Knight.prototype.setAttackLeftAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = false;
-    var scale = 1;
+    var scale = this.animationAttackLeft.scale;
 
     this.state = "attackLeft";
 
@@ -419,7 +515,7 @@ Knight.prototype.setJumpRightAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = false;
-    var scale = 1;
+    var scale = this.animationJumpRight.scale;
 
     this.state = "jumpRight";
 
@@ -436,8 +532,23 @@ Knight.prototype.setJumpRightAnimation = function() {
     this.animationCurrent.scale = scale;
 }
 
-Knight.prototype.setJumpAttackRightAnimation = function() {
-    console.log('jump + attack');
+Knight.prototype.setJumpLeftAnimation = function() {
+    this.state = "jumpLeft";
+    //set current animation property values
+    this.animationCurrent.spriteSheet = this.animationJumpLeft.spriteSheet;
+    this.animationCurrent.frameWidth = this.animationJumpLeft.frameWidth;
+    this.animationCurrent.frameDuration = this.animationJumpLeft.frameDuration;
+    this.animationCurrent.frameHeight = this.animationJumpLeft.frameHeight;
+    this.animationCurrent.sheetWidth = this.animationJumpLeft.sheetWidth;
+    this.animationCurrent.frames = this.animationJumpLeft.frames;
+    this.animationCurrent.totalTime = this.animationJumpLeft.totalTime;
+    this.animationCurrent.elapsedTime = this.animationJumpLeft.elapsedTime;
+    this.animationCurrent.loop = false;
+    this.animationCurrent.scale = 0.5;
+}
+
+Knight.prototype.setJumpAttackRightAnimation = function() { //don't reset the elapsed time to 0 here
+    //console.log('jump + attack');
 
     var attackRightSpriteSheet = this.animationAttackRight.spriteSheet;
     var frameWidth = this.animationAttackRight.frameWidth;
@@ -447,7 +558,7 @@ Knight.prototype.setJumpAttackRightAnimation = function() {
     var frames = this.animationAttackRight.frames;
     var totalTime = frameDuration * frames;
     var loop = false;
-    var scale = 1;
+    var scale = this.animationAttackRight.scale;
 
     this.state = "attackRight";
 
@@ -460,9 +571,87 @@ Knight.prototype.setJumpAttackRightAnimation = function() {
     this.animationCurrent.totalTime = totalTime;
     this.animationCurrent.loop = false;
     this.animationCurrent.scale = scale;
-
-
 }
+
+Knight.prototype.setJumpAttackLeftAnimation = function() { //don't reset the elapsed time to 0 here
+    //console.log('jump + attack');
+
+    var attackLeftSpriteSheet = this.animationAttackLeft.spriteSheet;
+    var frameWidth = this.animationAttackLeft.frameWidth;
+    var frameDuration = this.animationAttackLeft.frameDuration;
+    var frameHeight = this.animationAttackLeft.frameHeight;
+    var sheetWidth = this.animationAttackLeft.sheetWidth;
+    var frames = this.animationAttackLeft.frames;
+    var totalTime = frameDuration * frames;
+    var loop = false;
+    var scale = this.animationAttackLeft.scale;
+
+    this.state = "attackLeft";
+
+    this.animationCurrent.spriteSheet = attackLeftSpriteSheet;
+    this.animationCurrent.frameWidth = frameWidth;
+    this.animationCurrent.frameDuration = frameDuration;
+    this.animationCurrent.frameHeight = frameHeight;
+    this.animationCurrent.sheetWidth = sheetWidth;
+    this.animationCurrent.frames = frames;
+    this.animationCurrent.totalTime = totalTime;
+    this.animationCurrent.loop = false;
+    this.animationCurrent.scale = scale;
+}
+
+
+
+Knight.prototype.setJumpForwardRightAnimation = function() {
+    console.log('jump + walk right');
+
+    var jumpRightSpriteSheet = this.animationJumpRight.spriteSheet;
+    var frameWidth = this.animationJumpRight.frameWidth;
+    var frameDuration = this.animationJumpRight.frameDuration;
+    var frameHeight = this.animationJumpRight.frameHeight;
+    var sheetWidth = this.animationJumpRight.sheetWidth;
+    var frames = this.animationJumpRight.frames;
+    var totalTime = frameDuration * frames;
+    var loop = false;
+    var scale = this.animationJumpRight.scale;
+
+    this.state = "jumpRight";
+
+    this.animationCurrent.spriteSheet = jumpRightSpriteSheet;
+    this.animationCurrent.frameWidth = frameWidth;
+    this.animationCurrent.frameDuration = frameDuration;
+    this.animationCurrent.frameHeight = frameHeight;
+    this.animationCurrent.sheetWidth = sheetWidth;
+    this.animationCurrent.frames = frames;
+    this.animationCurrent.totalTime = totalTime;
+    this.animationCurrent.loop = false;
+    this.animationCurrent.scale = scale;
+}
+
+Knight.prototype.setJumpForwardLeftAnimation = function() {
+    console.log('jump + walk left');
+
+    var jumpLeftSpriteSheet = this.animationJumpLeft.spriteSheet;
+    var frameWidth = this.animationJumpLeft.frameWidth;
+    var frameDuration = this.animationJumpLeft.frameDuration;
+    var frameHeight = this.animationJumpLeft.frameHeight;
+    var sheetWidth = this.animationJumpLeft.sheetWidth;
+    var frames = this.animationJumpLeft.frames;
+    var totalTime = frameDuration * frames;
+    var scale = this.animationJumpLeft.scale;
+
+    this.state = "jumpLeft";
+
+    this.animationCurrent.spriteSheet = jumpLeftSpriteSheet;
+    this.animationCurrent.frameWidth = frameWidth;
+    this.animationCurrent.frameDuration = frameDuration;
+    this.animationCurrent.frameHeight = frameHeight;
+    this.animationCurrent.sheetWidth = sheetWidth;
+    this.animationCurrent.frames = frames;
+    this.animationCurrent.totalTime = totalTime;
+    this.animationCurrent.loop = false;
+    this.animationCurrent.scale = scale;
+}
+
 
 
 //Constructor for gunwoman
@@ -1085,7 +1274,7 @@ Wolf.prototype.update = function() {
 
 //set current animation properties to idle right animation values
 Wolf.prototype.setIdleRightAnimation = function() {
-    console.log("set idle right");
+    //console.log("set idle right");
 
     var idleRightSpriteSheet = this.animationIdleRight.spriteSheet;
     var frameWidth = this.animationIdleRight.frameWidth;
@@ -1179,7 +1368,7 @@ function Background(game, spritesheet) {
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
-};
+}
 
 Background.prototype.draw = function() {
     this.ctx.drawImage(this.spritesheet,
@@ -1190,9 +1379,55 @@ Background.prototype.draw = function() {
 Background.prototype.update = function() {
     var gameEngine = this.game;
     if (gameEngine.keyMap["KeyD"]) {
-        this.x--;
+        this.x = this.x - 1;
+    } else if (gameEngine.keyMap["KeyA"]) {
+        this.x = this.x + 1;
     }
 };
+
+function Foreground(game, spritesheet) {
+    this.x = 0;
+    this.y = 0;
+    this.spritesheet = spritesheet;
+    this.game = game;
+    this.ctx = game.ctx;
+}
+
+Foreground.prototype.draw = function() {
+    this.ctx.drawImage(this.spritesheet, this.x, this.y);
+};
+
+Foreground.prototype.update = function() {
+    var gameEngine = this.game;
+    if (gameEngine.keyMap["KeyD"]) {
+        this.x -= 3;
+    } else if (gameEngine.keyMap["KeyA"]) {
+        this.x += 3;
+    }
+}
+
+function Midground(game, spritesheet) {
+    this.x = 0;
+    this.y = 0;
+    this.spritesheet = spritesheet;
+    this.game = game;
+    this.ctx = game.ctx;
+}
+
+Midground.prototype.draw = function() {
+    this.ctx.drawImage(this.spritesheet, this.x, this.y);
+}
+
+Midground.prototype.update = function() {
+    //console.log(this.x);
+    var gameEngine = this.game;
+    
+    if (gameEngine.keyMap["KeyD"]) {
+        this.x -= 0.8;
+    } else if (gameEngine.keyMap["KeyA"]) {
+        this.x += 0.8;
+    }
+}
 
 var AM = new AssetManager();
 
@@ -1200,18 +1435,20 @@ var gameWorld = document.getElementById("gameWorld");
 gameWorld.width = window.innerWidth;
 gameWorld.height = window.innerHeight;
 
-AM.queueDownload("./img/background.jpg");
+AM.queueDownload("./img/background.png");
+AM.queueDownload("./img/midground.png");
+AM.queueDownload("./img/foreground.png");
 
 //knight
 AM.queueDownload("./img/knightidleright.png");
 AM.queueDownload("./img/knightattackright.png");
 AM.queueDownload("./img/knightwalkright.png");
-
 AM.queueDownload("./img/knightidleleft.png");
 AM.queueDownload("./img/knightattackleft.png");
 AM.queueDownload("./img/knightwalkleft.png");
-
 AM.queueDownload("./img/knightjumpright.png");
+AM.queueDownload("./img/knightjumpleft.png");
+AM.queueDownload("./img/knightportraitright.png");
 
 //gunwoman
 AM.queueDownload("./img/gunwomanidleright.png");
@@ -1251,15 +1488,23 @@ AM.downloadAll(function() {
     gameEngine.init(ctx, AM);
     gameEngine.start();
 
-    var background = new Background(gameEngine, AM.getAsset("./img/background.jpg"));
+    var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground.png"));
+    var background = new Background(gameEngine, AM.getAsset("./img/background.png"));
+    var midground = new Midground(gameEngine, AM.getAsset("./img/midground.png"));
+
     var knight = new Knight(gameEngine);
     var gunwoman = new Gunwoman(gameEngine);
     var mage = new Mage(gameEngine);
     var wolf = new Wolf(gameEngine);
 
+    var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"));
+
     //an entity is any element drawn on the map
     gameEngine.addEntity(background);
+    gameEngine.addEntity(midground);
+    gameEngine.addEntity(foreground);
     gameEngine.addEntity(knight);
+    gameEngine.addEntity(knightPortraitRight);
 
     gameEngine.addPlayableCharacter(knight);
     gameEngine.addPlayableCharacter(gunwoman);
@@ -1270,5 +1515,5 @@ AM.downloadAll(function() {
     gameEngine.setCurrentCharacter(knight);
     gameEngine.setCurrentBackground(background);
 
-    //console.log("All Done!");
+    console.log("All Done!");
 });

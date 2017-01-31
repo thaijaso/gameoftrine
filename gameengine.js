@@ -58,6 +58,10 @@ GameEngine.prototype.setCurrentCharacter = function(character) {
     this.currentCharacter = character;
 }
 
+GameEngine.prototype.setCurrentPortrait = function(ctx, image) {
+    ctx.drawImage(image, 0, 0);
+}
+
 //get the current character playing
 GameEngine.prototype.getCurrentCharacter = function() {
     return this.currentCharacter;
@@ -159,7 +163,7 @@ GameEngine.prototype.startInput = function() {
        //      console.log('Mouse Button Undetected');
        //  }
 
-         console.log("rightClickCount: " + rightClickCount);
+         //console.log("rightClickCount: " + rightClickCount);
 
     }, false);
 
@@ -253,7 +257,8 @@ GameEngine.prototype.draw = function() {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
     for (var i = 0; i < this.entities.length; i++) {
-        this.entities[i].draw(this.ctx);
+        var entity = this.entities[i];
+        entity.draw(this.ctx);
     }
     this.ctx.restore();
 }
