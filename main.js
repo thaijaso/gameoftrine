@@ -1504,6 +1504,10 @@ AM.queueDownload("./img/background.png");
 AM.queueDownload("./img/midground.png");
 AM.queueDownload("./img/foreground.png");
 
+// background
+//AM.queueDownload("./img/tiles/level1.png");
+// AM.queueDownload("./img/tiles/level1.png");
+
 //knight
 AM.queueDownload("./img/knightidleright.png");
 AM.queueDownload("./img/knightattackright.png");
@@ -1555,6 +1559,7 @@ AM.downloadAll(function() {
     gameEngine.init(ctx, AM);
     gameEngine.start();
 
+
     var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground.png"));
     var background = new Background(gameEngine, AM.getAsset("./img/background.png"));
     var midground = new Midground(gameEngine, AM.getAsset("./img/midground.png"));
@@ -1564,12 +1569,16 @@ AM.downloadAll(function() {
     var mage = new Mage(gameEngine);
     var wolf = new Wolf(gameEngine);
 
+
     var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"));
 
     //an entity is any element drawn on the map
     gameEngine.addEntity(background);
     gameEngine.addEntity(midground);
     gameEngine.addEntity(foreground);
+
+    // var tile = new Background(gameEngine, AM.getAsset("./img/tiles/tileset.png"));
+    // canvas.drawImage()
 
     gameEngine.addEntity(knight);
     gameEngine.addEntity(knightPortraitRight);
