@@ -1592,5 +1592,9 @@ AM.downloadAll(function() {
     gameEngine.setCurrentCharacter(knight);
     gameEngine.setCurrentBackground(background);
 
+    var gameState = new GameState();
+    gameState.init(ctx);
+    gameEngine.addEntity(gameState);
+
     console.log("All Done!");
 });
