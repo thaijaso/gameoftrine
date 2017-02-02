@@ -656,6 +656,8 @@ Knight.prototype.setJumpForwardLeftAnimation = function() {
 
 
 
+
+
 //Constructor for gunwoman
 function Gunwoman(game) {
     var idleRightSpriteSheet = AM.getAsset("./img/gunwomanidleright.png");
@@ -671,30 +673,30 @@ function Gunwoman(game) {
 
     this.name = "gunwoman";
 
-    this.animationCurrent = new Animation(this, idleRightSpriteSheet, 192, 192, 5, 0.1, 22, true, 1);
+    this.animationCurrent = new Animation(this, idleRightSpriteSheet, 192, 192, 5, 0.1, 22, true, .5);
 
-    this.animationIdleRight = new Animation(this, idleRightSpriteSheet, 192, 192, 5, 0.1, 22, true, 1);
-    this.animationWalkRight = new Animation(this, walkRightSpriteSheet, 192, 192, 4, 0.05, 14, true, 1);
-    this.animationAttackRight = new Animation(this, attackRightSpriteSheet, 384, 192, 4, 0.04, 23, false, 1);
+    this.animationIdleRight = new Animation(this, idleRightSpriteSheet, 192, 192, 5, 0.1, 22, true, .5);
+    this.animationWalkRight = new Animation(this, walkRightSpriteSheet, 192, 192, 4, 0.05, 14, true, .5);
+    this.animationAttackRight = new Animation(this, attackRightSpriteSheet, 384, 192, 4, 0.04, 23, false, .5);
 
-    this.animationIdleLeft = new Animation(this, idleLeftSpriteSheet, 192, 192, 5, 0.1, 22, true, 1);
-    this.animationWalkLeft = new Animation(this, walkLeftSpriteSheet, 192, 192, 2, 0.05, 14, true, 1);
-    this.animationAttackLeft = new Animation(this, attackLeftSpriteSheet, 384, 192, 5, 0.04, 23, false, 1);
+    this.animationIdleLeft = new Animation(this, idleLeftSpriteSheet, 192, 192, 5, 0.1, 22, true, .5);
+    this.animationWalkLeft = new Animation(this, walkLeftSpriteSheet, 192, 192, 2, 0.05, 14, true, .5);
+    this.animationAttackLeft = new Animation(this, attackLeftSpriteSheet, 384, 192, 5, 0.04, 23, false, .5);
 
-    this.animationJumpRight = new Animation(this, jumpRightSpriteSheet, 192, 192, 4, 0.04, 12, false, 1);
+    this.animationJumpRight = new Animation(this, jumpRightSpriteSheet, 192, 192, 4, 0.04, 12, false, .5);
 
     this.state = "idleRight";
     //this.x = 0;
     //this.y = 0;
     this.speed = 100;
     this.game = game;
-    this.jumping = false
+    this.jumping = false;
     this.ctx = game.ctx;
 
-    this.jumping = false;
-    this.radius = 100;
+    // this.jumping = false;
+    // this.radius = 100;
     this.ground = 400;
-    Entity.call(this, this.game, 0, 400);
+    Entity.call(this, this.game, 530, 410);
 
 }
 
@@ -713,16 +715,16 @@ function Mage(game) {
 
     this.name = "mage";
 
-    this.animationCurrent = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 8, true, 1);
+    this.animationCurrent = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 8, true, .5);
 
-    this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 8, true, 1);
-    this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 3, 0.07, 8, true, 1);
-    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 3, 0.03, 17, false, 1);
-    this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 4, 0.1, 8, true, 1);
-    this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 4, 0.07, 8, true, 1);
-    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 2, 0.03, 17, false, 1);
+    this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 8, true, .5);
+    this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 3, 0.07, 8, true, .5);
+    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 3, 0.03, 17, false, .5);
+    this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 4, 0.1, 8, true, .5);
+    this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 4, 0.07, 8, true, .5);
+    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 2, 0.03, 17, false, .5);
 
-    this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 10, false, 1);
+    this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 10, false, .5);
 
     this.state = "idleRight";
     // this.x = 0;
@@ -732,14 +734,14 @@ function Mage(game) {
     this.game = game;
     this.ctx = game.ctx;
     this.ground = 400;
-    Entity.call(this, this.game, 0, 400);
+    Entity.call(this, this.game, 530, 410);
 }
 
 Mage.prototype.draw = function() {
     if (this.state === "attackRight") {
-        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 95, this.y);
+        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 45, this.y);
     } else if (this.state === "attackLeft") {
-        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 95, this.y);
+        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 45, this.y);
     } else {
         this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
     }
@@ -789,7 +791,7 @@ Mage.prototype.setIdleRightAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = true;
-    var scale = 1;
+    var scale = this.animationIdleRight.scale;
 
     this.state = "idleRight";
 
@@ -810,6 +812,9 @@ Mage.prototype.setIdleRightAnimation = function() {
 Mage.prototype.setIdleLeftAnimation = function() {
     console.log("set idle left");
 
+    left = true;
+    right = false;
+
     var idleLeftSpriteSheet = this.animationIdleLeft.spriteSheet;
     var frameWidth = this.animationIdleLeft.frameWidth;
     var frameDuration = this.animationIdleLeft.frameDuration;
@@ -819,7 +824,7 @@ Mage.prototype.setIdleLeftAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = true;
-    var scale = 1;
+    var scale = this.animationIdleLeft.scale;
 
     this.state = "idleLeft";
 
@@ -848,7 +853,7 @@ Mage.prototype.setWalkRightAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = true;
-    var scale = 1;
+    var scale = this.animationWalkRight.scale;
 
     this.state = "walkRight";
 
@@ -877,7 +882,7 @@ Mage.prototype.setWalkLeftAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = true;
-    var scale = 1;
+    var scale = this.animationWalkLeft.scale;
 
     this.state = "walkLeft";
 
@@ -912,7 +917,7 @@ Mage.prototype.setAttackRightAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = false;
-    var scale = 1;
+    var scale = this.animationAttackRight.scale;
 
     this.state = "attackRight";
 
@@ -945,7 +950,7 @@ Mage.prototype.setAttackLeftAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = false;
-    var scale = 1;
+    var scale = this.animationAttackLeft.scale;
 
     this.state = "attackLeft";
 
@@ -976,7 +981,7 @@ Mage.prototype.setJumpRightAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = false;
-    var scale = 1;
+    var scale = this.animationJumpRight.scale;
 
     this.state = "jumpRight";
 
@@ -1037,9 +1042,9 @@ Mage.prototype.setJumpRightAnimation = function() {
 
 Gunwoman.prototype.draw = function() {
     if (this.state === "attackRight") {
-        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 95, this.y);
+        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 48, this.y);
     } else if (this.state === "attackLeft") {
-        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 95, this.y);
+        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 48, this.y);
     } else {
         this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
     }
@@ -1072,14 +1077,14 @@ Gunwoman.prototype.update = function() {
 }
 
 
-Gunwoman.prototype.draw = function() {
-    var that = this;
-    if (this.state === "attackRight") {
-        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 95, this.y);
-    } else {
-        this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
-    }
-}
+// Gunwoman.prototype.draw = function() {
+//     var that = this;
+//     if (this.state === "attackRight") {
+//         this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x - 95, this.y);
+//     } else {
+//         this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+//     }
+// }
 
 
 
@@ -1097,7 +1102,7 @@ Gunwoman.prototype.setIdleRightAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = true;
-    var scale = 1;
+    var scale = this.animationIdleRight.scale;
 
     this.state = "idleRight";
 
@@ -1118,6 +1123,9 @@ Gunwoman.prototype.setIdleRightAnimation = function() {
 Gunwoman.prototype.setIdleLeftAnimation = function() {
     console.log("set idle left");
 
+    left = true;
+    right = false;
+
     var idleLeftSpriteSheet = this.animationIdleLeft.spriteSheet;
     var frameWidth = this.animationIdleLeft.frameWidth;
     var frameDuration = this.animationIdleLeft.frameDuration;
@@ -1127,7 +1135,7 @@ Gunwoman.prototype.setIdleLeftAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = true;
-    var scale = 1;
+    var scale = this.animationIdleLeft.scale;
 
     this.state = "idleLeft";
 
@@ -1156,7 +1164,7 @@ Gunwoman.prototype.setWalkRightAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = true;
-    var scale = 1;
+    var scale = this.animationWalkRight.scale;
 
     this.state = "walkRight";
 
@@ -1185,7 +1193,7 @@ Gunwoman.prototype.setWalkLeftAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = true;
-    var scale = 1;
+    var scale = this.animationWalkLeft.scale;
 
     this.state = "walkLeft";
 
@@ -1215,7 +1223,7 @@ Gunwoman.prototype.setAttackRightAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = false;
-    var scale = 1;
+    var scale = this.animationAttackRight.scale;
 
     this.state = "attackRight";
 
@@ -1247,7 +1255,7 @@ Gunwoman.prototype.setAttackLeftAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = false;
-    var scale = 1;
+    var scale = this.animationAttackLeft.scale;
 
     this.state = "attackLeft";
 
@@ -1278,7 +1286,7 @@ Gunwoman.prototype.setJumpRightAnimation = function() {
     var totalTime = frameDuration * frames;
     var elapsedTime = 0;
     var loop = false;
-    var scale = 1;
+    var scale = this.animationJumpRight.scale;
 
     this.state = "jumpRight";
 
