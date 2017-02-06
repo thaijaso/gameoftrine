@@ -17,7 +17,7 @@ function GameEngine() {
     this.playableCharacters = [];
     this.playableCharacterIndex = 0;
     this.ctx = null;
-    this.keyMap = {d: false};
+    this.keyMap = {};
     this.assetManager = null;
     this.d = false;
     this.a = false;
@@ -253,16 +253,6 @@ GameEngine.prototype.addPlayableCharacter = function(character) {
     this.playableCharacters.push(character);
 }
 
-GameEngine.prototype.draw = function() {
-    this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
-    this.ctx.save();
-    for (var i = 0; i < this.entities.length; i++) {
-        var entity = this.entities[i];
-        entity.draw(this.ctx);
-    }
-    this.ctx.restore();
-}
-
 GameEngine.prototype.update = function() {
     var entitiesCount = this.entities.length;
 
@@ -271,6 +261,16 @@ GameEngine.prototype.update = function() {
 
         entity.update();
     }
+}
+
+GameEngine.prototype.draw = function() {
+    this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
+    this.ctx.save();
+    for (var i = 0; i < this.entities.length; i++) {
+        var entity = this.entities[i];
+        entity.draw(this.ctx);
+    }
+    this.ctx.restore();
 }
 
 GameEngine.prototype.loop = function() {
@@ -287,7 +287,7 @@ function Timer() {
 
 Timer.prototype.tick = function() {
     var wallCurrent = Date.now();
-    var wallDelta = (wallCurrent - this.wallLastTimestamp) / 1000;
+    var wallDelta = (wallCurrent - this.wallLastTimestamp) / 2000;
     this.wallLastTimestamp = wallCurrent;
 
     var gameDelta = Math.min(wallDelta, this.maxStep);
