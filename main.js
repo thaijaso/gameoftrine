@@ -4,7 +4,7 @@ function Portrait(ctx, spritesheet) {
     this.y = 0;
     this.spritesheet = spritesheet;
     this.ctx = ctx;
-    
+
 }
 
 Portrait.prototype.draw = function() {
@@ -13,8 +13,7 @@ Portrait.prototype.draw = function() {
 };
 
 
-Portrait.prototype.update = function() {
-};
+Portrait.prototype.update = function() {};
 
 // no inheritance
 function Background(game, spritesheet) {
@@ -77,7 +76,7 @@ Midground.prototype.draw = function() {
 Midground.prototype.update = function() {
     //console.log(this.x);
     var gameEngine = this.game;
-    
+
     if (gameEngine.keyMap["KeyD"]) {
         this.x -= 0.8;
     } else if (gameEngine.keyMap["KeyA"]) {
@@ -91,7 +90,7 @@ function Platform(game, x, y, width, height) {
     this.ctx = game.ctx;
 
     this.x = x * 16; //game world x and y coordinates
-    this.y = y * 16; 
+    this.y = y * 16;
 
     this.canvasX = x * 16;
     this.canvasY = y * 16;
@@ -110,7 +109,7 @@ Platform.prototype.draw = function() {
 
 Platform.prototype.update = function() {
     var gameEngine = this.game;
-    
+
     if (gameEngine.keyMap["KeyD"]) {
 
         this.canvasX -= 3;
@@ -125,6 +124,8 @@ Platform.prototype.update = function() {
 // the "main" code begins here
 
 var AM = new AssetManager();
+var gameState = new GameState();
+
 
 var gameWorld = document.getElementById("gameWorld");
 gameWorld.width = window.innerWidth;
@@ -182,8 +183,11 @@ AM.downloadAll(function() {
     var ctx = canvas.getContext("2d");
 
     var gameEngine = new GameEngine();
+
     gameEngine.init(ctx, AM);
     gameEngine.start();
+    gameState.init(ctx, gameEngine);
+
 
     //var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground.png"));
     var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground-grid.png"));
@@ -201,6 +205,8 @@ AM.downloadAll(function() {
     //gameEngine.addEntity(background);
     //gameEngine.addEntity(midground);
     gameEngine.addEntity(foreground);
+    gameEngine.addEntity(gameState);
+
 
     gameEngine.addEntity(knight);
     //gameEngine.addEntity(knightPortraitRight);
@@ -220,7 +226,7 @@ AM.downloadAll(function() {
     var platform4 = new Platform(gameEngine, 135, 25, 5, 1);
     var platform5 = new Platform(gameEngine, 33, 20, 4, 1);
     var platform6 = new Platform(gameEngine, 25, 22, 3, 1);
-   
+
     gameEngine.addEntity(platform1);
     gameEngine.addEntity(platform2);
     gameEngine.addEntity(platform3);
@@ -228,9 +234,6 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform5);
     gameEngine.addEntity(platform6);
 
-    //var gameState = new GameState();
-    //gameState.init(ctx, gameEngine);
-    //gameEngine.addEntity(gameState);
 
     console.log("All Done!");
 });
