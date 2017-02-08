@@ -158,6 +158,8 @@ AM.queueDownload("./img/gunwomanwalkleft.png");
 AM.queueDownload("./img/gunwomanattackleft.png");
 
 AM.queueDownload("./img/gunwomanjumpright.png");
+AM.queueDownload("./img/gunwomanjumpleft.png");
+
 
 //wolf
 AM.queueDownload("./img/wolfidleright.png");
@@ -174,6 +176,8 @@ AM.queueDownload("./img/mageIdleLeft.png");
 AM.queueDownload("./img/mageAttackLeft.png");
 
 AM.queueDownload("./img/mageJumpRight.png");
+AM.queueDownload("./img/magejumpleft.png");
+
 
 
 AM.downloadAll(function() {
