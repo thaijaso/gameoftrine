@@ -73,7 +73,7 @@ GameEngine.prototype.getWolf = function() {
 
 
 GameEngine.prototype.changeCharacter = function() {
-    var oldCharacter = this.getCurrentCharacter();
+    var oldCharacter = this.getCurrentCharacter()
 
     //removes the old character from the entities array
     for (var i = 0; i < this.entities.length; i++) { //perhaps make entities a map to find the old character faster??
@@ -185,14 +185,13 @@ GameEngine.prototype.startInput = function() {
         //     that.a = true;
         //     that.right = false;
 
-        // } else if (e.code === "KeyF" && !that.didLeftClick) {
+        if (e.code === "KeyF" && !that.didLeftClick) {
 
-        //     that.f = true;
-        //     //console.log("F pressed");
+            that.changeCharacter();
 
-        // } else if (e.code === "Space" && !that.space) {
-        //     that.space = true;
-        // }
+        } 
+
+    
 
     }, false);
 
