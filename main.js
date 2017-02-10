@@ -105,7 +105,7 @@ AM.downloadAll(function() {
     //gameEngine.addEntity(midground);
 
     gameEngine.addEntity(knight);
-    gameEngine.addEntity(tree);
+    // gameEngine.addEntity(tree);
     //gameEngine.addEntity(knightPortraitRight);
 
     gameEngine.addPlayableCharacter(knight);
