@@ -1240,3 +1240,33 @@ Platform.prototype.update = function() {
         //console.log(this.canvasX);
     }
 }
+
+
+
+function Tree(gameEngine) {
+    this.game = gameEngine
+
+    var treeSpriteSheet= AM.getAsset("./img/treeleaffall.png");
+
+    this.name = "tree";
+
+    this.animation = new Animation(this, treeSpriteSheet, 190, 183, 5, 0.05, 22, true, 1);
+
+    this.ctx = this.game.ctx;
+
+     this.x = 800;
+    this.y = 400;
+
+    this.width = 2 * 16;
+    this.height = 4 * 16;
+
+    this.canvasX = 800;
+    this.canvasY = 430;
+}
+
+Tree.prototype.draw = function() {
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+};
+Tree.prototype.update = function() {
+    
+};

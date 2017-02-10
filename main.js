@@ -68,6 +68,10 @@ AM.queueDownload("./img/mageAttackLeft.png");
 AM.queueDownload("./img/mageJumpRight.png");
 AM.queueDownload("./img/magejumpleft.png");
 
+//tree
+AM.queueDownload("./img/treeleaffall.png");
+
+
 AM.downloadAll(function() {
     var canvas = document.getElementById("gameWorld");
     canvas.focus();
@@ -91,6 +95,8 @@ AM.downloadAll(function() {
     var gunwoman = new Gunwoman(gameEngine);
     var mage = new Mage(gameEngine);
     var wolf = new Wolf(gameEngine);
+    var tree = new Tree(gameEngine);
+
 
     var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"));
 
@@ -99,6 +105,7 @@ AM.downloadAll(function() {
     //gameEngine.addEntity(midground);
 
     gameEngine.addEntity(knight);
+    gameEngine.addEntity(tree);
     //gameEngine.addEntity(knightPortraitRight);
 
     gameEngine.addPlayableCharacter(knight);
