@@ -82,7 +82,7 @@ AM.downloadAll(function() {
 
 
     //var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground.png"));
-    var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground-grid.png"));
+    var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground.png"));
     var background = new Background(gameEngine, AM.getAsset("./img/background.png"));
     var midground = new Midground(gameEngine, AM.getAsset("./img/midground.png"));
 
@@ -126,6 +126,6 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform6);
 
 
-    //gameEngine.addEntity(foreground);
+    gameEngine.addEntity(foreground);
     console.log("All Done!");
 });
