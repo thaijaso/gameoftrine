@@ -68,7 +68,6 @@ AM.queueDownload("./img/mageAttackLeft.png");
 AM.queueDownload("./img/mageJumpRight.png");
 AM.queueDownload("./img/magejumpleft.png");
 
-
 AM.downloadAll(function() {
     var canvas = document.getElementById("gameWorld");
     canvas.focus();
@@ -98,9 +97,6 @@ AM.downloadAll(function() {
     //an entity is any element drawn on the map
     //gameEngine.addEntity(background);
     //gameEngine.addEntity(midground);
-
-   
-    //gameEngine.addEntity(gameState);
 
     gameEngine.addEntity(knight);
     //gameEngine.addEntity(knightPortraitRight);
