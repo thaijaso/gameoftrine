@@ -11,7 +11,7 @@ function Animation(entity, spriteSheet, frameWidth, frameHeight, sheetWidth, fra
     this.frames = frames;
     this.totalTime = frameDuration * frames;
    
-   this.elapsedTime = 0;   //used for jumping as well as various other animations
+    this.elapsedTime = 0;   //used for jumping as well as various other animations
 
     this.loop = loop;
     this.scale = scale;
@@ -24,7 +24,11 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
 
     this.elapsedTime += tick;
 
-    if (currentCharacter.jumping) {
+    if (currentCharacter.jumping && 
+        (this.entity.name === "knight" || 
+         this.entity.name === "gunwoman" ||
+         this.entity.name === "mage")) {
+        
         currentCharacter.jumpElapsedTime += tick;
     }
 
@@ -35,6 +39,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
             this.elapsedTime = 0; //restart animation
 
         } else { //go back to idle state from attack animation
+
 
             if (currentCharacter.direction === "right") {
                 currentCharacter.animationState = "idleRight";  
@@ -58,7 +63,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
 
     //debugging
     ctx.fillStyle = "#ff0000";
-    ctx.fillRect(currentCharacter.canvasX, currentCharacter.canvasY, currentCharacter.width, currentCharacter.height);
+    //ctx.fillRect(currentCharacter.canvasX, currentCharacter.canvasY, currentCharacter.width, currentCharacter.height);
     //ctx.fillRect(currentCharacter.x, currentCharacter.y, currentCharacter.width, currentCharacter.height);
 
     ctx.drawImage(this.spriteSheet,
@@ -111,7 +116,7 @@ function Knight(game) {
     this.oldY = 14 * TILE_SIZE;
     
     this.width = 2 * TILE_SIZE;
-    this.height = 4 * TILE_SIZE;
+    this.height = 4 * TILE_SIZE - 5;
     
     this.canvasX = 34 * TILE_SIZE;
     this.canvasY = 14 * TILE_SIZE;
@@ -127,11 +132,18 @@ function Knight(game) {
     
     this.attacking = false;
 
-    this.collidedWith = null; //checks to see which entity the knight collided with
+    this.collidedWith = null; //checks to see which entity the knight collided with LAST
+
     this.collidedLeft = false; //checks to see if knight collided on its left side
     this.collidedRight = false; 
     this.collidedBottom = false;
     this.collidedTop = false; 
+
+    this.collidedLeftPlatform = null;
+    this.collidedRightPlatform = null;
+    this.collidedTopPlatform = null;
+
+
 }
 
 //checks for all sides collision
@@ -191,7 +203,7 @@ Knight.prototype.collideBottom = function(other) {
     if (this.oldY + this.height < other.y && 
         this.y + this.height >= other.y) {
         
-        console.log('collided bottom');
+        //console.log('collided bottom');
     }
 
     return this.oldY + this.height < other.y && 
@@ -203,6 +215,8 @@ Knight.prototype.update = function() {
 
     //handle jumping
     if (this.jumping) {
+
+        this.collidedBottom = false;
 
         var jumpDistance = this.jumpElapsedTime /
             this.animationJumpRight.totalTime;
@@ -237,31 +251,44 @@ Knight.prototype.update = function() {
                     this.jumping = false;
                     this.jumpElapsedTime = 0;
 
+                } else if (this.collideTop(entity)) {
+
+                    this.collidedTop = true;
+                    this.collidedTopPlatform = entity;
+                    //this.oldY = this.y;
+                    this.canvasY += 3;
+                    this.y += 3;
+                    this.jumping = false;
+
                 } else if (this.collideLeft(entity)) {
                     //fall after colliding left
-                    this.collidedLeft = true; 
-                    this.canvasY += 5;
-                    this.y += 5;
+                    this.collidedLeft = true;
+                    this.collidedLeftPlatform = entity;
+
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.canvasY += 3;
+                        this.y += 3;
+                    } 
+                    
                 
                 } else if (this.collideRight(entity)) {
 
                     this.collidedRight = true;
-                    this.canvasY += 5;
-                    this.y += 5;
-
-                } else if (this.collideTop(entity)) {
-
-                    this.collidedTop = true;
-                    this.canvasY += 5;
-                    this.y += 5;
-                    this.jumping = false;
-
+                    this.collidedRightPlatform = entity;
+                    
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.y += 3;
+                        this.canvasY += 3;
+                    }
                 }
             }
         }
     }
 
     //check if player is no longer colliding with any platforms
+    
     if (this.collidedWith) {
         var stillColliding = false;
 
@@ -281,6 +308,32 @@ Knight.prototype.update = function() {
             this.collidedRight = false;
             this.collidedBottom = false;
             this.collidedTop = false;
+
+        } else { //still colliding
+
+            for (var i = 0; i < gameEngine.entities.length; i++) {
+                var entity = this.game.entities[i];
+
+                if (entity.name === "platform") {
+                    //check if still colliding right with a platform we collided right with
+                    if (this.collidedRightPlatform === entity &&  
+                        !this.collideRight(entity)) {
+                        
+                        this.collidedRight = false;
+                    } else if (this.collidedLeftPlatform === entity &&
+                        !this.collideLeft(entity)) {
+
+                        this.collidedLeft = false;
+
+                    } else if (this.collidedTopPlatform === entity && 
+                        !this.collideTop(entity)) {
+
+                        //this.collidedTop = false;
+
+                    }
+                }
+            }
+
         }
 
     } else if (!this.jumping) { //player has not collided therefore fall
@@ -385,35 +438,35 @@ Knight.prototype.update = function() {
 Knight.prototype.draw = function() {
    if (this.animationState === "idleRight") {
 
-        this.animationIdleRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationIdleRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
 
     } else if (this.animationState === "walkRight") {
 
-        this.animationWalkRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationWalkRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
 
     } else if (this.animationState === "jumpRight") {
 
-        this.animationJumpRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationJumpRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
 
     } else if (this.animationState === "attackRight") {
 
-         this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY);
+         this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY - 2);
 
     } else if(this.animationState === "idleLeft") {
 
-        this.animationIdleLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY);
+        this.animationIdleLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY - 2);
 
     } else if (this.animationState === "walkLeft") {
 
-        this.animationWalkLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY);
+        this.animationWalkLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY - 2);
 
     } else if (this.animationState === "jumpLeft") {
 
-        this.animationJumpLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 30, this.canvasY);
+        this.animationJumpLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 30, this.canvasY - 2);
 
     } else if (this.animationState === "attackLeft") {
 
-        this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 68, this.canvasY);
+        this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 68, this.canvasY - 2);
     } 
 }
 
@@ -1116,7 +1169,6 @@ function Wolf(game) {
     this.radius = 100;
     this.ground = 400;
     Entity.call(this, this.game, 0, 400);
-
 }
 
 Wolf.prototype.draw = function() {
@@ -1172,7 +1224,7 @@ Foreground.prototype.update = function() {
 
     if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
         this.x -= 3;
-        console.log('here');
+        //console.log('here');
     } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
         this.x += 3;
     }
@@ -1235,8 +1287,45 @@ Platform.prototype.update = function() {
 
         this.canvasX += 3;
     }
-
-    if (this.width === 4 * TILE_SIZE) {
-        //console.log(this.canvasX);
-    }
 }
+
+
+
+function Tree(gameEngine) {
+    this.game = gameEngine
+
+    var treeSpriteSheet = AM.getAsset("./img/treeleaffall.png");
+
+    this.name = "tree";
+
+    this.animation = new Animation(this, treeSpriteSheet, 190, 183, 5, 0.05, 22, true, 1);
+
+    this.ctx = this.game.ctx;
+
+    this.x = 29 * TILE_SIZE;
+    this.y = 25 * TILE_SIZE;
+
+    this.width = 8 * TILE_SIZE;
+    this.height = 7 * TILE_SIZE;
+
+    this.canvasX = 29 * TILE_SIZE;
+    this.canvasY = 25 * TILE_SIZE;
+}
+
+Tree.prototype.draw = function() {
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.canvasX + 0.5, this.canvasY);
+};
+
+Tree.prototype.update = function() {
+    var gameEngine = this.game;
+    var currentCharacter = gameEngine.getCurrentCharacter();
+    
+    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+
+        this.canvasX -= 3;
+
+    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+        this.canvasX += 3;
+    }
+};

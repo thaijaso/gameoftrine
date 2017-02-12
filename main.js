@@ -68,6 +68,10 @@ AM.queueDownload("./img/mageAttackLeft.png");
 AM.queueDownload("./img/mageJumpRight.png");
 AM.queueDownload("./img/magejumpleft.png");
 
+//tree
+AM.queueDownload("./img/treeleaffall.png");
+
+
 AM.downloadAll(function() {
     var canvas = document.getElementById("gameWorld");
     canvas.focus();
@@ -87,18 +91,19 @@ AM.downloadAll(function() {
     var midground = new Midground(gameEngine, AM.getAsset("./img/midground.png"));
 
     var knight = new Knight(gameEngine);
-    console.log(knight);
     var gunwoman = new Gunwoman(gameEngine);
     var mage = new Mage(gameEngine);
     var wolf = new Wolf(gameEngine);
+    var tree = new Tree(gameEngine);
 
-    var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"));
+
+    //var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"));
 
     //an entity is any element drawn on the map
-    //gameEngine.addEntity(background);
-    //gameEngine.addEntity(midground);
-
     gameEngine.addEntity(knight);
+    gameEngine.addEntity(foreground);
+    
+    gameEngine.addEntity(tree);
     //gameEngine.addEntity(knightPortraitRight);
 
     gameEngine.addPlayableCharacter(knight);
@@ -112,20 +117,25 @@ AM.downloadAll(function() {
     
                                           //x,  y, width, height
     var platform1 = new Platform(gameEngine, 0, 31, 110, 1); 
-    var platform2 = new Platform(gameEngine, 119, 34, 5, 1);
-    var platform3 = new Platform(gameEngine, 125, 30, 5, 1);
-    var platform4 = new Platform(gameEngine, 135, 25, 5, 1);
-    var platform5 = new Platform(gameEngine, 33, 23, 4, 1);
-    var platform6 = new Platform(gameEngine, 25, 22, 3, 1);
+    var platform2 = new Platform(gameEngine, 30, 23, 8, 1);
+    var platform3 = new Platform(gameEngine, 36, 19, 2, 1);
+    var platform4 = new Platform(gameEngine, 32, 18, 3, 1);
+    var platform5 = new Platform(gameEngine, 36, 19, 4, 1);
+    
+    platform1.number = 1;
+    platform2.number = 2;
+    platform3.number = 3;
+    platform4.number = 4;
+    platform5.number = 5;
 
     gameEngine.addEntity(platform1);
     gameEngine.addEntity(platform2);
     gameEngine.addEntity(platform3);
     gameEngine.addEntity(platform4);
-    gameEngine.addEntity(platform5);
-    gameEngine.addEntity(platform6);
+    //gameEngine.addEntity(platform5);
 
 
-    gameEngine.addEntity(foreground);
+    gameEngine.addEntity(midground);
+    gameEngine.addEntity(background);    
     console.log("All Done!");
 });
