@@ -1313,7 +1313,7 @@ function Tree(gameEngine) {
 }
 
 Tree.prototype.draw = function() {
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.canvasX + 0.5, this.canvasY);
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.canvasX + 1.5, this.canvasY - 2.0);
 };
 
 Tree.prototype.update = function() {
