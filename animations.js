@@ -66,8 +66,8 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
     // grapple.drawLine(myLine2, ctx);
 
     //debugging
-    ctx.fillStyle = "#ff0000";
-    //ctx.fillRect(currentCharacter.canvasX, currentCharacter.canvasY, currentCharacter.width, currentCharacter.height);
+    //ctx.fillStyle = "#ff0000";
+    ctx.fillRect(currentCharacter.canvasX, currentCharacter.canvasY, currentCharacter.width, currentCharacter.height);
     //ctx.fillRect(currentCharacter.x, currentCharacter.y, currentCharacter.width, currentCharacter.height);
 
     ctx.drawImage(this.spriteSheet,
@@ -150,6 +150,7 @@ function Knight(game) {
     this.collidedLeftPlatform = null;
     this.collidedRightPlatform = null;
     this.collidedTopPlatform = null;
+    this.collidedBottomPlatform = null;
 }
 
 //checks for all sides collision
@@ -216,26 +217,6 @@ Knight.prototype.collideBottom = function(other) {
         this.y + this.height >= other.y;
 }
 
-function startTimer(duration) {
-    var timer = duration,
-        minutes, seconds;
-    setInterval(function() {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        // display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
-        }
-
-        console.log(minutes + ":" + seconds);
-    }, 1000);
-}
-
 Knight.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
 
     var jumpDistance = 1 - timeSinceJump / maxJumpTime;
@@ -298,6 +279,7 @@ Knight.prototype.update = function() {
                 if (this.collideBottom(entity)) {
                     this.collidedBottom = true;
                     this.lastGroundY = this.collidedWith.y;
+                    this.collidedBottomPlatform = entity;
                     this.jumping = false;
                     this.jumpReleased = true;
                     this.jumpElapsedTime = 0;
@@ -331,7 +313,14 @@ Knight.prototype.update = function() {
                         this.oldY = this.y;
                         this.y += 3;
                         this.canvasY += 3;
-                    }
+                    } 
+
+                    // if (Math.abs((this.collidedBottomPlatform.y + this.collidedBottomPlatform.height) - (entity.y + entity.height) >= 16)) {
+                    //     this.oldY = this.y;
+                    //     this.y -= 16;
+                    //     this.canvasY -= 16;
+                    // }
+
                 }
             }
         }
@@ -1403,10 +1392,11 @@ Background.prototype.draw = function() {
 
 Background.prototype.update = function() {
     var gameEngine = this.game;
+    var currentCharacter = gameEngine.getCurrentCharacter();
 
-    if (gameEngine.keyMap["KeyD"]) {
+    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
         this.x = this.x - 1;
-    } else if (gameEngine.keyMap["KeyA"]) {
+    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
         this.x = this.x + 1;
     }
 };

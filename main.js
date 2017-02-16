@@ -108,11 +108,40 @@ AM.downloadAll(function() {
 
     //an entity is any element drawn on the map
     gameEngine.addEntity(knight);
-    gameEngine.addEntity(foreground);
+                                            //x,  y, width, height
+    var platform1 = new Platform(gameEngine, 0, 31, 110, 1); 
+    var platform2 = new Platform(gameEngine, 64, 25, 3, 2);
+    var platform3 = new Platform(gameEngine, 75, 22, 3, 2);
+    var platform4 = new Platform(gameEngine, 88, 21, 3, 1.5);
+    var platform5 = new Platform(gameEngine, 94, 21, 5, 1.5);
+    var platform6 = new Platform(gameEngine, 102, 21, 7.5, 1.5);
+    var platform7 = new Platform(gameEngine, 95.5, 6.8, 3, 2);
+    var platform8 = new Platform(gameEngine, 119, 34, 5, 4);
+    var platform9 = new Platform(gameEngine, 129, 36, 3, 2);
+    var platform10 = new Platform(gameEngine, 134, 40, 1, 2);
+    var platform11 = new Platform(gameEngine, 135, 39, 2, 1);
+    var platform12 = new Platform(gameEngine, 135, 39, 1, 3);
+    var platform13 = new Platform(gameEngine, 136, 39, 1, 3);
+    var platform14 = new Platform(gameEngine, 137, 38, 8, 1);
+
+    gameEngine.addEntity(platform1);
+    gameEngine.addEntity(platform2);
+    gameEngine.addEntity(platform3);
+    gameEngine.addEntity(platform4);
+    gameEngine.addEntity(platform5);
+    gameEngine.addEntity(platform6);
+    gameEngine.addEntity(platform7);
+    gameEngine.addEntity(platform8);
+    gameEngine.addEntity(platform9);
+    gameEngine.addEntity(platform10);
+    gameEngine.addEntity(platform11);
+    //gameEngine.addEntity(platform12);
+    //gameEngine.addEntity(platform13);
+    gameEngine.addEntity(platform14);
     
+    gameEngine.addEntity(foreground);
     gameEngine.addEntity(tree);
 
-    
     // gameEngine.addEntity(skeleton);
     // gameEngine.addEntity(tree);
 
@@ -128,20 +157,7 @@ AM.downloadAll(function() {
     gameEngine.setCurrentCharacter(knight);
     //gameEngine.setCurrentBackground(background);
 
-    
-                                          //x,  y, width, height
-    var platform1 = new Platform(gameEngine, 0, 31, 110, 1); 
-    var platform2 = new Platform(gameEngine, 30, 23, 8, 1);
-    var platform3 = new Platform(gameEngine, 36, 19, 2, 1);
-    var platform4 = new Platform(gameEngine, 32, 18, 3, 1);
-    var platform5 = new Platform(gameEngine, 36, 19, 4, 1);
-
-    gameEngine.addEntity(platform1);
-    gameEngine.addEntity(platform2);
-    gameEngine.addEntity(platform3);
-    gameEngine.addEntity(platform4);
-    //gameEngine.addEntity(platform5);
-
+   
     gameEngine.addEntity(midground);
     gameEngine.addEntity(background);    
 
