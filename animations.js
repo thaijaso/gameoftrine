@@ -10,9 +10,7 @@ function Animation(entity, spriteSheet, frameWidth, frameHeight, sheetWidth, fra
     this.sheetWidth = sheetWidth;
     this.frames = frames;
     this.totalTime = frameDuration * frames;
-
-    this.elapsedTime = 0; //used for jumping as well as various other animations
-
+    this.elapsedTime = 0;   //used for jumping as well as various other animations
     this.loop = loop;
     this.scale = scale;
 }
@@ -24,7 +22,11 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
 
     this.elapsedTime += tick;
 
-    if (currentCharacter.jumping) {
+    if (currentCharacter.jumping && 
+        (this.entity.name === "knight" || 
+         this.entity.name === "gunwoman" ||
+         this.entity.name === "mage")) {
+        
         currentCharacter.jumpElapsedTime += tick;
     }
 
@@ -35,6 +37,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
             this.elapsedTime = 0; //restart animation
 
         } else { //go back to idle state from attack animation
+
 
             if (currentCharacter.direction === "right") {
                 currentCharacter.animationState = "idleRight";
@@ -67,7 +70,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
     // grapple.drawLine(myLine2, ctx);
 
     //debugging
-    ctx.fillStyle = "#ff0000";
+    //ctx.fillStyle = "#ff0000";
     ctx.fillRect(currentCharacter.canvasX, currentCharacter.canvasY, currentCharacter.width, currentCharacter.height);
     //ctx.fillRect(currentCharacter.x, currentCharacter.y, currentCharacter.width, currentCharacter.height);
 
@@ -121,7 +124,8 @@ function Knight(game) {
     this.oldY = 14 * TILE_SIZE;
 
     this.width = 2 * TILE_SIZE;
-    this.height = 4 * TILE_SIZE;
+
+    this.height = 4 * TILE_SIZE - 5;
 
     this.canvasX = 34 * TILE_SIZE;
     this.canvasY = 14 * TILE_SIZE;
@@ -143,11 +147,17 @@ function Knight(game) {
 
     this.attacking = false;
 
-    this.collidedWith = null; //checks to see which entity the knight collided with
+    this.collidedWith = null; //checks to see which entity the knight collided with LAST
+
     this.collidedLeft = false; //checks to see if knight collided on its left side
     this.collidedRight = false;
     this.collidedBottom = false;
-    this.collidedTop = false;
+    this.collidedTop = false; 
+
+    this.collidedLeftPlatform = null;
+    this.collidedRightPlatform = null;
+    this.collidedTopPlatform = null;
+    this.collidedBottomPlatform = null;
 }
 
 //checks for all sides collision
@@ -204,13 +214,13 @@ Knight.prototype.collideTop = function(other) {
 //This function assumes there was a collision
 //Should not be called if there was no collision
 Knight.prototype.collideBottom = function(other) {
-    if (this.oldY + this.height < other.y &&
+    if (this.oldY + this.height < other.y && 
         this.y + this.height >= other.y) {
-
-        console.log('collided bottom');
+        
+        //console.log('collided bottom');
     }
 
-    return this.oldY + this.height < other.y &&
+    return this.oldY + this.height < other.y && 
         this.y + this.height >= other.y;
 }
 
@@ -231,6 +241,8 @@ Knight.prototype.update = function() {
 
     //handle jumping
     if (this.jumping) {
+
+        this.collidedBottom = false;
 
         // this code is shema working on variable jumping DO NOT DELETE BITCHES
 
@@ -282,27 +294,46 @@ Knight.prototype.update = function() {
                 if (this.collideBottom(entity)) {
                     this.collidedBottom = true;
                     this.lastGroundY = this.collidedWith.y;
+                    this.collidedBottomPlatform = entity;
                     this.jumping = false;
                     this.jumpElapsedTime = 0;
-
-                } else if (this.collideLeft(entity)) {
-                    //fall after colliding left
-                    this.collidedLeft = true;
-                    this.canvasY += 5;
-                    this.y += 5;
-
-                } else if (this.collideRight(entity)) {
-
-                    this.collidedRight = true;
-                    this.canvasY += 5;
-                    this.y += 5;
 
                 } else if (this.collideTop(entity)) {
 
                     this.collidedTop = true;
-                    this.canvasY += 5;
-                    this.y += 5;
+                    this.collidedTopPlatform = entity;
+                    //this.oldY = this.y;
+                    this.canvasY += 3;
+                    this.y += 3;
                     this.jumping = false;
+
+                } else if (this.collideLeft(entity)) {
+                    //fall after colliding left
+                    this.collidedLeft = true;
+                    this.collidedLeftPlatform = entity;
+
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.canvasY += 3;
+                        this.y += 3;
+                    } 
+
+                } else if (this.collideRight(entity)) {
+
+                    this.collidedRight = true;
+                    this.collidedRightPlatform = entity;
+                    
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.y += 3;
+                        this.canvasY += 3;
+                    } 
+
+                    // if (Math.abs((this.collidedBottomPlatform.y + this.collidedBottomPlatform.height) - (entity.y + entity.height) >= 16)) {
+                    //     this.oldY = this.y;
+                    //     this.y -= 16;
+                    //     this.canvasY -= 16;
+                    // }
 
                 }
             }
@@ -310,6 +341,7 @@ Knight.prototype.update = function() {
     }
 
     //check if player is no longer colliding with any platforms
+    
     if (this.collidedWith) {
         var stillColliding = false;
 
@@ -330,6 +362,32 @@ Knight.prototype.update = function() {
             this.collidedRight = false;
             this.collidedBottom = false;
             this.collidedTop = false;
+
+        } else { //still colliding
+
+            for (var i = 0; i < gameEngine.entities.length; i++) {
+                var entity = this.game.entities[i];
+
+                if (entity.name === "platform") {
+                    //check if still colliding right with a platform we collided right with
+                    if (this.collidedRightPlatform === entity &&  
+                        !this.collideRight(entity)) {
+                        
+                        this.collidedRight = false;
+                    } else if (this.collidedLeftPlatform === entity &&
+                        !this.collideLeft(entity)) {
+
+                        this.collidedLeft = false;
+
+                    } else if (this.collidedTopPlatform === entity && 
+                        !this.collideTop(entity)) {
+
+                        //this.collidedTop = false;
+
+                    }
+                }
+            }
+
         }
 
     } else if (!this.jumping) { //player has not collided therefore fall
@@ -438,36 +496,36 @@ Knight.prototype.update = function() {
 Knight.prototype.draw = function() {
     if (this.animationState === "idleRight") {
 
-        this.animationIdleRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationIdleRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
 
     } else if (this.animationState === "walkRight") {
 
-        this.animationWalkRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationWalkRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
 
     } else if (this.animationState === "jumpRight") {
 
-        this.animationJumpRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationJumpRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
 
     } else if (this.animationState === "attackRight") {
 
-        this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY);
+         this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY - 2);
 
-    } else if (this.animationState === "idleLeft") {
+    } else if(this.animationState === "idleLeft") {
 
-        this.animationIdleLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY);
+        this.animationIdleLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY - 2);
 
     } else if (this.animationState === "walkLeft") {
 
-        this.animationWalkLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY);
+        this.animationWalkLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY - 2);
 
     } else if (this.animationState === "jumpLeft") {
 
-        this.animationJumpLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 30, this.canvasY);
+        this.animationJumpLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 30, this.canvasY - 2);
 
     } else if (this.animationState === "attackLeft") {
 
-        this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 68, this.canvasY);
-    }
+        this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 68, this.canvasY - 2);
+    } 
 }
 
 
@@ -1199,7 +1257,6 @@ function Wolf(game) {
     this.radius = 100;
     this.ground = 400;
     Entity.call(this, this.game, 0, 400);
-
 }
 
 Wolf.prototype.draw = function() {
@@ -1374,10 +1431,11 @@ Background.prototype.draw = function() {
 
 Background.prototype.update = function() {
     var gameEngine = this.game;
+    var currentCharacter = gameEngine.getCurrentCharacter();
 
-    if (gameEngine.keyMap["KeyD"]) {
+    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
         this.x = this.x - 1;
-    } else if (gameEngine.keyMap["KeyA"]) {
+    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
         this.x = this.x + 1;
     }
 };
@@ -1402,7 +1460,7 @@ Foreground.prototype.update = function() {
 
     if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
         this.x -= 3;
-        console.log('here');
+        //console.log('here');
     } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
         this.x += 3;
     }
@@ -1465,13 +1523,9 @@ Platform.prototype.update = function() {
 
         this.canvasX += 3;
     }
-
-    if (this.width === 4 * TILE_SIZE) {
-        //console.log(this.canvasX);
-    }
 }
 
-// TREE ANIMATION
+
 
 function Tree(gameEngine) {
     this.game = gameEngine
@@ -1484,26 +1538,35 @@ function Tree(gameEngine) {
 
     this.ctx = this.game.ctx;
 
-    this.x = 800;
-    this.y = 400;
+    this.x = 29 * TILE_SIZE;
+    this.y = 25 * TILE_SIZE;
 
-    this.width = 2 * 16;
-    this.height = 4 * 16;
+    this.width = 8 * TILE_SIZE;
+    this.height = 7 * TILE_SIZE;
 
-    this.canvasX = 800;
-    this.canvasY = 430;
+    this.canvasX = 29 * TILE_SIZE;
+    this.canvasY = 25 * TILE_SIZE;
 }
 
 Tree.prototype.draw = function() {
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.canvasX + 1.5, this.canvasY - 2.0);
 };
+
 Tree.prototype.update = function() {
+    var gameEngine = this.game;
+    var currentCharacter = gameEngine.getCurrentCharacter();
+    
+    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-};
+        this.canvasX -= 3;
 
+    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+        this.canvasX += 3;
+    }
+}
 
 // GRAPPLE
-
 function Grapple(gameEngine, canvas, ctx) {
     this.canvas = canvas;
     this.ctx = ctx;
@@ -1584,6 +1647,7 @@ Grapple.prototype.animate = function(myCircle1, myCircle2, myLine1, myLine2, can
 Grapple.prototype.update = function() {
     this.run(this.ctx);
 };
+
 var init = {};
 
 Grapple.prototype.run = function(context) {
@@ -1609,7 +1673,6 @@ Grapple.prototype.run = function(context) {
     init = setInterval(function() {
         that.animate(myCircle1, myCircle2, myLine1, myLine2, this.canvasX, this.canvasY, context);
     }, 10);
-
 };
 
 var id = 0; 
@@ -1667,5 +1730,5 @@ Bullet.prototype.update = function() {
 Bullet.prototype.draw = function() {
     this.ctx.fillStyle = "#000000";
     this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
-
+    console.log("draw");
 };

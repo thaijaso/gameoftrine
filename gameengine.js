@@ -45,59 +45,6 @@ GameEngine.prototype.init = function(ctx, assetManager) {
     console.log('Game Engine Initialized');
 }
 
-GameEngine.prototype.getGameEngine = function() {
-    return this;
-}
-
-GameEngine.prototype.setCurrentBackground = function(background) {
-    this.currentBackground = background;
-}
-
-//sets current character playing
-GameEngine.prototype.setCurrentCharacter = function(character) {
-    this.currentCharacter = character;
-}
-
-GameEngine.prototype.setCurrentPortrait = function(ctx, image) {
-    ctx.drawImage(image, 0, 0);
-}
-
-//get the current character playing
-GameEngine.prototype.getCurrentCharacter = function() {
-        return this.currentCharacter;
-    }
-    //get the wolf
-GameEngine.prototype.getWolf = function() {
-    return this.wolf;
-};
-
-
-GameEngine.prototype.changeCharacter = function() {
-    var oldCharacter = this.getCurrentCharacter()
-
-    //removes the old character from the entities array
-    for (var i = 0; i < this.entities.length; i++) { //perhaps make entities a map to find the old character faster??
-        if (oldCharacter === this.entities[i]) {
-            this.entities.splice(i, 1);
-            //console.log(this.entities);
-        }
-    }
-
-    if (this.playableCharacterIndex >= this.playableCharacters.length - 1) { //if on last character, change to first index
-        this.playableCharacterIndex = 0;
-    } else {
-        this.playableCharacterIndex++;
-    }
-
-    var newCharacter = this.playableCharacters[this.playableCharacterIndex];
-    this.entities.push(newCharacter);
-    this.setCurrentCharacter(newCharacter);
-    //console.log(this);
-}
-
-GameEngine.prototype.addWolf = function(theWolf) {
-    this.wolf = theWolf;
-};
 
 GameEngine.prototype.start = function() {
     console.log("Starting Game");
@@ -252,10 +199,10 @@ GameEngine.prototype.startInput = function() {
     console.log('Input started');
 }
 
-//entities are drawn on the map
-GameEngine.prototype.addEntity = function(entity) {
-    console.log('Added Entity ' + entity);
-    this.entities.push(entity);
+GameEngine.prototype.loop = function() {
+    this.clockTick = this.timer.tick();
+    this.update();
+    this.draw();
 }
 
 GameEngine.prototype.removeEntity = function(id) {
@@ -266,46 +213,10 @@ GameEngine.prototype.removeEntity = function(id) {
         var e = this.entities[i];
         if (e.id === id) {
             temp = this.entities.splice(i, 1);
-            // entitiesCount--;
         }
     }
 
 };
-
-GameEngine.prototype.addPlayableCharacter = function(character) {
-    console.log('Added Character ' + character.name);
-    this.playableCharacters.push(character);
-}
-
-GameEngine.prototype.update = function() {
-    var entitiesCount = this.entities.length;
-    for (var i = 0; i < this.entities.length; i++) {
-        var entity = this.entities[i];
-        // if (!this.entities[i].removeFromWorld) {
-        entity.update();
-
-        // }
-    }
-}
-
-GameEngine.prototype.draw = function() {
-    this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
-    this.ctx.save();
-    for (var i = 0; i < this.entities.length; i++) {
-        var entity = this.entities[i];
-        // if (!this.entities[i].removeFromWorld) {
-        entity.draw(this.ctx);
-
-        // }
-    }
-    this.ctx.restore();
-}
-
-GameEngine.prototype.loop = function() {
-    this.clockTick = this.timer.tick();
-    this.update();
-    this.draw();
-}
 
 function Timer() {
     this.gameTime = 0;
@@ -322,6 +233,102 @@ Timer.prototype.tick = function() {
     this.gameTime += gameDelta;
     return gameDelta;
 }
+
+GameEngine.prototype.update = function() {
+    var entitiesCount = this.entities.length;
+    for (var i = 0; i < this.entities.length; i++) {
+        var entity = this.entities[i];
+        // if (!this.entities[i].removeFromWorld) {
+        entity.update();
+
+        // }
+    }
+}
+
+GameEngine.prototype.draw = function() {
+    this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
+    this.ctx.save();
+    for (var i = this.entities.length - 1; i >= 0; i--) {
+        var entity = this.entities[i];
+        // if (!this.entities[i].removeFromWorld) {
+        entity.draw(this.ctx);
+
+        // }
+    }
+    this.ctx.restore();
+}
+
+
+GameEngine.prototype.getGameEngine = function() {
+    return this;
+}
+
+GameEngine.prototype.setCurrentBackground = function(background) {
+    this.currentBackground = background;
+}
+
+//sets current character playing
+GameEngine.prototype.setCurrentCharacter = function(character) {
+    this.currentCharacter = character;
+}
+
+GameEngine.prototype.setCurrentPortrait = function(ctx, image) {
+    ctx.drawImage(image, 0, 0);
+}
+
+//get the current character playing
+GameEngine.prototype.getCurrentCharacter = function() {
+    return this.currentCharacter;
+}
+//get the wolf
+GameEngine.prototype.getWolf = function() {
+    return this.wolf;
+};
+
+
+GameEngine.prototype.changeCharacter = function() {
+    var oldCharacter = this.getCurrentCharacter()
+
+    //removes the old character from the entities array
+    for (var i = 0; i < this.entities.length; i++) { //perhaps make entities a map to find the old character faster??
+        if (oldCharacter === this.entities[i]) {
+            this.entities.splice(i, 1);
+            //console.log(this.entities);
+        }
+    }
+
+    if (this.playableCharacterIndex >= this.playableCharacters.length - 1) { //if on last character, change to first index
+        this.playableCharacterIndex = 0;
+    } else {
+        this.playableCharacterIndex++;
+    }
+
+    var newCharacter = this.playableCharacters[this.playableCharacterIndex];
+    this.entities.push(newCharacter);
+    this.setCurrentCharacter(newCharacter);
+    //console.log(this);
+}
+
+GameEngine.prototype.addWolf = function(theWolf) {
+    this.wolf = theWolf;
+};
+
+
+//entities are drawn on the map
+GameEngine.prototype.addEntity = function(entity) {
+    console.log('Added Entity ' + entity);
+    this.entities.push(entity);
+}
+
+GameEngine.prototype.removeEntity = function(entity) {
+    console.log(entity);
+};
+
+GameEngine.prototype.addPlayableCharacter = function(character) {
+    console.log('Added Character ' + character.name);
+    this.playableCharacters.push(character);
+}
+
 
 function Entity(game, x, y) {
     this.game = game;
