@@ -43,13 +43,17 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
             }
 
             gameEngine.keyMap["1"] = false;
-            currentCharacter.jumping = false;
-            // currentCharacter.jumpElapsedTime = 0;
+            // currentCharacter.jumping = false;
+            currentCharacter.jumpElapsedTime = 0;
             currentCharacter.attacking = false;
         }
     }
-
     var frame = this.currentFrame();
+    // if (currentCharacter.name === "gunwoman" && frame === 8 && currentCharacter.attacking && currentCharacter.animationState === "attackRight") {
+    //     var newBullet = new Bullet(gameEngine);
+    //     gameEngine.addEntity(newBullet);
+    // }
+
 
     var xindex = 0;
     var yindex = 0;
@@ -128,11 +132,14 @@ function Knight(game) {
     this.jumpReleased = false;
     this.jumpTimeHeld = 0;
     this.jumpStartTime = 0;
+    this.timeSinceJump = 0;
 
     //this property is used for jumping.
     //Each animation shares this property 
     //to do jump + attack, etc.
     this.jumpElapsedTime = 0;
+    this.jumpIsDone = false;
+
 
     this.attacking = false;
 
@@ -207,56 +214,41 @@ Knight.prototype.collideBottom = function(other) {
         this.y + this.height >= other.y;
 }
 
-function startTimer(duration) {
-    var timer = duration,
-        minutes, seconds;
-    setInterval(function() {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        // display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
-        }
-
-        console.log(minutes + ":" + seconds);
-    }, 1000);
-}
 Knight.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
 
     var jumpDistance = 1 - timeSinceJump / maxJumpTime;
-
     var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
 
     this.oldY = this.y;
     this.canvasY = this.lastGroundY - this.height - height;
     this.y = this.canvasY;
+
 };
 
 Knight.prototype.update = function() {
     var gameEngine = this.game;
-    //handle jumping
 
+    //handle jumping
     if (this.jumping) {
 
         // this code is shema working on variable jumping DO NOT DELETE BITCHES
 
-        // var timeSinceJump = gameEngine.timer.gameTime - this.jumpStartTime;
-        // var maxJumpTime = .5;
-        // var totalJumpHeight = 200;
+        this.timeSinceJump = gameEngine.timer.gameTime - this.jumpStartTime;
+        var maxJumpTime = .5;
+        var minJumpTime = .05;
+        var midJumpTime = .2;
+        var totalJumpHeight = 150;
+        var minJumpHeight = 50;
 
         // console.log(timeSinceJump);
 
-        // if (!this.jumpReleased && timeSinceJump < maxJumpTime) {
-        //     this.jump(totalJumpHeight, timeSinceJump, maxJumpTime);
+        // if (this.timeSinceJump < minJumpTime ) {
+        //     this.jump(totalJumpHeight, this.timeSinceJump, maxJumpTime);
         // }
 
 
-         var jumpDistance = this.jumpElapsedTime /
+        var jumpDistance = this.jumpElapsedTime /
             this.animationJumpRight.totalTime;
 
         var totalHeight = 120;
@@ -265,10 +257,14 @@ Knight.prototype.update = function() {
             jumpDistance = 1 - jumpDistance;
 
         var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-         
-        this.oldY = this.y;              
+
+        this.oldY = this.y;
         this.canvasY = this.lastGroundY - this.height - height;
-        this.y = this.canvasY;  
+        this.y = this.canvasY;
+    }
+
+    if (this.jumpElapsedTime === 0) {
+        this.jumping = false;
     }
 
     //check if player collided with any platforms
@@ -287,7 +283,6 @@ Knight.prototype.update = function() {
                     this.collidedBottom = true;
                     this.lastGroundY = this.collidedWith.y;
                     this.jumping = false;
-                    this.jumpReleased = true;
                     this.jumpElapsedTime = 0;
 
                 } else if (this.collideLeft(entity)) {
@@ -385,14 +380,9 @@ Knight.prototype.update = function() {
             this.animationState = "jumpRight";
             this.animationJumpRight.elapsedTime = 0;
             this.jumpStartTime = gameEngine.timer.gameTime;
-            // this.jumpTimeHeld += gameEngine.timer.tick();
-            // startTimer(this.animationJumpRight.elapsedTime);
-
 
         } else if (!gameEngine.keyMap["Space"] && this.jumping && !this.collidedBottom) {
             this.jumpReleased = true;
-            // this.jumping = false;
-
         } else if (gameEngine.keyMap["1"] && !this.attacking && !this.jumping) { //attack only if not already attacking
 
             this.attacking = true;
@@ -875,6 +865,13 @@ function Gunwoman(game) {
     this.collidedRight = false;
     this.collidedBottom = false;
     this.collidedTop = false;
+    // this.myBullet = {
+    //     x: 607,
+    //     y: 315,
+    //     width: 5,
+    //     height: 3,
+    //     tempX: 607
+    // };
 }
 
 Gunwoman.prototype.collide = function(other) {
@@ -946,6 +943,8 @@ Gunwoman.prototype.draw = function() {
 
         this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY);
 
+
+
     } else if (this.animationState === "idleLeft") { // START LEFT HERE
 
         this.animationIdleLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY);
@@ -962,10 +961,13 @@ Gunwoman.prototype.draw = function() {
 
         this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 81, this.canvasY);
     }
+
 }
 
 Gunwoman.prototype.update = function() {
     var gameEngine = this.game;
+
+
 
     //handle jumping
     if (this.jumping) {
@@ -1070,10 +1072,23 @@ Gunwoman.prototype.update = function() {
         this.oldX = this.x;
         this.x -= 3;
 
-    } else if (gameEngine.keyMap["KeyF"]) {
-
-        //gameEngine.changeCharacter();
     }
+
+    if (gameEngine.keyMap["1"] && this.animationAttackRight.currentFrame() === 8 && this.attacking && this.animationState === "attackRight" ) {
+        var newBullet = new Bullet(gameEngine);
+        gameEngine.addEntity(newBullet);
+
+    } else if (gameEngine.keyMap["1"] && gameEngine.keyMap["KeyD"] && this.animationAttackRight.currentFrame() === 8 && this.attacking && this.animationState === "attackRight" ) {
+        var newBullet = new Bullet(gameEngine);
+        gameEngine.addEntity(newBullet);
+    } 
+
+    if (gameEngine.keyMap["1"] && this.animationAttackLeft.currentFrame() === 8 && this.attacking && this.animationState === "attackLeft") {
+        var newBullet = new Bullet(gameEngine);
+        gameEngine.addEntity(newBullet);
+        console.log("here");
+    }
+
 
     //handle animation changes
     if (this.direction === "right") {
@@ -1083,6 +1098,8 @@ Gunwoman.prototype.update = function() {
             this.attacking = true;
             this.animationState = "attackRight";
             this.animationAttackRight.elapsedTime = 0;
+            // this.shootBulletTime = gameEngine.timer.gameTime;
+
 
         } else if (gameEngine.keyMap["1"] && !this.attacking && this.jumping) {
 
@@ -1101,6 +1118,9 @@ Gunwoman.prototype.update = function() {
             this.attacking = true;
             this.animationState = "attackRight";
             this.animationAttackRight.elapsedTime = 0;
+            // console.log(this.shootBulletTime);
+
+
 
         } else if (gameEngine.keyMap["KeyD"] && !this.jumping && !this.attacking) { //only walk if not jumping
 
@@ -1589,5 +1609,63 @@ Grapple.prototype.run = function(context) {
     init = setInterval(function() {
         that.animate(myCircle1, myCircle2, myLine1, myLine2, this.canvasX, this.canvasY, context);
     }, 10);
+
+};
+
+var id = 0; 
+function Bullet(gameEngine) {
+    this.id = id;
+    id++;
+    this.game = gameEngine;
+    this.currentCharacter = gameEngine.getCurrentCharacter();
+    this.ctx = this.game.ctx;
+    this.name = "bullet";
+    this.x = this.currentCharacter.canvasX;
+    this.y = this.currentCharacter.canvasY + 12;
+    this.direction = this.currentCharacter.direction;
+    this.removeFromWorld = false;
+    this.canvasX = this.currentCharacter.canvasX;
+    this.canvasY = this.currentCharacter.canvasY + 12;
+    this.rightDistance = 0;
+    this.leftDistance = 0;
+    this.distance = 700;
+
+    this.width = 5;
+    this.height = 3;
+
+    // console.log(this);
+
+
+}
+
+
+Bullet.prototype.update = function() {
+    // this.direction = this.currentCharacter.direction;
+
+    if (this.rightDistance <= this.distance && this.direction === "right") {
+        this.canvasX += 5;
+        this.x += 5;
+        this.rightDistance += 5;
+
+
+    }  else if(this.leftDistance <= this.distance && this.direction === "left") {
+        this.canvasX -= 5;
+        this.x -= 5;
+        this.leftDistance += 5;
+
+    }
+
+    else if (this.rightDistance > this.distance || this.leftDistance > this.distance) {
+        this.game.removeEntity(this.id);
+        // this.removeFromWorld = true;
+    }
+
+    // console.log(this.canvasX);
+
+};
+
+Bullet.prototype.draw = function() {
+    this.ctx.fillStyle = "#000000";
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
 };

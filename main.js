@@ -109,7 +109,7 @@ AM.downloadAll(function() {
     //gameEngine.addEntity(background);
     //gameEngine.addEntity(midground);
     gameEngine.addEntity(knight);
-    
+    // gameEngine.addEntity(bullet);
     // gameEngine.addEntity(skeleton);
     // gameEngine.addEntity(tree);
     //gameEngine.addEntity(knightPortraitRight);

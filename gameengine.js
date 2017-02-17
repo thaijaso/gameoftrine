@@ -64,9 +64,9 @@ GameEngine.prototype.setCurrentPortrait = function(ctx, image) {
 
 //get the current character playing
 GameEngine.prototype.getCurrentCharacter = function() {
-    return this.currentCharacter;
-}
-//get the wolf
+        return this.currentCharacter;
+    }
+    //get the wolf
 GameEngine.prototype.getWolf = function() {
     return this.wolf;
 };
@@ -125,45 +125,60 @@ GameEngine.prototype.startInput = function() {
 
     var that = this;
 
+
     // event listeners are  here
 
     //attack
     var rightClickCount = 0;
     this.ctx.canvas.addEventListener("mousedown", function(e) {
-
         var currentCharacter = that.getCurrentCharacter();
-        that.click = getXandY(e);
 
+
+        that.click = getXandY(e);
         that.keyMap[e.which] = true;
 
-       //  if (e.which === 1 && !that.didLeftClick) { //Left Mouse button pressed
-       //      that.didLeftClick = true;
+        // get x and y coordinates
+        var rect = that.ctx.canvas.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        console.log("x: " + x + " y: " + y);
 
-       //  } else if (e.which === 2) { //Middle Mouse button pressed  
+        if (e.which === 1) {
+            // if (currentCharacter.name === "gunwoman" && frame === 8 && currentCharacter.attacking &&
+            //     currentCharacter.animationState === "attackRight") {
 
-       //      console.log('Middle Mouse Button Pressed');
+            //     var newBullet = new Bullet(that);
+            //     that.addEntity(newBullet);
+            // }
+        }
+        //  if (e.which === 1 && !that.didLeftClick) { //Left Mouse button pressed
+        //      that.didLeftClick = true;
 
-       // } else if (e.which === 3 && currentCharacter.name === "gunwoman" && rightClickCount === 0) { //Right Mouse button pressed, add wolf
-       //      console.log('Right Mouse Button Pressed');
-       //      rightClickCount++;
-       //      that.drawWolf = true;
-       //      that.addEntity(that.wolf);
-       //  } else if (e.which == 3 && currentCharacter.name === "gunwoman" && rightClickCount >= 1) {
+        //  } else if (e.which === 2) { //Middle Mouse button pressed  
 
-       //      rightClickCount++;
-            
-       //      if (rightClickCount === 2) {
-       //          that.wolfAttack = true;
-       //          that.wolfIsRight = true;
-       //      } else if (rightClickCount >= 2) {
-       //          rightClickCount = 1;
-       //      }
+        //      console.log('Middle Mouse Button Pressed');
 
-       //  } else {
-       //      console.log('Mouse Button Undetected');
-       //  }
+        // } else if (e.which === 3 && currentCharacter.name === "gunwoman" && rightClickCount === 0) { //Right Mouse button pressed, add wolf
+        //      console.log('Right Mouse Button Pressed');
+        //      rightClickCount++;
+        //      that.drawWolf = true;
+        //      that.addEntity(that.wolf);
+        //  } else if (e.which == 3 && currentCharacter.name === "gunwoman" && rightClickCount >= 1) {
 
-         //console.log("rightClickCount: " + rightClickCount);
+        //      rightClickCount++;
+
+        //      if (rightClickCount === 2) {
+        //          that.wolfAttack = true;
+        //          that.wolfIsRight = true;
+        //      } else if (rightClickCount >= 2) {
+        //          rightClickCount = 1;
+        //      }
+
+        //  } else {
+        //      console.log('Mouse Button Undetected');
+        //  }
+
+        //console.log("rightClickCount: " + rightClickCount);
 
     }, false);
 
@@ -172,7 +187,7 @@ GameEngine.prototype.startInput = function() {
     }, false);
 
     this.ctx.canvas.addEventListener("keydown", function(e) {
-        
+
         that.keyMap[e.code] = true;
 
         // if (e.code === "KeyD" && !that.keyMap[e.code] && !that.didLeftClick) {
@@ -181,7 +196,7 @@ GameEngine.prototype.startInput = function() {
         //     that.right = true;
 
         // } else if (e.code === "KeyA" && !that.a  && !that.didLeftClick) {
-            
+
         //     that.a = true;
         //     that.right = false;
 
@@ -189,9 +204,9 @@ GameEngine.prototype.startInput = function() {
 
             that.changeCharacter();
 
-        } 
+        }
 
-    
+
 
     }, false);
 
@@ -243,8 +258,18 @@ GameEngine.prototype.addEntity = function(entity) {
     this.entities.push(entity);
 }
 
-GameEngine.prototype.removeEntity = function(entity) {
-    console.log(entity);
+GameEngine.prototype.removeEntity = function(id) {
+    var entitiesCount = this.entities.length;
+    var temp = null;
+
+    for (var i = 0; i < this.entities.length; i++) {
+        var e = this.entities[i];
+        if (e.id === id) {
+            temp = this.entities.splice(i, 1);
+            // entitiesCount--;
+        }
+    }
+
 };
 
 GameEngine.prototype.addPlayableCharacter = function(character) {
@@ -254,11 +279,12 @@ GameEngine.prototype.addPlayableCharacter = function(character) {
 
 GameEngine.prototype.update = function() {
     var entitiesCount = this.entities.length;
-
-    for (var i = 0; i < entitiesCount; i++) {
+    for (var i = 0; i < this.entities.length; i++) {
         var entity = this.entities[i];
-
+        // if (!this.entities[i].removeFromWorld) {
         entity.update();
+
+        // }
     }
 }
 
@@ -267,7 +293,10 @@ GameEngine.prototype.draw = function() {
     this.ctx.save();
     for (var i = 0; i < this.entities.length; i++) {
         var entity = this.entities[i];
+        // if (!this.entities[i].removeFromWorld) {
         entity.draw(this.ctx);
+
+        // }
     }
     this.ctx.restore();
 }
