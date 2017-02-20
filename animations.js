@@ -10,7 +10,7 @@ function Animation(entity, spriteSheet, frameWidth, frameHeight, sheetWidth, fra
     this.sheetWidth = sheetWidth;
     this.frames = frames;
     this.totalTime = frameDuration * frames;
-    this.elapsedTime = 0;   //used for jumping as well as various other animations
+    this.elapsedTime = 0; //used for jumping as well as various other animations
     this.loop = loop;
     this.scale = scale;
 }
@@ -22,11 +22,11 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
 
     this.elapsedTime += tick;
 
-    if (currentCharacter.jumping && 
-        (this.entity.name === "knight" || 
-         this.entity.name === "gunwoman" ||
-         this.entity.name === "mage")) {
-        
+    if (currentCharacter.jumping &&
+        (this.entity.name === "knight" ||
+            this.entity.name === "gunwoman" ||
+            this.entity.name === "mage")) {
+
         currentCharacter.jumpElapsedTime += tick;
     }
 
@@ -63,14 +63,13 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
     xindex = frame % this.sheetWidth;
     yindex = Math.floor(frame / this.sheetWidth);
 
-
-    // grapple.drawCircle(myCircle1, ctx);
-    // grapple.drawCircle(myCircle2, ctx);
-    // grapple.drawLine(myLine1, ctx);
-    // grapple.drawLine(myLine2, ctx);
+    // ctx.beginPath();
+    // ctx.moveTo(0, 0);
+    // ctx.lineTo(300, 150);
+    // ctx.stroke();
 
     //debugging
-    //ctx.fillStyle = "#ff0000";
+    ctx.fillStyle = "#ff0000";
     ctx.fillRect(currentCharacter.canvasX, currentCharacter.canvasY, currentCharacter.width, currentCharacter.height);
     //ctx.fillRect(currentCharacter.x, currentCharacter.y, currentCharacter.width, currentCharacter.height);
 
@@ -152,7 +151,7 @@ function Knight(game) {
     this.collidedLeft = false; //checks to see if knight collided on its left side
     this.collidedRight = false;
     this.collidedBottom = false;
-    this.collidedTop = false; 
+    this.collidedTop = false;
 
     this.collidedLeftPlatform = null;
     this.collidedRightPlatform = null;
@@ -214,13 +213,13 @@ Knight.prototype.collideTop = function(other) {
 //This function assumes there was a collision
 //Should not be called if there was no collision
 Knight.prototype.collideBottom = function(other) {
-    if (this.oldY + this.height < other.y && 
+    if (this.oldY + this.height < other.y &&
         this.y + this.height >= other.y) {
-        
+
         //console.log('collided bottom');
     }
 
-    return this.oldY + this.height < other.y && 
+    return this.oldY + this.height < other.y &&
         this.y + this.height >= other.y;
 }
 
@@ -316,18 +315,18 @@ Knight.prototype.update = function() {
                         this.oldY = this.y;
                         this.canvasY += 3;
                         this.y += 3;
-                    } 
+                    }
 
                 } else if (this.collideRight(entity)) {
 
                     this.collidedRight = true;
                     this.collidedRightPlatform = entity;
-                    
+
                     if (!this.collidedBottom && !this.jumping) {
                         this.oldY = this.y;
                         this.y += 3;
                         this.canvasY += 3;
-                    } 
+                    }
 
                     // if (Math.abs((this.collidedBottomPlatform.y + this.collidedBottomPlatform.height) - (entity.y + entity.height) >= 16)) {
                     //     this.oldY = this.y;
@@ -341,7 +340,7 @@ Knight.prototype.update = function() {
     }
 
     //check if player is no longer colliding with any platforms
-    
+
     if (this.collidedWith) {
         var stillColliding = false;
 
@@ -370,16 +369,16 @@ Knight.prototype.update = function() {
 
                 if (entity.name === "platform") {
                     //check if still colliding right with a platform we collided right with
-                    if (this.collidedRightPlatform === entity &&  
+                    if (this.collidedRightPlatform === entity &&
                         !this.collideRight(entity)) {
-                        
+
                         this.collidedRight = false;
                     } else if (this.collidedLeftPlatform === entity &&
                         !this.collideLeft(entity)) {
 
                         this.collidedLeft = false;
 
-                    } else if (this.collidedTopPlatform === entity && 
+                    } else if (this.collidedTopPlatform === entity &&
                         !this.collideTop(entity)) {
 
                         //this.collidedTop = false;
@@ -508,9 +507,9 @@ Knight.prototype.draw = function() {
 
     } else if (this.animationState === "attackRight") {
 
-         this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY - 2);
+        this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY - 2);
 
-    } else if(this.animationState === "idleLeft") {
+    } else if (this.animationState === "idleLeft") {
 
         this.animationIdleLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY - 2);
 
@@ -525,7 +524,7 @@ Knight.prototype.draw = function() {
     } else if (this.animationState === "attackLeft") {
 
         this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 68, this.canvasY - 2);
-    } 
+    }
 }
 
 
@@ -870,6 +869,7 @@ function Gunwoman(game) {
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanidleright.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanwalkright.png");
     var attackRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanattackright.png");
+    var attackRightUpAnimationSpriteSheet = AM.getAsset("./img/gunwomanattackrightup.png");
 
     var idleLeftAnimationSpriteSheet = AM.getAsset("./img/gunwomanidleleft.png");
     var walkLeftAnimationSpriteSheet = AM.getAsset("./img/gunwomanwalkleft.png");
@@ -888,10 +888,11 @@ function Gunwoman(game) {
 
     this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 5, 0.05, 22, true, 0.5);
     this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.035, 12, true, 0.5);
-    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 4, 0.015, 16, false, 0.5);
+    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 4, 0.015, 23, false, 0.5);
+    this.animationAttackRightUp = new Animation(this, attackRightUpAnimationSpriteSheet, 384, 192, 4, .015, 22, false, 0.5);
     this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 5, 0.1, 22, true, 0.5);
     this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 2, 0.07, 12, true, 0.5);
-    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 4, 0.015, 16, false, 0.5);
+    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 4, 0.015, 19, false, 0.5);
     this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
     this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 11, false, 0.5);
     this.animationState = "idleRight";
@@ -998,10 +999,13 @@ Gunwoman.prototype.draw = function() {
         this.animationJumpRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
 
     } else if (this.animationState === "attackRight") {
-
-        this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY);
-
-
+        if (this.game.clickX > this.canvasX) {
+            this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY);
+        } 
+        else {
+            this.direction = "left";
+            this.animationState = "attackLeft";
+        }
 
     } else if (this.animationState === "idleLeft") { // START LEFT HERE
 
@@ -1017,7 +1021,13 @@ Gunwoman.prototype.draw = function() {
 
     } else if (this.animationState === "attackLeft") {
 
-        this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 81, this.canvasY);
+
+        if (this.game.clickX < this.canvasX) {
+            this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 81, this.canvasY);
+        } else {
+            this.direction = "right";
+            this.animationState = "attackRight";
+        }
     }
 
 }
@@ -1025,7 +1035,7 @@ Gunwoman.prototype.draw = function() {
 Gunwoman.prototype.update = function() {
     var gameEngine = this.game;
 
-
+    console.log(this.game.clickY);
 
     //handle jumping
     if (this.jumping) {
@@ -1132,21 +1142,28 @@ Gunwoman.prototype.update = function() {
 
     }
 
-    if (gameEngine.keyMap["1"] && this.animationAttackRight.currentFrame() === 8 && this.attacking && this.animationState === "attackRight" ) {
+    if (gameEngine.keyMap["1"] && this.animationAttackRight.currentFrame() === 8 && this.attacking &&
+        this.animationState === "attackRight") {
+
         var newBullet = new Bullet(gameEngine);
         gameEngine.addEntity(newBullet);
 
-    } else if (gameEngine.keyMap["1"] && gameEngine.keyMap["KeyD"] && this.animationAttackRight.currentFrame() === 8 && this.attacking && this.animationState === "attackRight" ) {
-        var newBullet = new Bullet(gameEngine);
-        gameEngine.addEntity(newBullet);
-    } 
 
-    if (gameEngine.keyMap["1"] && this.animationAttackLeft.currentFrame() === 8 && this.attacking && this.animationState === "attackLeft") {
+    } else if (gameEngine.keyMap["1"] && gameEngine.keyMap["KeyD"] && this.animationAttackRight.currentFrame() === 8 &&
+        this.attacking && this.animationState === "attackRight" ) {
+
         var newBullet = new Bullet(gameEngine);
         gameEngine.addEntity(newBullet);
-        console.log("here");
+
+    }  
+
+    if (gameEngine.keyMap["1"] && this.animationAttackLeft.currentFrame() === 8 && this.attacking &&
+        this.animationState === "attackLeft") {
+
+        var newBullet = new Bullet(gameEngine);
+        gameEngine.addEntity(newBullet);
+
     }
-
 
     //handle animation changes
     if (this.direction === "right") {
@@ -1156,8 +1173,6 @@ Gunwoman.prototype.update = function() {
             this.attacking = true;
             this.animationState = "attackRight";
             this.animationAttackRight.elapsedTime = 0;
-            // this.shootBulletTime = gameEngine.timer.gameTime;
-
 
         } else if (gameEngine.keyMap["1"] && !this.attacking && this.jumping) {
 
@@ -1176,9 +1191,6 @@ Gunwoman.prototype.update = function() {
             this.attacking = true;
             this.animationState = "attackRight";
             this.animationAttackRight.elapsedTime = 0;
-            // console.log(this.shootBulletTime);
-
-
 
         } else if (gameEngine.keyMap["KeyD"] && !this.jumping && !this.attacking) { //only walk if not jumping
 
@@ -1192,7 +1204,7 @@ Gunwoman.prototype.update = function() {
 
     } else { //direction is left
         if (gameEngine.keyMap["1"] && gameEngine.keyMap["KeyA"] && !this.attacking) {
-
+            console.log("here");
             this.attacking = true;
             this.animationState = "attackLeft";
             this.animationAttackLeft.elapsedTime = 0;
@@ -1225,7 +1237,6 @@ Gunwoman.prototype.update = function() {
             this.animationState = "idleLeft";
 
         }
-
     }
 }
 
@@ -1555,7 +1566,7 @@ Tree.prototype.draw = function() {
 Tree.prototype.update = function() {
     var gameEngine = this.game;
     var currentCharacter = gameEngine.getCurrentCharacter();
-    
+
     if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
         this.canvasX -= 3;
@@ -1675,7 +1686,8 @@ Grapple.prototype.run = function(context) {
     }, 10);
 };
 
-var id = 0; 
+var id = 0;
+
 function Bullet(gameEngine) {
     this.id = id;
     id++;
@@ -1684,11 +1696,18 @@ function Bullet(gameEngine) {
     this.ctx = this.game.ctx;
     this.name = "bullet";
     this.x = this.currentCharacter.canvasX;
-    this.y = this.currentCharacter.canvasY + 12;
+    this.y = this.currentCharacter.canvasY + 14;
     this.direction = this.currentCharacter.direction;
-    this.removeFromWorld = false;
     this.canvasX = this.currentCharacter.canvasX;
-    this.canvasY = this.currentCharacter.canvasY + 12;
+    this.canvasY = this.currentCharacter.canvasY + 14;
+
+    this.x1 = this.canvasX;
+    this.x2 = this.game.clickX;
+    this.y1 = this.canvasY;
+    this.y2 = this.game.clickY;
+    this.f = 0;
+
+    this.slope = (this.endY - this.canvasY) / (this.endX - this.canvasX);
     this.rightDistance = 0;
     this.leftDistance = 0;
     this.distance = 700;
@@ -1696,39 +1715,65 @@ function Bullet(gameEngine) {
     this.width = 5;
     this.height = 3;
 
-    // console.log(this);
-
 
 }
 
 
 Bullet.prototype.update = function() {
-    // this.direction = this.currentCharacter.direction;
-
-    if (this.rightDistance <= this.distance && this.direction === "right") {
-        this.canvasX += 5;
-        this.x += 5;
-        this.rightDistance += 5;
+    // if (this.rightDistance <= this.distance && this.direction === "right") {
+    //     this.canvasX += 5;
+    //     this.x += 5;
+    //     this.rightDistance += 5;
 
 
-    }  else if(this.leftDistance <= this.distance && this.direction === "left") {
-        this.canvasX -= 5;
-        this.x -= 5;
-        this.leftDistance += 5;
+    // } else if (this.leftDistance <= this.distance && this.direction === "left") {
+    //     this.canvasX -= 5;
+    //     this.x -= 5;
+    //     this.leftDistance += 5;
 
-    }
+    // }
 
-    else if (this.rightDistance > this.distance || this.leftDistance > this.distance) {
+    // if (this.rightDistance > this.distance || this.leftDistance > this.distance) {
+    //     this.game.removeEntity(this.id);
+    // }
+    // if (this.game.clickY >= this.canvasY) {
+    // this.canvasY -= (this.slope ) ;
+    // this.canvasX += 5;
+
+    this.canvasX = this.x1 + (this.x2 - this.x1) * this.f;
+    this.canvasY = this.y1 + (this.y2 - this.y1) * this.f;
+
+    // if (this.direction === "right") {
+    //     this.canvasX = tempX;
+    //     this.canvasY = tempY;
+    // } else if (this.direction === "left") {
+    //     this.canvasX = tempX;
+    //     this.canvasY = tempY;
+    // }
+
+    if (this.f < 5) {
+
+        this.f += .05;
+    } else {
         this.game.removeEntity(this.id);
-        // this.removeFromWorld = true;
+
     }
 
-    // console.log(this.canvasX);
+    // } 
+    // if(this.game.clickY <= this.canvasY) {
+    //     this.canvasY -= 2;
+    //     this.canvasX += 5;
+    // }
+
+
 
 };
 
 Bullet.prototype.draw = function() {
     this.ctx.fillStyle = "#000000";
     this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
-    console.log("draw");
+
+
+
+
 };

@@ -22,6 +22,8 @@ function GameEngine() {
     this.d = false;
     this.a = false;
     this.f = false;
+    this.clickX = 0;
+    this.clickY = 0;
 
     this.right = true;
 
@@ -86,18 +88,11 @@ GameEngine.prototype.startInput = function() {
 
         // get x and y coordinates
         var rect = that.ctx.canvas.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-        console.log("x: " + x + " y: " + y);
+        that.clickX = e.clientX - rect.left;
+        that.clickY = e.clientY - rect.top;
+        // console.log("x: " + x + " y: " + y);
 
-        if (e.which === 1) {
-            // if (currentCharacter.name === "gunwoman" && frame === 8 && currentCharacter.attacking &&
-            //     currentCharacter.animationState === "attackRight") {
 
-            //     var newBullet = new Bullet(that);
-            //     that.addEntity(newBullet);
-            // }
-        }
         //  if (e.which === 1 && !that.didLeftClick) { //Left Mouse button pressed
         //      that.didLeftClick = true;
 
@@ -137,6 +132,23 @@ GameEngine.prototype.startInput = function() {
 
         that.keyMap[e.code] = true;
 
+        for (var i = 0; i < that.playableCharacters.length; i++) {
+
+            if (e.code === "Digit1" && that.playableCharacters[i].name === "knight") {
+                that.changeCharacter(that.playableCharacters[i]);
+
+            } else if (e.code === "Digit2" && that.playableCharacters[i].name === "gunwoman") {
+                that.changeCharacter(that.playableCharacters[i]);
+
+
+            } else if (e.code === "Digit3" && that.playableCharacters[i].name === "mage") {
+                that.changeCharacter(that.playableCharacters[i]);
+
+            }
+
+        }
+
+
         // if (e.code === "KeyD" && !that.keyMap[e.code] && !that.didLeftClick) {
 
         //     that.d = true;
@@ -147,13 +159,11 @@ GameEngine.prototype.startInput = function() {
         //     that.a = true;
         //     that.right = false;
 
-        if (e.code === "KeyF" && !that.didLeftClick) {
+        // if (e.code === "KeyF" && !that.didLeftClick) {
 
-            that.changeCharacter();
+        //     that.changeCharacter();
 
-        }
-
-
+        // }
 
     }, false);
 
@@ -205,13 +215,13 @@ GameEngine.prototype.loop = function() {
     this.draw();
 }
 
-GameEngine.prototype.removeEntity = function(id) {
+GameEngine.prototype.removeEntity = function(info) {
     var entitiesCount = this.entities.length;
     var temp = null;
 
     for (var i = 0; i < this.entities.length; i++) {
         var e = this.entities[i];
-        if (e.id === id) {
+        if (e.id === info) {
             temp = this.entities.splice(i, 1);
         }
     }
@@ -240,6 +250,11 @@ GameEngine.prototype.update = function() {
         var entity = this.entities[i];
         // if (!this.entities[i].removeFromWorld) {
         entity.update();
+
+        if (entitiesCount != this.entities.length) {
+            console.log('bullet added');
+            i++;
+        }
 
         // }
     }
@@ -278,15 +293,15 @@ GameEngine.prototype.setCurrentPortrait = function(ctx, image) {
 
 //get the current character playing
 GameEngine.prototype.getCurrentCharacter = function() {
-    return this.currentCharacter;
-}
-//get the wolf
+        return this.currentCharacter;
+    }
+    //get the wolf
 GameEngine.prototype.getWolf = function() {
     return this.wolf;
 };
 
 
-GameEngine.prototype.changeCharacter = function() {
+GameEngine.prototype.changeCharacter = function(newCharacter) {
     var oldCharacter = this.getCurrentCharacter()
 
     //removes the old character from the entities array
@@ -297,14 +312,14 @@ GameEngine.prototype.changeCharacter = function() {
         }
     }
 
-    if (this.playableCharacterIndex >= this.playableCharacters.length - 1) { //if on last character, change to first index
-        this.playableCharacterIndex = 0;
-    } else {
-        this.playableCharacterIndex++;
-    }
+    // if (this.playableCharacterIndex >= this.playableCharacters.length - 1) { //if on last character, change to first index
+    //     this.playableCharacterIndex = 0;
+    // } else {
+    //     this.playableCharacterIndex++;
+    // }
 
-    var newCharacter = this.playableCharacters[this.playableCharacterIndex];
-    this.entities.push(newCharacter);
+    // var newCharacter = this.playableCharacters[this.playableCharacterIndex];
+    this.entities.unshift(newCharacter);
     this.setCurrentCharacter(newCharacter);
     //console.log(this);
 }
@@ -316,13 +331,17 @@ GameEngine.prototype.addWolf = function(theWolf) {
 
 //entities are drawn on the map
 GameEngine.prototype.addEntity = function(entity) {
-    console.log('Added Entity ' + entity);
-    this.entities.push(entity);
-}
+    // console.log('Added Entity ' + entity);
+    if (entity.name === "bullet") {
+        this.entities.unshift(entity);
+        // this.entities.splice(0,0,entity);
 
-GameEngine.prototype.removeEntity = function(entity) {
-    console.log(entity);
-};
+    } else {
+        this.entities.push(entity);
+    }
+
+
+}
 
 GameEngine.prototype.addPlayableCharacter = function(character) {
     console.log('Added Character ' + character.name);

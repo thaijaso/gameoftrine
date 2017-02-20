@@ -51,6 +51,8 @@ AM.queueDownload("./img/gunwomanwalkleft.png");
 AM.queueDownload("./img/gunwomanattackleft.png");
 AM.queueDownload("./img/gunwomanjumpright.png");
 AM.queueDownload("./img/gunwomanjumpleft.png");
+AM.queueDownload("./img/gunwomanattackrightup.png");
+
 
 
 //wolf
@@ -94,7 +96,7 @@ AM.downloadAll(function() {
     var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground.png"));
     var background = new Background(gameEngine, AM.getAsset("./img/background.png"));
     var midground = new Midground(gameEngine, AM.getAsset("./img/midground.png"));
-    var grapple = new Grapple(gameEngine, canvas, ctx);
+    // var grapple = new Grapple(gameEngine, canvas, ctx);
 
     var knight = new Knight(gameEngine);
     var gunwoman = new Gunwoman(gameEngine);
@@ -153,7 +155,7 @@ AM.downloadAll(function() {
     gameEngine.addPlayableCharacter(gunwoman);
     gameEngine.addPlayableCharacter(mage);
 
-    gameEngine.addWolf(wolf);
+    // gameEngine.addWolf(wolf);
 
     gameEngine.setCurrentCharacter(knight);
     //gameEngine.setCurrentBackground(background);
