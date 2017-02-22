@@ -490,12 +490,6 @@ Knight.prototype.update = function() {
             this.animationState = "idleLeft";
         }
     }
-
-    if(gameEngine.keyMap["1"]) {
-        var newX = gameEngine.currentCharacter.x;
-        var charac = gameEngine.currentCharacter;
-        console.log("come here");
-    }
 }
 
 Knight.prototype.draw = function() {
