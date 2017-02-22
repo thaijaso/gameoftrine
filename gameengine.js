@@ -135,14 +135,36 @@ GameEngine.prototype.startInput = function() {
         for (var i = 0; i < that.playableCharacters.length; i++) {
 
             if (e.code === "Digit1" && that.playableCharacters[i].name === "knight") {
-                that.changeCharacter(that.playableCharacters[i]);
+
+                that.changeCharacter(that.playableCharacters[i]); 
 
             } else if (e.code === "Digit2" && that.playableCharacters[i].name === "gunwoman") {
+                var newX = that.currentCharacter.x;
+                var newY = that.currentCharacter.y;
+                var newCanvasX = that.currentCharacter.canvasX;
+                var newCanvasY = that.currentCharacter.canvasY;
+
+
                 that.changeCharacter(that.playableCharacters[i]);
 
+                var charac = that.currentCharacter;
+                that.currentCharacter.x = newX;
+                that.currentCharacter.y = newY;
+                that.currentCharacter.canvasX = newCanvasX;
+                that.currentCharacter.canvasY = newCanvasY;
 
             } else if (e.code === "Digit3" && that.playableCharacters[i].name === "mage") {
+
+                var newX = that.currentCharacter.x;
+                var newY = that.currentCharacter.y;
+                var newCanvasX = that.currentCharacter.canvasX;
+                var newCanvasY = that.currentCharacter.canvasY;
                 that.changeCharacter(that.playableCharacters[i]);
+
+                that.currentCharacter.x = newX;
+                that.currentCharacter.y = newY;
+                that.currentCharacter.canvasX = newCanvasX;
+                that.currentCharacter.canvasY = newCanvasY;
 
             }
 
