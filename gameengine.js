@@ -135,8 +135,17 @@ GameEngine.prototype.startInput = function() {
         for (var i = 0; i < that.playableCharacters.length; i++) {
 
             if (e.code === "Digit1" && that.playableCharacters[i].name === "knight") {
+                var newX = that.currentCharacter.x;
+                var newY = that.currentCharacter.y;
+                var newCanvasX = that.currentCharacter.canvasX;
+                var newCanvasY = that.currentCharacter.canvasY;
 
                 that.changeCharacter(that.playableCharacters[i]); 
+
+                that.currentCharacter.x = newX;
+                that.currentCharacter.y = newY;
+                that.currentCharacter.canvasX = newCanvasX;
+                that.currentCharacter.canvasY = newCanvasY;
 
             } else if (e.code === "Digit2" && that.playableCharacters[i].name === "gunwoman") {
                 var newX = that.currentCharacter.x;
@@ -147,7 +156,6 @@ GameEngine.prototype.startInput = function() {
 
                 that.changeCharacter(that.playableCharacters[i]);
 
-                var charac = that.currentCharacter;
                 that.currentCharacter.x = newX;
                 that.currentCharacter.y = newY;
                 that.currentCharacter.canvasX = newCanvasX;
@@ -159,6 +167,7 @@ GameEngine.prototype.startInput = function() {
                 var newY = that.currentCharacter.y;
                 var newCanvasX = that.currentCharacter.canvasX;
                 var newCanvasY = that.currentCharacter.canvasY;
+                
                 that.changeCharacter(that.playableCharacters[i]);
 
                 that.currentCharacter.x = newX;

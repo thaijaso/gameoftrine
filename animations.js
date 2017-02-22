@@ -561,8 +561,8 @@ function Mage(game) {
 
     this.direction = "right";
 
-    this.x = 34 * TILE_SIZE;
-    this.y = 14 * TILE_SIZE;
+    // this.x = 34 * TILE_SIZE;
+    // this.y = 14 * TILE_SIZE;
 
     //for direction of collision
     this.oldX = 34 * TILE_SIZE;
@@ -571,8 +571,8 @@ function Mage(game) {
     this.width = 2 * TILE_SIZE;
     this.height = 4 * TILE_SIZE;
 
-    this.canvasX = 34 * TILE_SIZE;
-    this.canvasY = 14 * TILE_SIZE;
+    // this.canvasX = 34 * TILE_SIZE;
+    // this.canvasY = 14 * TILE_SIZE;
 
     this.lastGroundY = null; //y coord of platform last collided with
 
