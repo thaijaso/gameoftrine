@@ -559,6 +559,233 @@ Knight.prototype.draw = function() {
 }
 
 
+function Box(game, x, y) {
+    this.radius = 10;
+    this.name = "box";
+    this.game = game;
+    this.ctx = game.ctx;
+    // this.colors = ["Green", "Green", "Blue", "Red"];
+    // this.setNotIt();
+    // x = Math.random();
+    // console.log("random = " + x);
+    // Entity.call(this, game, this.radius + .5 * (255 - this.radius * 2), this.radius + .5 * (1 - this.radius * 2));
+    
+    // this.direction = "right";
+    
+    // this.x = 26 * TILE_SIZE;
+    // this.y = 14 * TILE_SIZE;
+    
+    // this.width = .78 * TILE_SIZE;
+    // this.height = .78 * TILE_SIZE;
+    
+    // this.canvasX = 26 * TILE_SIZE;
+    // this.canvasY = 14 * TILE_SIZE;
+   
+    // this.lastGroundY = null; //y coord of platform last collided with
+
+
+    // var currentCharacter = that.getCurrentCharacter();
+
+    // var rect = that.ctx.canvas.getBoundingClientRect();
+    // var xCord = x;
+    // var yCord = y;
+    // console.log("The x: " + xCord + " and y: " + yCord);
+
+    // this.canvasX = xCord/TILE_SIZE;
+    // this.canvasY = yCord/TILE_SIZE;
+
+    // this.width = 2;
+    // this.height = 2;
+
+    // this.gameEngine = that;
+
+    // this.x = (currentCharacter.x - currentCharacter.canvasX) + xCord;
+    // this.y = yCord/TILE_SIZE;
+
+    // var platformBox = new Platform(this.gameEngine, this.canvasX, this.canvasY, 2, 2);
+  
+    /*platformBox.x = this.x;
+
+    // console.log(platformBox); 
+    this.gameEngine.addEntity(platformBox);*/
+    // var gameEngine = new GameEngine();
+    
+
+    //this property is used for jumping.
+    //Each animation shares this property 
+    //to do jump + attack, etc.
+    
+
+    this.x = x  ; //game world x and y coordinates
+    this.y = y ;
+
+    this.canvasX = x;
+    this.canvasY = y;
+    this.width = 2 * TILE_SIZE;
+    this.height = 2 * TILE_SIZE;
+
+
+    this.collidedWith = null; //checks to see which entity the knight collided with
+    this.collidedLeft = false; //checks to see if knight collided on its left side
+    this.collidedRight = false; 
+    this.collidedBottom = false;
+    this.collidedTop = false; 
+};
+
+Box.prototype = new Entity();
+Box.prototype.constructor = Box;
+
+Box.prototype.draw = function() {
+   
+    this.ctx.fillStyle = "#ff0000";
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+};
+
+Box.prototype.update = function() {
+
+    var gameEngine = this.game;
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        var entity = this.game.entities[i];
+
+        if (entity.name === "platform") {
+
+            if (this != entity && this.collide(entity)) {
+                //console.log('colliding');
+
+
+                this.collidedWith = entity;
+
+                if (this.collideBottom(entity)) {
+                    this.collidedBottom = true;
+                    this.lastGroundY = this.collidedWith.y;
+                    this.jumping = false;
+                    this.jumpReleased = true;
+                    this.jumpElapsedTime = 0;
+
+                } 
+                // else if (this.collideTop(entity)) {
+
+                //     this.collidedTop = true;
+                //     this.collidedTopPlatform = entity;
+                //     //this.oldY = this.y;
+                //     this.canvasY += 3;
+                //     this.y += 3;
+                //     this.jumping = false;
+
+                // } 
+                // else if (this.collideLeft(entity)) {
+                //     //fall after colliding left
+                //     this.collidedLeft = true;
+                //     this.collidedLeftPlatform = entity;
+
+                //     if (!this.collidedBottom && !this.jumping) {
+                //         this.oldY = this.y;
+                //         this.canvasY += 3;
+                //         this.y += 3;
+                //     } 
+
+                // } else if (this.collideRight(entity)) {
+
+                //     this.collidedRight = true;
+                //     this.collidedRightPlatform = entity;
+                    
+                //     if (!this.collidedBottom && !this.jumping) {
+                //         this.oldY = this.y;
+                //         this.y += 5;
+                //         this.canvasY += 5;
+                //     }
+                // }
+            }
+        }
+    }
+
+    if (this.collidedWith) {
+        var stillColliding = false;
+
+        for (var i = 0; i < gameEngine.entities.length; i++) {
+            var entity = this.game.entities[i];
+
+            if (entity.name === "platform") {
+                if (this != entity && this.collide(entity)) {
+                    stillColliding = true;
+                }
+            }
+        }
+
+        if (!stillColliding) {
+            this.collidedWith = null;
+            this.collidedLeft = false;
+            this.collidedRight = false;
+            this.collidedBottom = false;
+            this.collidedTop = false;
+
+        } else { //still colliding
+
+            for (var i = 0; i < gameEngine.entities.length; i++) {
+                var entity = this.game.entities[i];
+
+                if (entity.name === "platform") {
+                    //check if still colliding right with a platform we collided right with
+                    if (this.collidedRightPlatform === entity &&  
+                        !this.collideRight(entity)) {
+                        
+                        this.collidedRight = false;
+                    } else if (this.collidedLeftPlatform === entity &&
+                        !this.collideLeft(entity)) {
+
+                        this.collidedLeft = false;
+
+                    } else if (this.collidedTopPlatform === entity && 
+                        !this.collideTop(entity)) {
+
+                        //this.collidedTop = false;
+
+                    }
+                }
+            }
+
+        }
+
+    } else if (!this.jumping) { //player has not collided therefore fall
+
+        this.oldY = this.y;
+
+        this.canvasY += 5;
+        this.y += 5;
+    }
+    if (gameEngine.keyMap["KeyD"]) {
+
+        this.canvasX -= 3;
+
+    } else if (gameEngine.keyMap["KeyA"]) {
+
+        this.canvasX += 3;
+    }
+}
+
+
+//checks for all sides collision
+Box.prototype.collide = function(other) {
+    return this.x <= other.x + other.width &&
+        this.x + this.width >= other.x &&
+        this.y <= other.y + other.height &&
+        this.height + this.y >= other.y;
+};
+
+//Returns true if Knight collided on his bottom 
+//This function assumes there was a collision
+//Should not be called if there was no collision
+Box.prototype.collideBottom = function(other) {
+    if (this.oldY + this.height < other.y && 
+        this.y + this.height >= other.y) {
+        
+        console.log('box collided bottom');
+    }
+
+    return this.oldY + this.height < other.y && 
+        this.y + this.height >= other.y;
+}
+
 //Constructor for mage
 function Mage(game) {
 
@@ -723,7 +950,7 @@ Mage.prototype.update = function() {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.game.entities[i];
 
-        if (entity.name === "platform") {
+        if (entity.name === "platform" || entity.name === "box") {
 
             if (this != entity && this.collide(entity)) {
                 //console.log('colliding');
