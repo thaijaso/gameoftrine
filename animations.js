@@ -89,6 +89,36 @@ Animation.prototype.isDone = function() {
     return (this.elapsedTime >= this.totalTime);
 }
 
+function jump(character) {
+    console.log("jump");
+
+
+        character.collidedBottom = false;
+
+    //     // this.timeSinceJump = gameEngine.timer.gameTime - this.jumpStartTime;
+    //     // var maxJumpTime = .5;
+    //     // var minJumpTime = .05;
+    //     // var midJumpTime = .2;
+    //     // var totalJumpHeight = 150;
+    //     // var minJumpHeight = 50;
+
+
+        var jumpDistance = character.jumpElapsedTime /
+            character.animationJumpRight.totalTime;
+
+        var totalHeight = 120;
+
+        if (jumpDistance > 0.5)
+            jumpDistance = 1 - jumpDistance;
+
+        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+
+        character.oldY = character.y;
+        character.canvasY = character.lastGroundY - character.height - height;
+        character.y = character.canvasY;
+
+}
+
 function Knight(game) {
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/knightidleright.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/knightwalkright.png");
@@ -240,38 +270,39 @@ Knight.prototype.update = function() {
 
     //handle jumping
     if (this.jumping) {
+    jump(this);
 
-        this.collidedBottom = false;
+    //     this.collidedBottom = false;
 
-        // this code is shema working on variable jumping DO NOT DELETE BITCHES
+    //     // this code is shema working on variable jumping DO NOT DELETE BITCHES
 
-        this.timeSinceJump = gameEngine.timer.gameTime - this.jumpStartTime;
-        var maxJumpTime = .5;
-        var minJumpTime = .05;
-        var midJumpTime = .2;
-        var totalJumpHeight = 150;
-        var minJumpHeight = 50;
+    //     this.timeSinceJump = gameEngine.timer.gameTime - this.jumpStartTime;
+    //     var maxJumpTime = .5;
+    //     var minJumpTime = .05;
+    //     var midJumpTime = .2;
+    //     var totalJumpHeight = 150;
+    //     var minJumpHeight = 50;
 
-        // console.log(timeSinceJump);
+    //     // console.log(timeSinceJump);
 
-        // if (this.timeSinceJump < minJumpTime ) {
-        //     this.jump(totalJumpHeight, this.timeSinceJump, maxJumpTime);
-        // }
+    //     // if (this.timeSinceJump < minJumpTime ) {
+    //     //     this.jump(totalJumpHeight, this.timeSinceJump, maxJumpTime);
+    //     // }
 
 
-        var jumpDistance = this.jumpElapsedTime /
-            this.animationJumpRight.totalTime;
+    //     var jumpDistance = this.jumpElapsedTime /
+    //         this.animationJumpRight.totalTime;
 
-        var totalHeight = 120;
+    //     var totalHeight = 120;
 
-        if (jumpDistance > 0.5)
-            jumpDistance = 1 - jumpDistance;
+    //     if (jumpDistance > 0.5)
+    //         jumpDistance = 1 - jumpDistance;
 
-        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+    //     var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
 
-        this.oldY = this.y;
-        this.canvasY = this.lastGroundY - this.height - height;
-        this.y = this.canvasY;
+    //     this.oldY = this.y;
+    //     this.canvasY = this.lastGroundY - this.height - height;
+    //     this.y = this.canvasY;
     }
 
     if (this.jumpElapsedTime === 0) {
@@ -685,19 +716,7 @@ Mage.prototype.update = function() {
     //handle jumping
     if (this.jumping) {
 
-        var jumpDistance = this.jumpElapsedTime /
-            this.animationJumpRight.totalTime;
-
-        var totalHeight = 120;
-
-        if (jumpDistance > 0.5)
-            jumpDistance = 1 - jumpDistance;
-
-        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-
-        this.oldY = this.y;
-        this.canvasY = this.lastGroundY - this.height - height;
-        this.y = this.canvasY;
+        jump(this);
     }
 
     //check if player collided with any platforms
@@ -1047,19 +1066,7 @@ Gunwoman.prototype.update = function() {
     //handle jumping
     if (this.jumping) {
 
-        var jumpDistance = this.jumpElapsedTime /
-            this.animationJumpRight.totalTime;
-
-        var totalHeight = 120;
-
-        if (jumpDistance > 0.5)
-            jumpDistance = 1 - jumpDistance;
-
-        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-
-        this.oldY = this.y;
-        this.canvasY = this.lastGroundY - this.height - height;
-        this.y = this.canvasY;
+        jump(this);
     }
 
     //check if player collided with any platforms
