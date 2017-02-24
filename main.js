@@ -198,6 +198,7 @@ AM.downloadAll(function() {
 
     // Major Platform 1
     gameEngine.addEntity(platform1);
+    /*
     gameEngine.addEntity(platform2);
     gameEngine.addEntity(platform3);
     gameEngine.addEntity(platform4);
@@ -285,7 +286,8 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform89); // ladder
     gameEngine.addEntity(platform90); // mini platform
 
-
+    */
+    
     gameEngine.addEntity(foreground);
     gameEngine.addEntity(tree);
 

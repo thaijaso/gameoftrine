@@ -313,7 +313,7 @@ Knight.prototype.update = function() {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.game.entities[i];
 
-        if (entity.name === "platform") {
+        if (entity.name === "platform" || entity.name === "box") {
 
             if (this != entity && this.collide(entity)) {
                 //console.log('colliding');
@@ -1772,15 +1772,17 @@ function Midground(game, spritesheet) {
 
 Midground.prototype.draw = function() {
     this.ctx.drawImage(this.spritesheet, this.x, this.y);
+    
 }
 
 Midground.prototype.update = function() {
     //console.log(this.x);
     var gameEngine = this.game;
+    var currentCharacter = gameEngine.getCurrentCharacter();
 
-    if (gameEngine.keyMap["KeyD"]) {
+    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
         this.x -= 0.8;
-    } else if (gameEngine.keyMap["KeyA"]) {
+    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
         this.x += 0.8;
     }
 }
