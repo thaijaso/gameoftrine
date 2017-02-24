@@ -449,11 +449,11 @@ Knight.prototype.update = function() {
         }
     }
 
-    //check if player collided with any platforms
+    //check if player collided with any platforms, skeletons, or boxes
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.game.entities[i];
 
-        if (entity.name === "platform" || entity.name === "skeleton") {
+        if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
 
             if (this !== entity && this.collide(entity)) {
                 //console.log('colliding');
@@ -461,6 +461,7 @@ Knight.prototype.update = function() {
                 this.collidedWith = entity;
 
                 if (this.collideBottom(entity)) {
+                    
                     this.collidedBottom = true;
                     this.lastGroundY = this.collidedWith.y;
                     this.collidedBottomEntity = entity;
@@ -504,15 +505,14 @@ Knight.prototype.update = function() {
         }
     }
 
-    //check if player is no longer colliding with any platforms
-    
+    //check if player is no longer colliding with any platforms, skeletons, or boxes
     if (this.collidedWith) {
         var stillColliding = false;
 
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = this.game.entities[i];
 
-            if (entity.name === "platform" || entity.name === "skeleton") {
+            if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
                 if (this != entity && this.collide(entity)) {
                     stillColliding = true;
 
@@ -533,7 +533,7 @@ Knight.prototype.update = function() {
             for (var i = 0; i < gameEngine.entities.length; i++) {
                 var entity = this.game.entities[i];
 
-                if (entity.name === "platform" || entity.name === "skeleton") {
+                if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
                     //check if still colliding right with a platform we collided right with
                     if (this.collidedRightEntity === entity &&  
                         !this.collide(entity)) {
@@ -578,9 +578,6 @@ Knight.prototype.update = function() {
         this.oldX = this.x;
         this.x -= 3;
 
-    } else if (gameEngine.keyMap["KeyF"]) {
-
-        //gameEngine.changeCharacter();
     }
 
     //handle animation changes
@@ -844,7 +841,6 @@ Knight.prototype.draw = function() {
 
 
 function Box(game, x, y) {
-    this.radius = 10;
     this.name = "box";
     this.game = game;
     this.ctx = game.ctx;
@@ -901,9 +897,14 @@ function Box(game, x, y) {
 
     var currentCharacter = game.getCurrentCharacter();
     this.x = (currentCharacter.x - currentCharacter.canvasX) + x;
+    
 
     // this.x = x  ; //game world x and y coordinates
-    this.y = y ;
+    this.y = y;
+
+    this.oldX = (currentCharacter.x - currentCharacter.canvasX) + x;
+    this.oldY = y;
+
 
     this.canvasX = x;
     this.canvasY = y;

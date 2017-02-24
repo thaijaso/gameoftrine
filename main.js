@@ -127,10 +127,10 @@ AM.downloadAll(function() {
     gameEngine.addEntity(knight);
     //gameEngine.addEntity(gunwoman);
     
-    gameEngine.addEntity(skeleton0);
-    gameEngine.addEntity(skeleton1);
-    gameEngine.addEntity(skeleton2);
-    gameEngine.addEntity(skeleton3);
+    // gameEngine.addEntity(skeleton0);
+    // gameEngine.addEntity(skeleton1);
+    // gameEngine.addEntity(skeleton2);
+    // gameEngine.addEntity(skeleton3);
                                         
                                             //x,  y, width, height
     var platform1 = new Platform(gameEngine, 0, 31, 110, 1);
