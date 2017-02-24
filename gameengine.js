@@ -11,6 +11,8 @@ window.requestAnimFrame = (function() {
 
 function GameEngine() {
     this.currentBackground = null;
+    this.currentForeground = null;
+    this.currentMidground = null;
     this.currentCharacter = null;
     this.wolf = null;
     this.entities = [];
@@ -121,6 +123,8 @@ GameEngine.prototype.startInput = function() {
         
         that.keyMap[e.code] = true;
 
+
+
         // if (e.code === "KeyD" && !that.keyMap[e.code] && !that.didLeftClick) {
 
         //     that.d = true;
@@ -135,7 +139,11 @@ GameEngine.prototype.startInput = function() {
 
             that.changeCharacter();
 
-        } 
+        } else if (e.code === "Escape") {
+            toggleFullScreen();
+        }
+
+        
 
     
 
@@ -210,18 +218,20 @@ GameEngine.prototype.update = function() {
 
     for (var i = 0; i < entitiesCount; i++) {
         var entity = this.entities[i];
-
         entity.update();
+        
     }
 }
 
 GameEngine.prototype.draw = function() {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
+    
     for (var i = this.entities.length - 1; i >= 0; i--) {
         var entity = this.entities[i];
-        entity.draw(this.ctx);
+        entity.draw(this.ctx);   
     }
+    
     this.ctx.restore();
 }
 
@@ -232,6 +242,22 @@ GameEngine.prototype.getGameEngine = function() {
 
 GameEngine.prototype.setCurrentBackground = function(background) {
     this.currentBackground = background;
+}
+
+GameEngine.prototype.getCurrentBackground = function() {
+    return this.setCurrentBackground;
+}
+
+GameEngine.prototype.setCurrentForeground = function(foreground) {
+    this.currentForeground = foreground;
+}
+
+GameEngine.prototype.getCurrentForeground = function() {
+    return this.currentForeground;
+}
+
+GameEngine.prototype.setCurrentMidground = function(midground) {
+    this.currentMidground = midground;
 }
 
 //sets current character playing
