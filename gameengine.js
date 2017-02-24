@@ -185,7 +185,6 @@ GameEngine.prototype.startInput = function() {
 
         }
 
-
         // if (e.code === "KeyD" && !that.keyMap[e.code] && !that.didLeftClick) {
 
         //     that.d = true;
@@ -207,7 +206,6 @@ GameEngine.prototype.startInput = function() {
     this.ctx.canvas.addEventListener("keyup", function(e) {
 
         that.keyMap[e.code] = false;
-
         // if (e.code === "KeyD" && !that.didLeftClick) {
         //     that.d = false;
 
@@ -242,7 +240,6 @@ GameEngine.prototype.startInput = function() {
         e.preventDefault();
     }, false);
 
-
     console.log('Input started');
 }
 
@@ -262,7 +259,6 @@ GameEngine.prototype.removeEntity = function(info) {
             temp = this.entities.splice(i, 1);
         }
     }
-
 };
 
 function Timer() {

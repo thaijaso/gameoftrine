@@ -286,12 +286,6 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform90); // mini platform
 
 
-
-
-
-
-
-
     gameEngine.addEntity(foreground);
     gameEngine.addEntity(tree);
 

@@ -614,9 +614,11 @@ function Box(game, x, y) {
     //this property is used for jumping.
     //Each animation shares this property 
     //to do jump + attack, etc.
-    
 
-    this.x = x  ; //game world x and y coordinates
+    var currentCharacter = game.getCurrentCharacter();
+    this.x = (currentCharacter.x - currentCharacter.canvasX) + x;
+
+    // this.x = x  ; //game world x and y coordinates
     this.y = y ;
 
     this.canvasX = x;
@@ -647,7 +649,7 @@ Box.prototype.update = function() {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.game.entities[i];
 
-        if (entity.name === "platform") {
+        if (entity.name === "platform" || entity.name === "box") {
 
             if (this != entity && this.collide(entity)) {
                 //console.log('colliding');
@@ -662,39 +664,37 @@ Box.prototype.update = function() {
                     this.jumpReleased = true;
                     this.jumpElapsedTime = 0;
 
-                } 
-                // else if (this.collideTop(entity)) {
+                }  else if (this.collideTop(entity)) {
 
-                //     this.collidedTop = true;
-                //     this.collidedTopPlatform = entity;
-                //     //this.oldY = this.y;
-                //     this.canvasY += 3;
-                //     this.y += 3;
-                //     this.jumping = false;
+                    this.collidedTop = true;
+                    this.collidedTopPlatform = entity;
+                    //this.oldY = this.y;
+                    this.canvasY += 3;
+                    this.y += 3;
+                    this.jumping = false;
 
-                // } 
-                // else if (this.collideLeft(entity)) {
-                //     //fall after colliding left
-                //     this.collidedLeft = true;
-                //     this.collidedLeftPlatform = entity;
+                } else if (this.collideLeft(entity)) {
+                    //fall after colliding left
+                    this.collidedLeft = true;
+                    this.collidedLeftPlatform = entity;
 
-                //     if (!this.collidedBottom && !this.jumping) {
-                //         this.oldY = this.y;
-                //         this.canvasY += 3;
-                //         this.y += 3;
-                //     } 
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.canvasY += 3;
+                        this.y += 3;
+                    } 
 
-                // } else if (this.collideRight(entity)) {
+                } else if (this.collideRight(entity)) {
 
-                //     this.collidedRight = true;
-                //     this.collidedRightPlatform = entity;
+                    this.collidedRight = true;
+                    this.collidedRightPlatform = entity;
                     
-                //     if (!this.collidedBottom && !this.jumping) {
-                //         this.oldY = this.y;
-                //         this.y += 5;
-                //         this.canvasY += 5;
-                //     }
-                // }
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.y += 5;
+                        this.canvasY += 5;
+                    }
+                }
             }
         }
     }
@@ -739,11 +739,9 @@ Box.prototype.update = function() {
                         !this.collideTop(entity)) {
 
                         //this.collidedTop = false;
-
                     }
                 }
             }
-
         }
 
     } else if (!this.jumping) { //player has not collided therefore fall
@@ -784,6 +782,39 @@ Box.prototype.collideBottom = function(other) {
 
     return this.oldY + this.height < other.y && 
         this.y + this.height >= other.y;
+}
+
+Box.prototype.collideLeft = function(other) {
+    if (this.oldX > other.x + other.width && //was not colliding
+        this.x <= other.x + other.width) {
+
+        console.log('collide left');
+    }
+
+    return this.oldX > other.x + other.width && //was not colliding
+        this.x <= other.x + other.width;
+}
+
+Box.prototype.collideRight = function(other) {
+    if (this.oldX + this.width < other.x &&
+        this.x + this.width >= other.x) {
+
+        console.log('colided right');
+    }
+
+    return this.oldX + this.width < other.x &&
+        this.x + this.width >= other.x;
+}
+
+Box.prototype.collideTop = function(other) {
+    if (this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height) {
+
+        console.log('colided top');
+    }
+
+    return this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height;
 }
 
 //Constructor for mage
