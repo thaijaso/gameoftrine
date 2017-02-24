@@ -434,12 +434,14 @@ Knight.prototype.update = function() {
         this.direction = "right";
         this.oldX = this.x;
         this.x += 3;
+        this.collidedLeft = false;
 
     } else if (gameEngine.keyMap["KeyA"] && !this.collidedLeft) {
 
         this.direction = "left";
         this.oldX = this.x;
         this.x -= 3;
+        this.collidedRight = false;
 
     } else if (gameEngine.keyMap["KeyF"]) {
 
@@ -646,6 +648,8 @@ Box.prototype.draw = function() {
 Box.prototype.update = function() {
 
     var gameEngine = this.game;
+    var currentCharacter = gameEngine.getCurrentCharacter();
+
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.game.entities[i];
 
@@ -751,11 +755,11 @@ Box.prototype.update = function() {
         this.canvasY += 5;
         this.y += 5;
     }
-    if (gameEngine.keyMap["KeyD"]) {
+    if (gameEngine.keyMap["KeyD"]  && !currentCharacter.collidedRight) {
 
         this.canvasX -= 3;
 
-    } else if (gameEngine.keyMap["KeyA"]) {
+    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
         this.canvasX += 3;
     }
