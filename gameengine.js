@@ -11,6 +11,8 @@ window.requestAnimFrame = (function() {
 
 function GameEngine() {
     this.currentBackground = null;
+    this.currentForeground = null;
+    this.currentMidground = null;
     this.currentCharacter = null;
     this.wolf = null;
     this.entities = [];
@@ -128,6 +130,12 @@ GameEngine.prototype.startInput = function() {
 
     }, false);
 
+     this.ctx.canvas.addEventListener("click", function (e) {
+        var box = new Box(that, e.clientX, e.clientY);
+        that.addEntity(box);
+
+    }, false);
+
     this.ctx.canvas.addEventListener("keydown", function(e) {
 
         that.keyMap[e.code] = true;
@@ -179,29 +187,11 @@ GameEngine.prototype.startInput = function() {
 
         }
 
-
-        // if (e.code === "KeyD" && !that.keyMap[e.code] && !that.didLeftClick) {
-
-        //     that.d = true;
-        //     that.right = true;
-
-        // } else if (e.code === "KeyA" && !that.a  && !that.didLeftClick) {
-
-        //     that.a = true;
-        //     that.right = false;
-
-        // if (e.code === "KeyF" && !that.didLeftClick) {
-
-        //     that.changeCharacter();
-
-        // }
-
     }, false);
 
     this.ctx.canvas.addEventListener("keyup", function(e) {
 
         that.keyMap[e.code] = false;
-
         // if (e.code === "KeyD" && !that.didLeftClick) {
         //     that.d = false;
 
@@ -236,7 +226,6 @@ GameEngine.prototype.startInput = function() {
         e.preventDefault();
     }, false);
 
-
     console.log('Input started');
 }
 
@@ -256,7 +245,6 @@ GameEngine.prototype.removeEntity = function(info) {
             temp = this.entities.splice(i, 1);
         }
     }
-
 };
 
 function Timer() {
@@ -277,30 +265,29 @@ Timer.prototype.tick = function() {
 
 GameEngine.prototype.update = function() {
     var entitiesCount = this.entities.length;
+
     for (var i = 0; i < this.entities.length; i++) {
         var entity = this.entities[i];
-        // if (!this.entities[i].removeFromWorld) {
+
         entity.update();
 
         if (entitiesCount != this.entities.length) {
             console.log('bullet added');
             i++;
         }
-
-        // }
     }
 }
 
 GameEngine.prototype.draw = function() {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
+    
     for (var i = this.entities.length - 1; i >= 0; i--) {
-        var entity = this.entities[i];
-        // if (!this.entities[i].removeFromWorld) {
-        entity.draw(this.ctx);
+        var entity = this.entities[i];   
 
-        // }
+        entity.draw(this.ctx);
     }
+    
     this.ctx.restore();
 }
 
@@ -311,6 +298,22 @@ GameEngine.prototype.getGameEngine = function() {
 
 GameEngine.prototype.setCurrentBackground = function(background) {
     this.currentBackground = background;
+}
+
+GameEngine.prototype.getCurrentBackground = function() {
+    return this.setCurrentBackground;
+}
+
+GameEngine.prototype.setCurrentForeground = function(foreground) {
+    this.currentForeground = foreground;
+}
+
+GameEngine.prototype.getCurrentForeground = function() {
+    return this.currentForeground;
+}
+
+GameEngine.prototype.setCurrentMidground = function(midground) {
+    this.currentMidground = midground;
 }
 
 //sets current character playing
@@ -362,10 +365,9 @@ GameEngine.prototype.addWolf = function(theWolf) {
 
 //entities are drawn on the map
 GameEngine.prototype.addEntity = function(entity) {
-    // console.log('Added Entity ' + entity);
-    if (entity.name === "bullet" || entity.name === "arrow") {
+
+    if (entity.name === "bullet" || entity.name === "box" || entity.name === "arrow") {
         this.entities.unshift(entity);
-        // this.entities.splice(0,0,entity);
 
     } else {
         this.entities.push(entity);

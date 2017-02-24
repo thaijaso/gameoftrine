@@ -1,5 +1,3 @@
-
-// no inheritance
 function Background(game, spritesheet) {
     this.x = 0;
     this.y = 0;
@@ -24,6 +22,7 @@ Background.prototype.update = function() {
         this.x = this.x + 1;
     }
 };
+
 
 function Foreground(game, spritesheet) {
     this.x = 0;
@@ -50,7 +49,6 @@ Foreground.prototype.update = function() {
         this.x += 3;
     }
 }
-
 function Midground(game, spritesheet) {
     this.x = 0;
     this.y = 0;
@@ -61,15 +59,17 @@ function Midground(game, spritesheet) {
 
 Midground.prototype.draw = function() {
     this.ctx.drawImage(this.spritesheet, this.x, this.y);
+    
 }
 
 Midground.prototype.update = function() {
     //console.log(this.x);
     var gameEngine = this.game;
+    var currentCharacter = gameEngine.getCurrentCharacter();
 
-    if (gameEngine.keyMap["KeyD"]) {
+    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
         this.x -= 0.8;
-    } else if (gameEngine.keyMap["KeyA"]) {
+    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
         this.x += 0.8;
     }
 }
@@ -81,6 +81,9 @@ function Platform(game, x, y, width, height) {
 
     this.x = x * TILE_SIZE; //game world x and y coordinates
     this.y = y * TILE_SIZE;
+
+    this.oldX = x * TILE_SIZE;
+    this.oldY = y * TILE_SIZE;
 
     this.canvasX = x * TILE_SIZE;
     this.canvasY = y * TILE_SIZE;
@@ -112,6 +115,7 @@ Platform.prototype.update = function() {
 
 
 
+
 function Tree(gameEngine) {
     this.game = gameEngine
 
@@ -123,8 +127,8 @@ function Tree(gameEngine) {
 
     this.ctx = this.game.ctx;
 
-    this.x = 29 * TILE_SIZE;
-    this.y = 25 * TILE_SIZE;
+    //this.x = 29 * TILE_SIZE;
+    //this.y = 25 * TILE_SIZE;
 
     this.width = 8 * TILE_SIZE;
     this.height = 7 * TILE_SIZE;
@@ -149,4 +153,6 @@ Tree.prototype.update = function() {
 
         this.canvasX += 3;
     }
+}
+
 }

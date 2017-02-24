@@ -22,9 +22,12 @@ var AM = new AssetManager();
 var gameState = new GameState();
 
 
-var gameWorld = document.getElementById("gameWorld");
-gameWorld.width = window.innerWidth;
-gameWorld.height = window.innerHeight;
+
+//var gameWorld = document.getElementById("gameWorld");
+
+//gameWorld.width = window.innerWidth;
+//gameWorld.height = window.innerHeight;
+
 
 
 AM.queueDownload("./img/background.png");
@@ -42,6 +45,7 @@ AM.queueDownload("./img/knightwalkleft.png");
 AM.queueDownload("./img/knightjumpright.png");
 AM.queueDownload("./img/knightjumpleft.png");
 AM.queueDownload("./img/knightPORTRAITright.png");
+AM.queueDownload("./img/knight-impact-right.png");
 
 //gunwoman
 AM.queueDownload("./img/gunwomanidleright.png");
@@ -79,6 +83,10 @@ AM.queueDownload("./img/magePORTRAITright.png");
 //skeleton
 AM.queueDownload("./img/skeletonidleright.png");
 AM.queueDownload("./img/skeletonidleleft.png");
+AM.queueDownload("./img/skeleton-walk-left.png");
+AM.queueDownload("./img/skeleton-walk-right.png");
+AM.queueDownload("./img/skeleton-attack-right.png");
+AM.queueDownload("./img/skeleton-attack-left.png");
 
 //skeleton archer
 AM.queueDownload("./img/skeletonarcheridleleft.png");
@@ -95,6 +103,9 @@ AM.queueDownload("./img/arrow.png");
 
 AM.downloadAll(function() {
     var canvas = document.getElementById("gameWorld");
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     canvas.focus();
 
     var ctx = canvas.getContext("2d");
@@ -103,8 +114,7 @@ AM.downloadAll(function() {
 
     gameEngine.init(ctx, AM);
     gameEngine.start();
-    gameState.init(ctx, gameEngine);
-
+    //gameState.init(ctx, gameEngine);
 
     //var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground.png"));
     var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground1.png"));
@@ -117,7 +127,11 @@ AM.downloadAll(function() {
     var mage = new Mage(gameEngine);
     var wolf = new Wolf(gameEngine);
 
-    var skeleton = new Skeleton(gameEngine);
+    var skeleton0 = new Skeleton(gameEngine, 5, 27);
+    var skeleton1 = new Skeleton(gameEngine, 10, 27);
+    var skeleton2 = new Skeleton(gameEngine, 40, 27);
+    var skeleton3 = new Skeleton(gameEngine, 50, 27);
+    
     var tree = new Tree(gameEngine);
 
     var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightPORTRAITright.png"), 0, 0);
@@ -126,10 +140,16 @@ AM.downloadAll(function() {
 
 
     //an entity is any element drawn on the map
+    
     gameEngine.addEntity(knight);
-
-
-    //x,  y, width, height
+    //gameEngine.addEntity(gunwoman);
+    
+    gameEngine.addEntity(skeleton0);
+    gameEngine.addEntity(skeleton1);
+    gameEngine.addEntity(skeleton2);
+    gameEngine.addEntity(skeleton3);
+                                        
+                                            //x,  y, width, height
     var platform1 = new Platform(gameEngine, 0, 31, 110, 1);
     var platform2 = new Platform(gameEngine, 64, 25, 3, 2);
     var platform3 = new Platform(gameEngine, 75, 22, 3, 2);
@@ -215,8 +235,22 @@ AM.downloadAll(function() {
 
 
     // Major Platform 1
+
     gameEngine.addEntity(platform1);
+    
     gameEngine.addEntity(platform2);
+
+    // gameEngine.addEntity(platform3);
+    // gameEngine.addEntity(platform4);
+    // gameEngine.addEntity(platform5);
+    // gameEngine.addEntity(platform6);
+    // gameEngine.addEntity(platform7);
+    // gameEngine.addEntity(platform8);
+    // gameEngine.addEntity(platform9);
+    // gameEngine.addEntity(platform10);
+    // gameEngine.addEntity(platform11);
+    // gameEngine.addEntity(platform12);
+
     gameEngine.addEntity(platform3);
     gameEngine.addEntity(platform4);
     gameEngine.addEntity(platform5);
@@ -303,14 +337,10 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform89); // ladder
     gameEngine.addEntity(platform90); // mini platform
 
-
-
+    
     gameEngine.addEntity(foreground);
     gameEngine.addEntity(tree);
 
-
-    // gameEngine.addEntity(skeleton);
-    // gameEngine.addEntity(tree);
 
     gameEngine.addEntity(knightPortraitRight);
     gameEngine.addEntity(gunwomanPortraitRight);
@@ -331,6 +361,9 @@ AM.downloadAll(function() {
     // gameEngine.addEntity(skeletonArcher);
 
     //gameEngine.setCurrentBackground(background);
+    
+    gameEngine.setCurrentBackground(background);
+    gameEngine.setCurrentForeground(foreground);
 
 
     gameEngine.addEntity(midground);

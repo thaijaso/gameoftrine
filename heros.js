@@ -50,7 +50,7 @@ function Knight(game) {
     this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.035, 12, true, 0.5);
     this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 3, 0.015, 14, false, 0.5);
     this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 2, 0.1, 14, true, 0.5);
-    this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 2, 0.07, 12, true, 0.5);
+    this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 2, 0.035, 12, true, 0.5);
     this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 2, 0.015, 14, false, 0.5);
     this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
     this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
@@ -59,17 +59,17 @@ function Knight(game) {
     this.direction = "right";
 
     this.x = 34 * TILE_SIZE;
-    this.y = 14 * TILE_SIZE;
+    this.y = 27 * TILE_SIZE;
 
     this.oldX = 34 * TILE_SIZE;
-    this.oldY = 14 * TILE_SIZE;
+    this.oldY = 27 * TILE_SIZE;
 
     this.width = 2 * TILE_SIZE;
 
     this.height = 4 * TILE_SIZE - 5;
 
     this.canvasX = 34 * TILE_SIZE;
-    this.canvasY = 14 * TILE_SIZE;
+    this.canvasY = 27 * TILE_SIZE;
 
     this.lastGroundY = null; //y coord of platform last collided with
 
@@ -85,8 +85,8 @@ function Knight(game) {
     this.jumpElapsedTime = 0;
     this.jumpIsDone = false;
 
-
     this.attacking = false;
+    this.attacked = false;
 
     this.collidedWith = null; //checks to see which entity the knight collided with LAST
 
@@ -95,10 +95,10 @@ function Knight(game) {
     this.collidedBottom = false;
     this.collidedTop = false;
 
-    this.collidedLeftPlatform = null;
-    this.collidedRightPlatform = null;
-    this.collidedTopPlatform = null;
-    this.collidedBottomPlatform = null;
+    this.collidedLeftEntity = null;
+    this.collidedRightEntity = null;
+    this.collidedTopEntity = null;
+    this.collidedBottomEntity = null;
 }
 
 //checks for all sides collision
@@ -179,57 +179,183 @@ Knight.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
 
 Knight.prototype.update = function() {
     var gameEngine = this.game;
-
     //handle jumping
+
     if (this.jumping) {
+
+        this.collidedBottom = false;
         jump(this);
 
-        //     this.collidedBottom = false;
-
-        //     // this code is shema working on variable jumping DO NOT DELETE BITCHES
-
-        //     this.timeSinceJump = gameEngine.timer.gameTime - this.jumpStartTime;
-        //     var maxJumpTime = .5;
-        //     var minJumpTime = .05;
-        //     var midJumpTime = .2;
-        //     var totalJumpHeight = 150;
-        //     var minJumpHeight = 50;
-
-        //     // console.log(timeSinceJump);
-
-        //     // if (this.timeSinceJump < minJumpTime ) {
-        //     //     this.jump(totalJumpHeight, this.timeSinceJump, maxJumpTime);
-        //     // }
     }
 
-    if (this.jumpElapsedTime === 0) {
-        this.jumping = false;
+    if (this.attacking) {
+
+        for (var i = 0; i < gameEngine.entities.length; i++) {
+            var entity = this.game.entities[i];
+
+            if (entity.name === "skeleton") {
+
+                if (this.direction === "right" && this.collideAttackRight(entity)) {
+                    console.log('landed attack right');
+
+                    if (this.animationAttackRight.currentFrame() === 10) {
+
+                        //knock back collision
+                        var knockBackCollidedWith = null;
+
+                        for (var j = 0; j < gameEngine.entities.length; j++) {
+                            var potentialCollision = gameEngine.entities[j];
+
+                            if (potentialCollision !== entity && //can't knock back into itself
+                                potentialCollision !== entity.collidedBottomEntity && //cant knock back onto the ground platform
+                                potentialCollision !== this) { //cant knockback into the attacker (knight)
+
+                                //console.log('here');
+
+                                if (entity.knockBackRightCollide(potentialCollision)) {
+                                    
+                                    
+                                    if (!knockBackCollidedWith) {
+                                        
+                                        knockBackCollidedWith = potentialCollision;
+
+                                    } else if (knockBackCollidedWith.x + knockBackCollidedWith.width < 
+                                        potentialCollision.x + potentialCollision.width) {
+
+                                        //find the closest thing to knock back into
+                                        knockBackCollidedWith = potentialCollision;
+
+                                    }
+                                    
+                                }
+                            }
+                        }
+
+                        if (knockBackCollidedWith) {
+                            //console.log(knockBackCollidedWith.x + knockBackCollidedWith.width);
+
+                            entity.x = knockBackCollidedWith.x - entity.width;
+                            entity.oldX = entity.x;
+                            entity.canvasX = knockBackCollidedWith.canvasX - entity.width;
+                            entity.attacked = true;
+
+                        } else {    //nothing to knock back into
+
+                            entity.x = entity.x + 30;
+                            entity.oldX = entity.x;
+                            entity.canvasX = entity.canvasX + 30;
+                            entity.attacked = true;
+
+                        }
+
+                        if (entity.direction === "left") {
+
+                            entity.animationState = "idleLeft";
+
+                        } else {
+
+                            entity.animationState = "idleRight";
+                        } 
+
+                        entity.animationAttackLeft.elapsedTime = 0;
+                        entity.animationAttackRight.elapsedTime = 0;     
+                    }
+                    
+
+                } else if (this !== entity && this.collideAttackLeft(entity)) { //knight attacks left
+                    //console.log('landed attack left');
+
+                    if (this.animationAttackLeft.currentFrame() === 10) {
+
+                        //knock back collision
+                        var knockBackCollidedWith = null;
+
+                        for (var j = 0; j < gameEngine.entities.length; j++) {
+                            var potentialCollision = gameEngine.entities[j];
+
+                            if (potentialCollision !== entity && //can't knock back into itself
+                                potentialCollision !== entity.collidedBottomEntity && //cant knock back onto the ground platform
+                                potentialCollision !== this) { //cant knockback into the attacker (knight)
+
+                                //console.log('here');
+
+                                if (entity.knockBackLeftCollide(potentialCollision)) {
+                                    
+                                    
+                                    if (!knockBackCollidedWith) {
+                                        
+                                        knockBackCollidedWith = potentialCollision;
+
+                                    } else if (knockBackCollidedWith.x + knockBackCollidedWith.width < 
+                                        potentialCollision.x + potentialCollision.width) {
+
+                                        //find the closest thing to knock back into
+                                        knockBackCollidedWith = potentialCollision;
+
+                                    }  
+                                }
+                            }
+                        }
+
+                        if (knockBackCollidedWith) {
+
+                            entity.x = knockBackCollidedWith.x + knockBackCollidedWith.width;
+                            entity.oldX = entity.x;
+                            entity.canvasX = knockBackCollidedWith.canvasX + knockBackCollidedWith.width;
+                            entity.attacked = true;
+
+                        } else {    //nothing to knock back into
+
+                            entity.x = entity.x - 30;
+                            entity.oldX = entity.x;
+                            entity.canvasX = entity.canvasX - 30;
+                            entity.attacked = true;
+
+                        }
+ 
+                        
+
+                        if (entity.direction === "left") {
+
+                            entity.animationState = "idleLeft";
+                        } else {
+
+                            entity.animationState = "idleRight";
+                        }
+
+                        entity.animationAttackLeft.elapsedTime = 0;
+                        entity.animationAttackRight.elapsedTime = 0; 
+                    }
+                }
+            }
+        }
     }
 
     //check if player collided with any platforms
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.game.entities[i];
 
-        if (entity.name === "platform") {
+        if (entity.name === "platform" || entity.name === "skeleton") {
 
-            if (this != entity && this.collide(entity)) {
+            if (this !== entity && this.collide(entity)) {
                 //console.log('colliding');
-
 
                 this.collidedWith = entity;
 
                 if (this.collideBottom(entity)) {
                     this.collidedBottom = true;
                     this.lastGroundY = this.collidedWith.y;
-                    this.collidedBottomPlatform = entity;
+                    this.collidedBottomEntity = entity;
+                    this.canvasY = this.collidedBottomEntity.canvasY - this.height;
+                    this.y = this.collidedBottomEntity.y - this.height;
                     this.jumping = false;
+                    this.jumpReleased = true;
                     this.jumpElapsedTime = 0;
 
                 } else if (this.collideTop(entity)) {
 
                     this.collidedTop = true;
-                    this.collidedTopPlatform = entity;
-                    //this.oldY = this.y;
+                    this.collidedTopEntity = entity;
                     this.canvasY += 3;
                     this.y += 3;
                     this.jumping = false;
@@ -237,45 +363,38 @@ Knight.prototype.update = function() {
                 } else if (this.collideLeft(entity)) {
                     //fall after colliding left
                     this.collidedLeft = true;
-                    this.collidedLeftPlatform = entity;
+                    this.collidedLeftEntity = entity;
 
                     if (!this.collidedBottom && !this.jumping) {
                         this.oldY = this.y;
                         this.canvasY += 3;
                         this.y += 3;
-                    }
+                    } 
 
                 } else if (this.collideRight(entity)) {
 
                     this.collidedRight = true;
-                    this.collidedRightPlatform = entity;
-
+                    this.collidedRightEntity = entity;
+                    
                     if (!this.collidedBottom && !this.jumping) {
                         this.oldY = this.y;
                         this.y += 3;
                         this.canvasY += 3;
-                    }
-
-                    // if (Math.abs((this.collidedBottomPlatform.y + this.collidedBottomPlatform.height) - (entity.y + entity.height) >= 16)) {
-                    //     this.oldY = this.y;
-                    //     this.y -= 16;
-                    //     this.canvasY -= 16;
-                    // }
-
+                    } 
                 }
             }
         }
     }
 
     //check if player is no longer colliding with any platforms
-
+    
     if (this.collidedWith) {
         var stillColliding = false;
 
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = this.game.entities[i];
 
-            if (entity.name === "platform") {
+            if (entity.name === "platform" || entity.name === "skeleton") {
                 if (this != entity && this.collide(entity)) {
                     stillColliding = true;
 
@@ -284,6 +403,7 @@ Knight.prototype.update = function() {
         }
 
         if (!stillColliding) {
+
             this.collidedWith = null;
             this.collidedLeft = false;
             this.collidedRight = false;
@@ -295,32 +415,34 @@ Knight.prototype.update = function() {
             for (var i = 0; i < gameEngine.entities.length; i++) {
                 var entity = this.game.entities[i];
 
-                if (entity.name === "platform") {
+                if (entity.name === "platform" || entity.name === "skeleton") {
                     //check if still colliding right with a platform we collided right with
-                    if (this.collidedRightPlatform === entity &&
-                        !this.collideRight(entity)) {
-
+                    if (this.collidedRightEntity === entity &&  
+                        !this.collide(entity)) {
+                        
                         this.collidedRight = false;
-                    } else if (this.collidedLeftPlatform === entity &&
-                        !this.collideLeft(entity)) {
+                        this.collidedRightEntity = null;
+
+                    } else if (this.collidedLeftEntity === entity &&
+                        !this.collide(entity)) {
 
                         this.collidedLeft = false;
+                        this.collidedLeftEntity = null;
 
-                    } else if (this.collidedTopPlatform === entity &&
+                    } else if (this.collidedTopEntity === entity && 
                         !this.collideTop(entity)) {
 
                         //this.collidedTop = false;
+                        //this.collidedTop = null;
 
                     }
                 }
             }
-
         }
 
     } else if (!this.jumping) { //player has not collided therefore fall
 
         this.oldY = this.y;
-
         this.canvasY += 5;
         this.y += 5;
     }
@@ -365,9 +487,14 @@ Knight.prototype.update = function() {
             this.animationState = "jumpRight";
             this.animationJumpRight.elapsedTime = 0;
             this.jumpStartTime = gameEngine.timer.gameTime;
+            // this.jumpTimeHeld += gameEngine.timer.tick();
+            // startTimer(this.animationJumpRight.elapsedTime);
+
 
         } else if (!gameEngine.keyMap["Space"] && this.jumping && !this.collidedBottom) {
             this.jumpReleased = true;
+            // this.jumping = false;
+
         } else if (gameEngine.keyMap["1"] && !this.attacking && !this.jumping) { //attack only if not already attacking
 
             this.attacking = true;
@@ -420,7 +547,149 @@ Knight.prototype.update = function() {
     }
 }
 
+//checks for all sides collision
+Knight.prototype.collide = function(other) {
+    return this.x <= other.x + other.width &&
+        this.x + this.width >= other.x &&
+        this.y <= other.y + other.height &&
+        this.height + this.y >= other.y;
+};
+
+//Returns true if Knight collided on his left 
+//This function assumes there was a collision
+//Should not be called if there was no collision
+Knight.prototype.collideLeft = function(other) {
+    var knightOldBoxLeft = this.oldX;
+    var knightBoxLeft = this.x;
+
+    var otherOldBoxRight = other.oldX + other.width;
+    var otherBoxRight = other.x + other.width;
+
+    if (knightOldBoxLeft > otherOldBoxRight - 3 && //was not colliding
+        knightBoxLeft <= otherBoxRight) {
+
+        //console.log('knight collide left');
+    }
+
+    return knightOldBoxLeft > otherOldBoxRight - 3 && //was not colliding
+        knightBoxLeft <= otherBoxRight;
+}
+
+//Returns true if Knight collided on his right 
+//This function assumes there was a collision
+//Should not be called if there was no collision
+Knight.prototype.collideRight = function(other) {
+    var oldPlayerBoxRight = this.oldX + this.width;
+    var playerBoxRight = this.x + this.width;
+
+    var oldOtherBoxLeft = other.oldX;
+    var otherBoxLeft = other.x;
+
+    if (oldPlayerBoxRight < oldOtherBoxLeft &&
+        playerBoxRight >= otherBoxLeft) {
+
+        //console.log('knight colided right');
+    }
+
+
+    return oldPlayerBoxRight < oldOtherBoxLeft + 3 &&
+        playerBoxRight >= otherBoxLeft;
+}
+
+//Returns true if Knight collided on his top 
+//This function assumes there was a collision
+//Should not be called if there was no collision
+Knight.prototype.collideTop = function(other) {
+    if (this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height) {
+
+        //console.log('knight colided top');
+    }
+
+    return this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height;
+}
+
+//Returns true if Knight collided on his bottom 
+//This function assumes there was a collision
+//Should not be called if there was no collision
+Knight.prototype.collideBottom = function(other) {
+    if (this.oldY + this.height < other.y && 
+        this.y + this.height >= other.y) {
+        
+        //console.log('collided bottom');
+    }
+
+    return this.oldY + this.height < other.y && 
+        this.y + this.height >= other.y;
+}
+
+//Checks to see if enemy is within attack range. 
+//Returns true if it is, false otherwise
+Knight.prototype.collideAttackRight = function(other) {
+    var attackBoxLeft = this.x + this.width;
+    var attackBoxRight = attackBoxLeft + 92;
+    var attackBoxTop = this.y;
+    var attackBoxBottom = this.y + this.height;
+
+    return attackBoxLeft <= other.x + other.width &&
+        attackBoxRight >= other.x &&
+        attackBoxTop <= other.y + other.height &&
+        attackBoxBottom >= other.y;
+}
+
+Knight.prototype.collideAttackLeft = function(other) {
+    var attackBoxLeft = this.x - 92;
+    var attackBoxRight = this.x;
+    var attackBoxTop = this.y;
+    var attackBoxBottom = this.y + this.height;
+
+    return attackBoxRight >= other.x &&
+        attackBoxLeft <= other.x + other.width &&
+        attackBoxTop <= other.y + other.height &&
+        attackBoxBottom >= other.y;
+
+}
+
+Knight.prototype.knockBackLeftCollide = function(other) {
+    var attackBoxLeft = this.x - 15;
+    var attackBoxRight = this.x;
+    var attackBoxTop = this.y;
+    var attackBoxBottom = this.y + this.height;
+
+    return attackBoxRight >= other.x &&
+        attackBoxLeft <= other.x + other.width &&
+        attackBoxTop <= other.y + other.height &&
+        attackBoxBottom >= other.y;
+}
+
+Knight.prototype.knockBackRightCollide = function(other) {
+    var attackBoxLeft = this.x + this.width;
+    var attackBoxRight = attackBoxLeft + 15;
+    var attackBoxTop = this.y;
+    var attackBoxBottom = this.y + this.height;
+
+    return attackBoxLeft <= other.x + other.width &&
+        attackBoxRight >= other.x &&
+        attackBoxTop <= other.y + other.height &&
+        attackBoxBottom >= other.y;
+}
+
+Knight.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
+
+    var jumpDistance = 1 - timeSinceJump / maxJumpTime;
+
+    var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+
+    this.oldY = this.y;
+    this.canvasY = this.lastGroundY - this.height - height;
+    this.y = this.canvasY;
+};
+
 Knight.prototype.draw = function() {
+    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+
     if (this.animationState === "idleRight") {
 
         this.animationIdleRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
@@ -455,6 +724,266 @@ Knight.prototype.draw = function() {
     }
 }
 
+
+function Box(game, x, y) {
+    this.radius = 10;
+    this.name = "box";
+    this.game = game;
+    this.ctx = game.ctx;
+    // this.colors = ["Green", "Green", "Blue", "Red"];
+    // this.setNotIt();
+    // x = Math.random();
+    // console.log("random = " + x);
+    // Entity.call(this, game, this.radius + .5 * (255 - this.radius * 2), this.radius + .5 * (1 - this.radius * 2));
+    
+    // this.direction = "right";
+    
+    // this.x = 26 * TILE_SIZE;
+    // this.y = 14 * TILE_SIZE;
+    
+    // this.width = .78 * TILE_SIZE;
+    // this.height = .78 * TILE_SIZE;
+    
+    // this.canvasX = 26 * TILE_SIZE;
+    // this.canvasY = 14 * TILE_SIZE;
+   
+    // this.lastGroundY = null; //y coord of platform last collided with
+
+
+    // var currentCharacter = that.getCurrentCharacter();
+
+    // var rect = that.ctx.canvas.getBoundingClientRect();
+    // var xCord = x;
+    // var yCord = y;
+    // console.log("The x: " + xCord + " and y: " + yCord);
+
+    // this.canvasX = xCord/TILE_SIZE;
+    // this.canvasY = yCord/TILE_SIZE;
+
+    // this.width = 2;
+    // this.height = 2;
+
+    // this.gameEngine = that;
+
+    // this.x = (currentCharacter.x - currentCharacter.canvasX) + xCord;
+    // this.y = yCord/TILE_SIZE;
+
+    // var platformBox = new Platform(this.gameEngine, this.canvasX, this.canvasY, 2, 2);
+  
+    /*platformBox.x = this.x;
+
+    // console.log(platformBox); 
+    this.gameEngine.addEntity(platformBox);*/
+    // var gameEngine = new GameEngine();
+    
+
+    //this property is used for jumping.
+    //Each animation shares this property 
+    //to do jump + attack, etc.
+
+    var currentCharacter = game.getCurrentCharacter();
+    this.x = (currentCharacter.x - currentCharacter.canvasX) + x;
+
+    // this.x = x  ; //game world x and y coordinates
+    this.y = y ;
+
+    this.canvasX = x;
+    this.canvasY = y;
+    this.width = 2 * TILE_SIZE;
+    this.height = 2 * TILE_SIZE;
+
+
+    this.collidedWith = null; //checks to see which entity the knight collided with
+    this.collidedLeft = false; //checks to see if knight collided on its left side
+    this.collidedRight = false; 
+    this.collidedBottom = false;
+    this.collidedTop = false; 
+};
+
+Box.prototype = new Entity();
+Box.prototype.constructor = Box;
+
+Box.prototype.draw = function() {
+   
+    this.ctx.fillStyle = "#ff0000";
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+};
+
+Box.prototype.update = function() {
+
+    var gameEngine = this.game;
+    var currentCharacter = gameEngine.getCurrentCharacter();
+
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        var entity = this.game.entities[i];
+
+        if (entity.name === "platform" || entity.name === "box") {
+
+            if (this != entity && this.collide(entity)) {
+                //console.log('colliding');
+
+
+                this.collidedWith = entity;
+
+                if (this.collideBottom(entity)) {
+                    this.collidedBottom = true;
+                    this.lastGroundY = this.collidedWith.y;
+                    this.jumping = false;
+                    this.jumpReleased = true;
+                    this.jumpElapsedTime = 0;
+
+                }  else if (this.collideTop(entity)) {
+
+                    this.collidedTop = true;
+                    this.collidedTopPlatform = entity;
+                    //this.oldY = this.y;
+                    this.canvasY += 3;
+                    this.y += 3;
+                    this.jumping = false;
+
+                } else if (this.collideLeft(entity)) {
+                    //fall after colliding left
+                    this.collidedLeft = true;
+                    this.collidedLeftPlatform = entity;
+
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.canvasY += 3;
+                        this.y += 3;
+                    } 
+
+                } else if (this.collideRight(entity)) {
+
+                    this.collidedRight = true;
+                    this.collidedRightPlatform = entity;
+                    
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.y += 5;
+                        this.canvasY += 5;
+                    }
+                }
+            }
+        }
+    }
+
+    if (this.collidedWith) {
+        var stillColliding = false;
+
+        for (var i = 0; i < gameEngine.entities.length; i++) {
+            var entity = this.game.entities[i];
+
+            if (entity.name === "platform") {
+                if (this != entity && this.collide(entity)) {
+                    stillColliding = true;
+                }
+            }
+        }
+
+        if (!stillColliding) {
+            this.collidedWith = null;
+            this.collidedLeft = false;
+            this.collidedRight = false;
+            this.collidedBottom = false;
+            this.collidedTop = false;
+
+        } else { //still colliding
+
+            for (var i = 0; i < gameEngine.entities.length; i++) {
+                var entity = this.game.entities[i];
+
+                if (entity.name === "platform") {
+                    //check if still colliding right with a platform we collided right with
+                    if (this.collidedRightPlatform === entity &&  
+                        !this.collideRight(entity)) {
+                        
+                        this.collidedRight = false;
+                    } else if (this.collidedLeftPlatform === entity &&
+                        !this.collideLeft(entity)) {
+
+                        this.collidedLeft = false;
+
+                    } else if (this.collidedTopPlatform === entity && 
+                        !this.collideTop(entity)) {
+
+                        //this.collidedTop = false;
+                    }
+                }
+            }
+        }
+
+    } else if (!this.jumping) { //player has not collided therefore fall
+
+        this.oldY = this.y;
+
+        this.canvasY += 5;
+        this.y += 5;
+    }
+    if (gameEngine.keyMap["KeyD"]  && !currentCharacter.collidedRight) {
+
+        this.canvasX -= 3;
+
+    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+        this.canvasX += 3;
+    }
+}
+
+
+//checks for all sides collision
+Box.prototype.collide = function(other) {
+    return this.x <= other.x + other.width &&
+        this.x + this.width >= other.x &&
+        this.y <= other.y + other.height &&
+        this.height + this.y >= other.y;
+};
+
+//Returns true if Knight collided on his bottom 
+//This function assumes there was a collision
+//Should not be called if there was no collision
+Box.prototype.collideBottom = function(other) {
+    if (this.oldY + this.height < other.y && 
+        this.y + this.height >= other.y) {
+        
+        console.log('box collided bottom');
+    }
+
+    return this.oldY + this.height < other.y && 
+        this.y + this.height >= other.y;
+}
+
+Box.prototype.collideLeft = function(other) {
+    if (this.oldX > other.x + other.width && //was not colliding
+        this.x <= other.x + other.width) {
+
+        console.log('collide left');
+    }
+
+    return this.oldX > other.x + other.width && //was not colliding
+        this.x <= other.x + other.width;
+}
+
+Box.prototype.collideRight = function(other) {
+    if (this.oldX + this.width < other.x &&
+        this.x + this.width >= other.x) {
+
+        console.log('colided right');
+    }
+
+    return this.oldX + this.width < other.x &&
+        this.x + this.width >= other.x;
+}
+
+Box.prototype.collideTop = function(other) {
+    if (this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height) {
+
+        console.log('colided top');
+    }
+
+    return this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height;
+}
 
 //Constructor for mage
 function Mage(game) {
@@ -620,7 +1149,7 @@ Mage.prototype.update = function() {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.game.entities[i];
 
-        if (entity.name === "platform") {
+        if (entity.name === "platform" || entity.name === "box") {
 
             if (this != entity && this.collide(entity)) {
                 //console.log('colliding');
@@ -780,7 +1309,7 @@ Mage.prototype.update = function() {
 }
 
 
-//Constructor for gunwoman
+//Constructor for 
 function Gunwoman(game) {
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanidleright.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanwalkright.png");
@@ -1164,9 +1693,6 @@ Gunwoman.prototype.update = function() {
     }
 }
 
-
-
-// END ENEMIES
 
 
 var id = 0;
