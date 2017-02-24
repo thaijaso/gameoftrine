@@ -10,7 +10,7 @@ function Animation(entity, spriteSheet, frameWidth, frameHeight, sheetWidth, fra
     this.sheetWidth = sheetWidth;
     this.frames = frames;
     this.totalTime = frameDuration * frames;
-    this.elapsedTime = 0;   //used for jumping as well as various other animations
+    this.elapsedTime = 0; //used for jumping as well as various other animations
     this.loop = loop;
     this.scale = scale;
 }
@@ -22,11 +22,11 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
 
     this.elapsedTime += tick;
 
-    if (currentCharacter.jumping && 
-        (this.entity.name === "knight" || 
-         this.entity.name === "gunwoman" ||
-         this.entity.name === "mage")) {
-        
+    if (currentCharacter.jumping &&
+        (this.entity.name === "knight" ||
+            this.entity.name === "gunwoman" ||
+            this.entity.name === "mage")) {
+
         currentCharacter.jumpElapsedTime += tick;
     }
 
@@ -55,6 +55,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
                 currentCharacter.attacking = false;
             }
 
+
             if (this.entity.name === "skeleton") {
                 
                 if (this.entity.direction === "right") {
@@ -69,15 +70,13 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
             }
         }
     }
-
+    
     var frame = this.currentFrame();
 
     var xindex = 0;
     var yindex = 0;
     xindex = frame % this.sheetWidth;
     yindex = Math.floor(frame / this.sheetWidth);
-    
-  
 
     ctx.drawImage(this.spriteSheet,
         xindex * this.frameWidth, yindex * this.frameHeight, // source from sheet
@@ -93,6 +92,36 @@ Animation.prototype.currentFrame = function() {
 
 Animation.prototype.isDone = function() {
     return (this.elapsedTime >= this.totalTime);
+}
+
+function jump(character) {
+    console.log("jump");
+
+
+        character.collidedBottom = false;
+
+    //     // this.timeSinceJump = gameEngine.timer.gameTime - this.jumpStartTime;
+    //     // var maxJumpTime = .5;
+    //     // var minJumpTime = .05;
+    //     // var midJumpTime = .2;
+    //     // var totalJumpHeight = 150;
+    //     // var minJumpHeight = 50;
+
+
+        var jumpDistance = character.jumpElapsedTime /
+            character.animationJumpRight.totalTime;
+
+        var totalHeight = 120;
+
+        if (jumpDistance > 0.5)
+            jumpDistance = 1 - jumpDistance;
+
+        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+
+        character.oldY = character.y;
+        character.canvasY = character.lastGroundY - character.height - height;
+        character.y = character.canvasY;
+
 }
 
 function Knight(game) {
@@ -141,11 +170,13 @@ function Knight(game) {
     this.jumpReleased = false;
     this.jumpTimeHeld = 0;
     this.jumpStartTime = 0;
+    this.timeSinceJump = 0;
 
     //this property is used for jumping.
     //Each animation shares this property 
     //to do jump + attack, etc.
     this.jumpElapsedTime = 0;
+    this.jumpIsDone = false;
 
     this.attacking = false;
     this.attacked = false;
@@ -155,13 +186,89 @@ function Knight(game) {
     this.collidedLeft = false; //checks to see if knight collided on its left side
     this.collidedRight = false;
     this.collidedBottom = false;
-    this.collidedTop = false; 
+    this.collidedTop = false;
 
     this.collidedLeftEntity = null;
     this.collidedRightEntity = null;
     this.collidedTopEntity = null;
     this.collidedBottomEntity = null;
 }
+
+//checks for all sides collision
+Knight.prototype.collide = function(other) {
+    return this.x <= other.x + other.width &&
+        this.x + this.width >= other.x &&
+        this.y <= other.y + other.height &&
+        this.height + this.y >= other.y;
+};
+
+//Returns true if Knight collided on his left 
+//This function assumes there was a collision
+//Should not be called if there was no collision
+Knight.prototype.collideLeft = function(other) {
+    if (this.oldX > other.x + other.width && //was not colliding
+        this.x <= other.x + other.width) {
+
+        console.log('collide left');
+    }
+
+    return this.oldX > other.x + other.width && //was not colliding
+        this.x <= other.x + other.width;
+}
+
+//Returns true if Knight collided on his right 
+//This function assumes there was a collision
+//Should not be called if there was no collision
+Knight.prototype.collideRight = function(other) {
+    if (this.oldX + this.width < other.x &&
+        this.x + this.width >= other.x) {
+
+        console.log('colided right');
+    }
+
+    return this.oldX + this.width < other.x &&
+        this.x + this.width >= other.x;
+}
+
+//Returns true if Knight collided on his top 
+//This function assumes there was a collision
+//Should not be called if there was no collision
+Knight.prototype.collideTop = function(other) {
+    if (this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height) {
+
+        console.log('colided top');
+    }
+
+    return this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height;
+}
+
+//Returns true if Knight collided on his bottom 
+//This function assumes there was a collision
+//Should not be called if there was no collision
+Knight.prototype.collideBottom = function(other) {
+    if (this.oldY + this.height < other.y &&
+        this.y + this.height >= other.y) {
+
+        //console.log('collided bottom');
+    }
+
+    return this.oldY + this.height < other.y &&
+        this.y + this.height >= other.y;
+}
+
+
+Knight.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
+
+    var jumpDistance = 1 - timeSinceJump / maxJumpTime;
+    var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+
+    this.oldY = this.y;
+    this.canvasY = this.lastGroundY - this.height - height;
+    this.y = this.canvasY;
+
+};
 
 Knight.prototype.update = function() {
     var gameEngine = this.game;
@@ -715,9 +822,9 @@ Knight.prototype.draw = function() {
 
     } else if (this.animationState === "attackRight") {
 
-         this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY - 2);
+        this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY - 2);
 
-    } else if(this.animationState === "idleLeft") {
+    } else if (this.animationState === "idleLeft") {
 
         this.animationIdleLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY - 2);
 
@@ -732,7 +839,268 @@ Knight.prototype.draw = function() {
     } else if (this.animationState === "attackLeft") {
 
         this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 68, this.canvasY - 2);
-    } 
+    }
+}
+
+
+function Box(game, x, y) {
+    this.radius = 10;
+    this.name = "box";
+    this.game = game;
+    this.ctx = game.ctx;
+    // this.colors = ["Green", "Green", "Blue", "Red"];
+    // this.setNotIt();
+    // x = Math.random();
+    // console.log("random = " + x);
+    // Entity.call(this, game, this.radius + .5 * (255 - this.radius * 2), this.radius + .5 * (1 - this.radius * 2));
+    
+    // this.direction = "right";
+    
+    // this.x = 26 * TILE_SIZE;
+    // this.y = 14 * TILE_SIZE;
+    
+    // this.width = .78 * TILE_SIZE;
+    // this.height = .78 * TILE_SIZE;
+    
+    // this.canvasX = 26 * TILE_SIZE;
+    // this.canvasY = 14 * TILE_SIZE;
+   
+    // this.lastGroundY = null; //y coord of platform last collided with
+
+
+    // var currentCharacter = that.getCurrentCharacter();
+
+    // var rect = that.ctx.canvas.getBoundingClientRect();
+    // var xCord = x;
+    // var yCord = y;
+    // console.log("The x: " + xCord + " and y: " + yCord);
+
+    // this.canvasX = xCord/TILE_SIZE;
+    // this.canvasY = yCord/TILE_SIZE;
+
+    // this.width = 2;
+    // this.height = 2;
+
+    // this.gameEngine = that;
+
+    // this.x = (currentCharacter.x - currentCharacter.canvasX) + xCord;
+    // this.y = yCord/TILE_SIZE;
+
+    // var platformBox = new Platform(this.gameEngine, this.canvasX, this.canvasY, 2, 2);
+  
+    /*platformBox.x = this.x;
+
+    // console.log(platformBox); 
+    this.gameEngine.addEntity(platformBox);*/
+    // var gameEngine = new GameEngine();
+    
+
+    //this property is used for jumping.
+    //Each animation shares this property 
+    //to do jump + attack, etc.
+
+    var currentCharacter = game.getCurrentCharacter();
+    this.x = (currentCharacter.x - currentCharacter.canvasX) + x;
+
+    // this.x = x  ; //game world x and y coordinates
+    this.y = y ;
+
+    this.canvasX = x;
+    this.canvasY = y;
+    this.width = 2 * TILE_SIZE;
+    this.height = 2 * TILE_SIZE;
+
+
+    this.collidedWith = null; //checks to see which entity the knight collided with
+    this.collidedLeft = false; //checks to see if knight collided on its left side
+    this.collidedRight = false; 
+    this.collidedBottom = false;
+    this.collidedTop = false; 
+};
+
+Box.prototype = new Entity();
+Box.prototype.constructor = Box;
+
+Box.prototype.draw = function() {
+   
+    this.ctx.fillStyle = "#ff0000";
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+};
+
+Box.prototype.update = function() {
+
+    var gameEngine = this.game;
+    var currentCharacter = gameEngine.getCurrentCharacter();
+
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        var entity = this.game.entities[i];
+
+        if (entity.name === "platform" || entity.name === "box") {
+
+            if (this != entity && this.collide(entity)) {
+                //console.log('colliding');
+
+
+                this.collidedWith = entity;
+
+                if (this.collideBottom(entity)) {
+                    this.collidedBottom = true;
+                    this.lastGroundY = this.collidedWith.y;
+                    this.jumping = false;
+                    this.jumpReleased = true;
+                    this.jumpElapsedTime = 0;
+
+                }  else if (this.collideTop(entity)) {
+
+                    this.collidedTop = true;
+                    this.collidedTopPlatform = entity;
+                    //this.oldY = this.y;
+                    this.canvasY += 3;
+                    this.y += 3;
+                    this.jumping = false;
+
+                } else if (this.collideLeft(entity)) {
+                    //fall after colliding left
+                    this.collidedLeft = true;
+                    this.collidedLeftPlatform = entity;
+
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.canvasY += 3;
+                        this.y += 3;
+                    } 
+
+                } else if (this.collideRight(entity)) {
+
+                    this.collidedRight = true;
+                    this.collidedRightPlatform = entity;
+                    
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.y += 5;
+                        this.canvasY += 5;
+                    }
+                }
+            }
+        }
+    }
+
+    if (this.collidedWith) {
+        var stillColliding = false;
+
+        for (var i = 0; i < gameEngine.entities.length; i++) {
+            var entity = this.game.entities[i];
+
+            if (entity.name === "platform") {
+                if (this != entity && this.collide(entity)) {
+                    stillColliding = true;
+                }
+            }
+        }
+
+        if (!stillColliding) {
+            this.collidedWith = null;
+            this.collidedLeft = false;
+            this.collidedRight = false;
+            this.collidedBottom = false;
+            this.collidedTop = false;
+
+        } else { //still colliding
+
+            for (var i = 0; i < gameEngine.entities.length; i++) {
+                var entity = this.game.entities[i];
+
+                if (entity.name === "platform") {
+                    //check if still colliding right with a platform we collided right with
+                    if (this.collidedRightPlatform === entity &&  
+                        !this.collideRight(entity)) {
+                        
+                        this.collidedRight = false;
+                    } else if (this.collidedLeftPlatform === entity &&
+                        !this.collideLeft(entity)) {
+
+                        this.collidedLeft = false;
+
+                    } else if (this.collidedTopPlatform === entity && 
+                        !this.collideTop(entity)) {
+
+                        //this.collidedTop = false;
+                    }
+                }
+            }
+        }
+
+    } else if (!this.jumping) { //player has not collided therefore fall
+
+        this.oldY = this.y;
+
+        this.canvasY += 5;
+        this.y += 5;
+    }
+    if (gameEngine.keyMap["KeyD"]  && !currentCharacter.collidedRight) {
+
+        this.canvasX -= 3;
+
+    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+        this.canvasX += 3;
+    }
+}
+
+
+//checks for all sides collision
+Box.prototype.collide = function(other) {
+    return this.x <= other.x + other.width &&
+        this.x + this.width >= other.x &&
+        this.y <= other.y + other.height &&
+        this.height + this.y >= other.y;
+};
+
+//Returns true if Knight collided on his bottom 
+//This function assumes there was a collision
+//Should not be called if there was no collision
+Box.prototype.collideBottom = function(other) {
+    if (this.oldY + this.height < other.y && 
+        this.y + this.height >= other.y) {
+        
+        console.log('box collided bottom');
+    }
+
+    return this.oldY + this.height < other.y && 
+        this.y + this.height >= other.y;
+}
+
+Box.prototype.collideLeft = function(other) {
+    if (this.oldX > other.x + other.width && //was not colliding
+        this.x <= other.x + other.width) {
+
+        console.log('collide left');
+    }
+
+    return this.oldX > other.x + other.width && //was not colliding
+        this.x <= other.x + other.width;
+}
+
+Box.prototype.collideRight = function(other) {
+    if (this.oldX + this.width < other.x &&
+        this.x + this.width >= other.x) {
+
+        console.log('colided right');
+    }
+
+    return this.oldX + this.width < other.x &&
+        this.x + this.width >= other.x;
+}
+
+Box.prototype.collideTop = function(other) {
+    if (this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height) {
+
+        console.log('colided top');
+    }
+
+    return this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height;
 }
 
 //Constructor for mage
@@ -768,8 +1136,8 @@ function Mage(game) {
 
     this.direction = "right";
 
-    this.x = 34 * TILE_SIZE;
-    this.y = 14 * TILE_SIZE;
+    // this.x = 34 * TILE_SIZE;
+    // this.y = 14 * TILE_SIZE;
 
     //for direction of collision
     this.oldX = 34 * TILE_SIZE;
@@ -778,8 +1146,8 @@ function Mage(game) {
     this.width = 2 * TILE_SIZE;
     this.height = 4 * TILE_SIZE;
 
-    this.canvasX = 34 * TILE_SIZE;
-    this.canvasY = 14 * TILE_SIZE;
+    // this.canvasX = 34 * TILE_SIZE;
+    // this.canvasY = 14 * TILE_SIZE;
 
     this.lastGroundY = null; //y coord of platform last collided with
 
@@ -892,26 +1260,14 @@ Mage.prototype.update = function() {
     //handle jumping
     if (this.jumping) {
 
-        var jumpDistance = this.jumpElapsedTime /
-            this.animationJumpRight.totalTime;
-
-        var totalHeight = 120;
-
-        if (jumpDistance > 0.5)
-            jumpDistance = 1 - jumpDistance;
-
-        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-
-        this.oldY = this.y;
-        this.canvasY = this.lastGroundY - this.height - height;
-        this.y = this.canvasY;
+        jump(this);
     }
 
     //check if player collided with any platforms
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.game.entities[i];
 
-        if (entity.name === "platform") {
+        if (entity.name === "platform" || entity.name === "box") {
 
             if (this != entity && this.collide(entity)) {
                 //console.log('colliding');
@@ -1076,6 +1432,7 @@ function Gunwoman(game) {
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanidleright.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanwalkright.png");
     var attackRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanattackright.png");
+    var attackRightUpAnimationSpriteSheet = AM.getAsset("./img/gunwomanattackrightup.png");
 
     var idleLeftAnimationSpriteSheet = AM.getAsset("./img/gunwomanidleleft.png");
     var walkLeftAnimationSpriteSheet = AM.getAsset("./img/gunwomanwalkleft.png");
@@ -1094,10 +1451,11 @@ function Gunwoman(game) {
 
     this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 5, 0.05, 22, true, 0.5);
     this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.035, 12, true, 0.5);
-    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 4, 0.015, 16, false, 0.5);
+    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 4, 0.015, 23, false, 0.5);
+    this.animationAttackRightUp = new Animation(this, attackRightUpAnimationSpriteSheet, 384, 192, 4, .015, 22, false, 0.5);
     this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 5, 0.1, 22, true, 0.5);
     this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 2, 0.07, 12, true, 0.5);
-    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 4, 0.015, 16, false, 0.5);
+    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 4, 0.015, 19, false, 0.5);
     this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
     this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 11, false, 0.5);
     this.animationState = "idleRight";
@@ -1129,6 +1487,13 @@ function Gunwoman(game) {
     this.collidedRight = false;
     this.collidedBottom = false;
     this.collidedTop = false;
+    // this.myBullet = {
+    //     x: 607,
+    //     y: 315,
+    //     width: 5,
+    //     height: 3,
+    //     tempX: 607
+    // };
 }
 
 Gunwoman.prototype.collide = function(other) {
@@ -1188,6 +1553,7 @@ Gunwoman.prototype.draw = function() {
 
         this.animationIdleRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
 
+
     } else if (this.animationState === "walkRight") {
 
         this.animationWalkRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
@@ -1197,8 +1563,12 @@ Gunwoman.prototype.draw = function() {
         this.animationJumpRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
 
     } else if (this.animationState === "attackRight") {
-
-        this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY);
+        if (this.game.clickX > this.canvasX) {
+            this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY);
+        } else {
+            this.direction = "left";
+            this.animationState = "attackLeft";
+        }
 
     } else if (this.animationState === "idleLeft") { // START LEFT HERE
 
@@ -1214,29 +1584,33 @@ Gunwoman.prototype.draw = function() {
 
     } else if (this.animationState === "attackLeft") {
 
-        this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 81, this.canvasY);
+        if (this.game.clickX < this.canvasX) {
+            this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 81, this.canvasY);
+        } else {
+            this.direction = "right";
+            this.animationState = "attackRightUp";
+        }
+
+    } else if (this.animationState === "attackRightUp") {
+
+        if (this.game.clickX > this.canvasX) {
+            this.animationAttackRightUp.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY);
+
+        } else {
+            this.direction = "left";
+            this.animationState = "attackLeft";
+        }
+
     }
+
 }
 
 Gunwoman.prototype.update = function() {
     var gameEngine = this.game;
-
     //handle jumping
     if (this.jumping) {
 
-        var jumpDistance = this.jumpElapsedTime /
-            this.animationJumpRight.totalTime;
-
-        var totalHeight = 120;
-
-        if (jumpDistance > 0.5)
-            jumpDistance = 1 - jumpDistance;
-
-        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-
-        this.oldY = this.y;
-        this.canvasY = this.lastGroundY - this.height - height;
-        this.y = this.canvasY;
+        jump(this);
     }
 
     //check if player collided with any platforms
@@ -1324,25 +1698,51 @@ Gunwoman.prototype.update = function() {
         this.oldX = this.x;
         this.x -= 3;
 
-    } else if (gameEngine.keyMap["KeyF"]) {
-
-        //gameEngine.changeCharacter();
     }
+
+    if (gameEngine.keyMap["1"] && this.animationAttackRight.currentFrame() === 8 ||
+        gameEngine.keyMap["1"] && this.animationAttackRightUp.currentFrame() === 9 ||
+        gameEngine.keyMap["1"] && this.animationAttackLeft.currentFrame() === 8) {
+
+        var newBullet = new Bullet(gameEngine);
+        gameEngine.addEntity(newBullet);
+
+
+    } else if (gameEngine.keyMap["1"] && gameEngine.keyMap["KeyD"] && this.animationAttackRight.currentFrame() === 8) {
+
+        var newBullet = new Bullet(gameEngine);
+        gameEngine.addEntity(newBullet);
+
+    }
+
 
     //handle animation changes
     if (this.direction === "right") {
 
         if (gameEngine.keyMap["1"] && gameEngine.keyMap["KeyD"] && !this.attacking) {
+            if (gameEngine.clickY < this.canvasY - 50) {
+                this.attacking = true;
+                this.animationState = "attackRightUp";
+                this.animationAttackRightUp.elapsedTime = 0;
+            } else {
+                this.attacking = true;
+                this.animationState = "attackRight";
+                this.animationAttackRight.elapsedTime = 0;
 
-            this.attacking = true;
-            this.animationState = "attackRight";
-            this.animationAttackRight.elapsedTime = 0;
+            }
+
 
         } else if (gameEngine.keyMap["1"] && !this.attacking && this.jumping) {
+            if (gameEngine.clickY < this.canvasY - 50) {
+                this.attacking = true;
+                this.animationState = "attackRightUp";
+                this.animationAttackRightUp.elapsedTime = 0;
+            } else {
+                this.attacking = true;
+                this.animationState = "attackRight";
+                this.animationAttackRight.elapsedTime = 0;
 
-            this.attacking = true;
-            this.animationState = "attackRight";
-            this.animationAttackRight.elapsedTime = 0;
+            }
 
         } else if (gameEngine.keyMap["Space"] && !this.jumping && this.collidedBottom) { //jump only if not already jumping
 
@@ -1352,9 +1752,16 @@ Gunwoman.prototype.update = function() {
 
         } else if (gameEngine.keyMap["1"] && !this.attacking && !this.jumping) { //attack only if not already attacking
 
-            this.attacking = true;
-            this.animationState = "attackRight";
-            this.animationAttackRight.elapsedTime = 0;
+            if (gameEngine.clickY < this.canvasY - 50) {
+                this.attacking = true;
+                this.animationState = "attackRightUp";
+                this.animationAttackRightUp.elapsedTime = 0;
+            } else {
+                this.attacking = true;
+                this.animationState = "attackRight";
+                this.animationAttackRight.elapsedTime = 0;
+
+            }
 
         } else if (gameEngine.keyMap["KeyD"] && !this.jumping && !this.attacking) { //only walk if not jumping
 
@@ -1368,7 +1775,7 @@ Gunwoman.prototype.update = function() {
 
     } else { //direction is left
         if (gameEngine.keyMap["1"] && gameEngine.keyMap["KeyA"] && !this.attacking) {
-
+            console.log("here");
             this.attacking = true;
             this.animationState = "attackLeft";
             this.animationAttackLeft.elapsedTime = 0;
@@ -1401,7 +1808,6 @@ Gunwoman.prototype.update = function() {
             this.animationState = "idleLeft";
 
         }
-
     }
 }
 
@@ -2188,15 +2594,17 @@ function Midground(game, spritesheet) {
 
 Midground.prototype.draw = function() {
     this.ctx.drawImage(this.spritesheet, this.x, this.y);
+    
 }
 
 Midground.prototype.update = function() {
     //console.log(this.x);
     var gameEngine = this.game;
+    var currentCharacter = gameEngine.getCurrentCharacter();
 
-    if (gameEngine.keyMap["KeyD"]) {
+    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
         this.x -= 0.8;
-    } else if (gameEngine.keyMap["KeyA"]) {
+    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
         this.x += 0.8;
     }
 }
@@ -2270,7 +2678,7 @@ Tree.prototype.draw = function() {
 Tree.prototype.update = function() {
     var gameEngine = this.game;
     var currentCharacter = gameEngine.getCurrentCharacter();
-    
+
     if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
         this.canvasX -= 3;
@@ -2386,4 +2794,67 @@ Grapple.prototype.run = function(context) {
     init = setInterval(function() {
         that.animate(myCircle1, myCircle2, myLine1, myLine2, this.canvasX, this.canvasY, context);
     }, 10);
+};
+
+var id = 0;
+
+function Bullet(gameEngine) {
+    this.id = id;
+    id++;
+    this.game = gameEngine;
+    this.currentCharacter = gameEngine.getCurrentCharacter();
+    this.ctx = this.game.ctx;
+    this.name = "bullet";
+    this.x = this.currentCharacter.canvasX;
+    this.y = this.currentCharacter.canvasY + 14;
+    this.direction = this.currentCharacter.direction;
+    this.canvasX = this.currentCharacter.canvasX;
+    this.canvasY = this.currentCharacter.canvasY + 14;
+
+    this.x1 = this.canvasX;
+    this.x2 = this.game.clickX;
+    this.y1 = this.canvasY;
+    this.y2 = this.game.clickY;
+    this.f = 0;
+
+    // this.slope = (this.endY - this.canvasY) / (this.endX - this.canvasX);
+    // this.angle = Math.atan(this.slope);
+    // this.speed = 2;
+
+    this.rightDistance = 0;
+    this.leftDistance = 0;
+    this.distance = 700;
+
+    this.width = 5;
+    this.height = 3;
+
+
+}
+
+
+Bullet.prototype.update = function() {
+
+    this.canvasX = this.x1 + (this.x2 - this.x1) * this.f;
+    this.canvasY = this.y1 + (this.y2 - this.y1) * this.f;
+
+
+
+
+    if (this.f < 5) {
+
+        this.f += .05;
+    } else {
+        this.game.removeEntity(this.id);
+
+    }
+
+};
+
+Bullet.prototype.draw = function() {
+    this.ctx.fillStyle = "#000000";
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+
+
+
+
 };
