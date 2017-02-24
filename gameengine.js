@@ -363,7 +363,7 @@ GameEngine.prototype.addWolf = function(theWolf) {
 //entities are drawn on the map
 GameEngine.prototype.addEntity = function(entity) {
     // console.log('Added Entity ' + entity);
-    if (entity.name === "bullet") {
+    if (entity.name === "bullet" || entity.name === "arrow") {
         this.entities.unshift(entity);
         // this.entities.splice(0,0,entity);
 
