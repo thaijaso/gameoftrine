@@ -7,7 +7,7 @@ function Portrait(ctx, spritesheet, x, y) {
 }
 
 Portrait.prototype.draw = function() {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y, 120 , 100);
+    this.ctx.drawImage(this.spritesheet, this.x, this.y, 121 , 101);
 };
 
 
@@ -103,7 +103,6 @@ var gameState = new GameState();
 AM.queueDownload("./img/background.png");
 AM.queueDownload("./img/midground.png");
 AM.queueDownload("./img/foreground1.png");
-AM.queueDownload("./img/foreground-grid.png");
 
 //knight
 AM.queueDownload("./img/knightidleright.png");
@@ -191,9 +190,9 @@ AM.downloadAll(function() {
     var background = new Background(gameEngine, AM.getAsset("./img/background.png"));
     var midground = new Midground(gameEngine, AM.getAsset("./img/midground.png"));
     
-    var progressKnight = new ProgressBar(ctx, 69, 52);
-    var progressGunwoman = new ProgressBar(ctx, 182, 52);
-    var progressMage = new ProgressBar(ctx, 300, 52);
+    var progressKnight = new ProgressBar(ctx, 69, 62);
+    var progressGunwoman = new ProgressBar(ctx, 187, 62);
+    var progressMage = new ProgressBar(ctx, 305, 62);
 
     var knight = new Knight(gameEngine, gameState, progressKnight);
     var gunwoman = new Gunwoman(gameEngine, gameState, progressGunwoman);
@@ -217,7 +216,7 @@ AM.downloadAll(function() {
     var skeleton14 = new Skeleton(gameEngine, gameState, 348, 1);
     var skeleton15 = new Skeleton(gameEngine, gameState, 335, 30);//UNDER THE THREEIO
     var skeleton16 = new Skeleton(gameEngine, gameState, 400, 30);//SINGLE ONE BY THE TREE ON POL
-    var skeleton17 = new Skeleton(gameEngine, gameState,485, 10);// SINGLE ON TOP OF THE SIGN
+    var skeleton17 = new Skeleton(gameEngine, gameState, 485, 10);// SINGLE ON TOP OF THE SIGN
     var skeleton18 = new Skeleton(gameEngine, gameState, 540, 35);//GUYS INSIDE THE SQURE SHAPE
     var skeleton19 = new Skeleton(gameEngine, gameState, 528, 35);
     var skeleton20 = new Skeleton(gameEngine, gameState, 580, 10);//SINGLE GUY BY TREE
@@ -227,9 +226,9 @@ AM.downloadAll(function() {
 
     var tree = new Tree(gameEngine);
 
-    var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"), 0, 0);
-    var gunwomanPortraitRight = new Portrait(ctx, AM.getAsset("./img/gunwomanPORTRAITright.png"), 130, 0);
-    var magePortraitRight = new Portrait(ctx, AM.getAsset("./img/magePORTRAITright.png"), 230, 0);
+    var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"), 4.9, 10);
+    var gunwomanPortraitRight = new Portrait(ctx, AM.getAsset("./img/gunwomanPORTRAITright.png"), 140, 10);
+    var magePortraitRight = new Portrait(ctx, AM.getAsset("./img/magePORTRAITright.png"), 240, 10);
 
 
     //an entity is any element drawn on the map
