@@ -66,7 +66,6 @@ GameEngine.prototype.startInput = function() {
 
     var that = this;
 
-
     // event listeners are  here
 
     //attack
@@ -121,8 +120,16 @@ GameEngine.prototype.startInput = function() {
     }, false);
 
      this.ctx.canvas.addEventListener("click", function (e) {
-        var box = new Box(that, e.clientX, e.clientY);
-        that.addEntity(box);
+        var charac = that.currentCharacter;
+        if(charac.name === "mage"){
+            var box = new Box(that, e.clientX, e.clientY);
+            that.addEntity(box);
+        }
+
+        var theX = (charac.x - charac.canvasX) + e.clientX;
+        console.log("the x = " + theX/16);
+        console.log("the y = " + e.clientY/16);
+        
 
     }, false);
 
@@ -135,6 +142,10 @@ GameEngine.prototype.startInput = function() {
             if (e.code === "Digit1" && that.playableCharacters[i].name === "knight") {
                 var newX = that.currentCharacter.x;
                 var newY = that.currentCharacter.y;
+
+                var oldX = that.currentCharacter.oldX;
+                var oldY = that.currentCharacter.oldY;
+
                 var newCanvasX = that.currentCharacter.canvasX;
                 var newCanvasY = that.currentCharacter.canvasY;
 
@@ -142,20 +153,31 @@ GameEngine.prototype.startInput = function() {
 
                 that.currentCharacter.x = newX;
                 that.currentCharacter.y = newY;
+
+                that.currentCharacter.oldX = oldX;
+                that.currentCharacter.oldY = oldY;
+
                 that.currentCharacter.canvasX = newCanvasX;
                 that.currentCharacter.canvasY = newCanvasY;
 
             } else if (e.code === "Digit2" && that.playableCharacters[i].name === "gunwoman") {
                 var newX = that.currentCharacter.x;
                 var newY = that.currentCharacter.y;
+
                 var newCanvasX = that.currentCharacter.canvasX;
                 var newCanvasY = that.currentCharacter.canvasY;
 
+                var oldX = that.currentCharacter.oldX;
+                var oldY = that.currentCharacter.oldY;
 
                 that.changeCharacter(that.playableCharacters[i]);
 
                 that.currentCharacter.x = newX;
                 that.currentCharacter.y = newY;
+
+                that.currentCharacter.oldX = oldX;
+                that.currentCharacter.oldY = oldY;
+
                 that.currentCharacter.canvasX = newCanvasX;
                 that.currentCharacter.canvasY = newCanvasY;
 
@@ -163,6 +185,10 @@ GameEngine.prototype.startInput = function() {
 
                 var newX = that.currentCharacter.x;
                 var newY = that.currentCharacter.y;
+
+                var oldX = that.currentCharacter.oldX;
+                var oldY = that.currentCharacter.oldY;
+
                 var newCanvasX = that.currentCharacter.canvasX;
                 var newCanvasY = that.currentCharacter.canvasY;
                 
@@ -170,6 +196,10 @@ GameEngine.prototype.startInput = function() {
 
                 that.currentCharacter.x = newX;
                 that.currentCharacter.y = newY;
+
+                that.currentCharacter.oldX = oldX;
+                that.currentCharacter.oldY = oldY;
+
                 that.currentCharacter.canvasX = newCanvasX;
                 that.currentCharacter.canvasY = newCanvasY;
 
