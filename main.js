@@ -112,11 +112,45 @@ AM.downloadAll(function() {
     var gunwoman = new Gunwoman(gameEngine);
     var mage = new Mage(gameEngine);
     var wolf = new Wolf(gameEngine);
-
+                                        //   x   y
     var skeleton0 = new Skeleton(gameEngine, 5, 27);
     var skeleton1 = new Skeleton(gameEngine, 10, 27);
     var skeleton2 = new Skeleton(gameEngine, 40, 27);
     var skeleton3 = new Skeleton(gameEngine, 50, 27);
+
+    var skeleton4 = new Skeleton(gameEngine, 144, 35);//BOTTOM TWO
+    var skeleton5 = new Skeleton(gameEngine, 174, 35);
+
+    var skeleton6 = new Skeleton(gameEngine, 168, 20);//SINGLE TOP ONE
+
+    var skeleton7 = new Skeleton(gameEngine, 235, 22);//TOP THREE BY THE TREE
+    var skeleton8 = new Skeleton(gameEngine, 255, 22);
+    var skeleton9 = new Skeleton(gameEngine, 285, 25);
+
+    var skeleton10 = new Skeleton(gameEngine, 235, 36);//TWO UNDER THE TREE
+    var skeleton11 = new Skeleton(gameEngine, 255, 36);
+
+    var skeleton12 = new Skeleton(gameEngine, 336, 10);//THE THREEIO 
+    var skeleton13 = new Skeleton(gameEngine, 360, 10);
+    var skeleton14 = new Skeleton(gameEngine, 348, 1);
+
+    var skeleton15 = new Skeleton(gameEngine, 335, 30);//UNDER THE THREEIO
+
+    var skeleton16 = new Skeleton(gameEngine, 400, 30);//SINGLE ONE BY THE TREE ON POL
+
+    var skeleton17 = new Skeleton(gameEngine, 485, 10);// SINGLE ON TOP OF THE SIGN
+
+    var skeleton18 = new Skeleton(gameEngine, 540, 35);//GUYS INSIDE THE SQURE SHAPE
+    var skeleton19 = new Skeleton(gameEngine, 528, 35);
+
+    var skeleton20 = new Skeleton(gameEngine, 580, 10);//SINGLE GUY BY TREE
+
+    var skeleton21 = new Skeleton(gameEngine, 650, 25);//
+
+    var skeleton22 = new Skeleton(gameEngine, 685, 25);
+
+
+
     
     var tree = new Tree(gameEngine);
 
@@ -126,12 +160,34 @@ AM.downloadAll(function() {
     
     gameEngine.addEntity(knight);
     //gameEngine.addEntity(gunwoman);
-    
+    /*
     gameEngine.addEntity(skeleton0);
     gameEngine.addEntity(skeleton1);
     gameEngine.addEntity(skeleton2);
     gameEngine.addEntity(skeleton3);
-                                        
+                      */  
+    gameEngine.addEntity(skeleton4); 
+    gameEngine.addEntity(skeleton5); 
+    gameEngine.addEntity(skeleton6);
+    gameEngine.addEntity(skeleton7);
+    gameEngine.addEntity(skeleton8);
+    gameEngine.addEntity(skeleton9);
+    gameEngine.addEntity(skeleton10);
+    gameEngine.addEntity(skeleton11);
+    gameEngine.addEntity(skeleton12);
+    gameEngine.addEntity(skeleton13);
+    gameEngine.addEntity(skeleton14);
+    gameEngine.addEntity(skeleton15);
+    gameEngine.addEntity(skeleton16);
+    gameEngine.addEntity(skeleton17);
+    gameEngine.addEntity(skeleton18);
+    gameEngine.addEntity(skeleton19);
+    gameEngine.addEntity(skeleton20);
+    gameEngine.addEntity(skeleton21);
+    gameEngine.addEntity(skeleton22);
+
+
+
                                             //x,  y, width, height
     var platform1 = new Platform(gameEngine, 0, 31, 110, 1);
     var platform2 = new Platform(gameEngine, 64, 25, 3, 2);
@@ -212,14 +268,10 @@ AM.downloadAll(function() {
 
 
 
-
-
-
-
-
     // Major Platform 1
 
     gameEngine.addEntity(platform1);
+    
     
     gameEngine.addEntity(platform2);
 
@@ -242,6 +294,7 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform8);
     gameEngine.addEntity(platform9);
 
+    
     // Major Platform 2
     gameEngine.addEntity(platform11); // main platform
     gameEngine.addEntity(platform26); // mini floating platform
@@ -250,6 +303,7 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform29); // bigger floating platform
     gameEngine.addEntity(platform30); // tiny floating platform (to platform 3)
 
+    
     // Major Platform 3
     gameEngine.addEntity(platform31); // floating mini platform
     gameEngine.addEntity(platform32); // floating platform
@@ -261,7 +315,7 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform38); // platform under floating platform 2
     gameEngine.addEntity(platform39); // tiny floating platform 1
     gameEngine.addEntity(platform40); // tiny floating platform 2
-    // gameEngine.addEntity(platform41);
+    gameEngine.addEntity(platform41);
     gameEngine.addEntity(platform42); // mini platform (under floating platform 2)
     gameEngine.addEntity(platform43); // mini platform 2, go to major platform 4
     gameEngine.addEntity(platform44); // mini platform (in sky)
