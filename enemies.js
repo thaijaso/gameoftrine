@@ -326,7 +326,8 @@ Skeleton.prototype.update = function() {
                                 
                                 if (gameEngine.entities[j].name === "platform" || 
                                     gameEngine.entities[j].name === "tree" ||
-                                    gameEngine.entities[j].name === "skeleton") {
+                                    gameEngine.entities[j].name === "skeleton" ||
+                                    gameEngine.entities[j].name === "box") {
 
                                     var other = gameEngine.entities[j];
 
@@ -424,7 +425,8 @@ Skeleton.prototype.update = function() {
                                 
                                 if (gameEngine.entities[j].name === "platform" || 
                                     gameEngine.entities[j].name === "tree" ||
-                                    gameEngine.entities[j].name === "skeleton") {
+                                    gameEngine.entities[j].name === "skeleton" ||
+                                    gameEngine.entities[j].name === "box") {
 
                                     //other entities in the game
                                     var other = gameEngine.entities[j];
@@ -450,8 +452,13 @@ Skeleton.prototype.update = function() {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.game.entities[i];
 
-        if (this !== entity && (entity.name === "platform" || 
-            entity.name === "knight" || entity.name === "skeleton")) {
+        if (this !== entity && 
+            (entity.name === "platform" || 
+            entity.name === "knight" ||
+            entity.name === "gunwoman" ||
+            entity.name === "mage" || 
+            entity.name === "skeleton" ||
+            entity.name === "box")) {
 
             if (this != entity && this.collide(entity)) {
 
@@ -503,7 +510,13 @@ Skeleton.prototype.update = function() {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = this.game.entities[i];
 
-            if (entity.name === "platform" || entity.name === "knight" || entity.name === "skeleton") {
+            if (entity.name === "platform" || 
+                entity.name === "knight" || 
+                entity.name === "gunwoman" ||
+                entity.name === "mage" ||
+                entity.name === "skeleton" ||
+                entity.name === "box") {
+                
                 if (this != entity && this.collide(entity)) {
                     stillColliding = true;
 
@@ -526,7 +539,10 @@ Skeleton.prototype.update = function() {
                 if (this !== entity && 
                     (entity.name === "platform" || 
                     entity.name === "knight" ||
-                    entity.name === "skeleton")) {
+                    entity.name === "gunwoman" ||
+                    entity.name === "mage" ||
+                    entity.name === "skeleton" ||
+                    entity.name === "box")) {
 
                     //check if still colliding right with a platform we collided right with
                     if (this.collidedRightEntity === entity &&  
