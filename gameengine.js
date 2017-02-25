@@ -15,28 +15,18 @@ function GameEngine() {
     this.currentMidground = null;
     this.currentCharacter = null;
     this.wolf = null;
+    this.wolfAttack = false;
     this.entities = [];
     this.playableCharacters = [];
     this.playableCharacterIndex = 0;
     this.ctx = null;
     this.keyMap = {};
     this.assetManager = null;
-    this.d = false;
-    this.a = false;
-    this.f = false;
     this.clickX = 0;
     this.clickY = 0;
-
-    this.right = true;
-
-    this.space = false;
     this.drawWolf = false;
-    this.wolfAttack = false;
-    this.wolfIsRight = true;
-    this.didLeftClick = false;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
-    this.space = false;
 }
 
 GameEngine.prototype.init = function(ctx, assetManager) {
@@ -192,13 +182,6 @@ GameEngine.prototype.startInput = function() {
     this.ctx.canvas.addEventListener("keyup", function(e) {
 
         that.keyMap[e.code] = false;
-        // if (e.code === "KeyD" && !that.didLeftClick) {
-        //     that.d = false;
-
-        // } else if (e.code === "KeyA" && !that.didLeftClick) {
-        //     that.a = false;
-
-        // }
 
     }, false);
 
@@ -365,10 +348,10 @@ GameEngine.prototype.addWolf = function(theWolf) {
 
 //entities are drawn on the map
 GameEngine.prototype.addEntity = function(entity) {
-    // console.log('Added Entity ' + entity);
-    if (entity.name === "bullet" || entity.name === "box") {
-        this.entities.unshift(entity);
-        // this.entities.splice(0,0,entity);
+
+    if (entity.name === "box" || entity.name === "bullet" || entity.name === "arrow") {
+
+        this.entities.splice(1, 0, entity); //add entity after knight index, ie index 1
 
     } else {
         this.entities.push(entity);
