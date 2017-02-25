@@ -137,8 +137,8 @@ GameEngine.prototype.startInput = function() {
         }
 
         var theX = (charac.x - charac.canvasX) + e.clientX;
-        console.log("the x = " + theX);
-        console.log("the y = " + e.clientY);
+        console.log("the x = " + theX/16);
+        console.log("the y = " + e.clientY/16);
         
 
     }, false);

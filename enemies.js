@@ -749,22 +749,22 @@ function SkeletonArcher(game, x, y) {
     this.direction = "left";
     var currentCharacter = game.getCurrentCharacter();
 
-    this.x = x;
-    this.y = y;
+    this.x = x * TILE_SIZE;
+    this.y = y * TILE_SIZE;
 
-    this.width = 2 * 16;
-    this.height = 4 * 16;
+    this.width = 2 * TILE_SIZE;
+    this.height = 4 * TILE_SIZE;
 
-    this.canvasX = x;
-    this.canvasY = y;
+    this.canvasX = x * TILE_SIZE;
+    this.canvasY = y * TILE_SIZE;
 
 
     this.attacking = false;
 
     this.collidedWith = null;
 
-    this.oldX = x;
-    this.oldY = y;
+    this.oldX = x * TILE_SIZE;
+    this.oldY = y * TILE_SIZE;
 
 
 }

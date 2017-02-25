@@ -44,7 +44,7 @@ AM.queueDownload("./img/knightattackleft.png");
 AM.queueDownload("./img/knightwalkleft.png");
 AM.queueDownload("./img/knightjumpright.png");
 AM.queueDownload("./img/knightjumpleft.png");
-AM.queueDownload("./img/knightPORTRAITright.png");
+AM.queueDownload("./img/knightportraitright.png");
 AM.queueDownload("./img/knight-impact-right.png");
 
 //gunwoman
@@ -168,7 +168,7 @@ AM.downloadAll(function() {
     
     var tree = new Tree(gameEngine);
 
-    var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightPORTRAITright.png"), 0, 0);
+    var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"), 0, 0);
     var gunwomanPortraitRight = new Portrait(ctx, AM.getAsset("./img/gunwomanPORTRAITright.png"), 130, 0);
     var magePortraitRight = new Portrait(ctx, AM.getAsset("./img/magePORTRAITright.png"), 230, 0);
 
@@ -202,6 +202,29 @@ AM.downloadAll(function() {
     gameEngine.addEntity(skeleton20);
     gameEngine.addEntity(skeleton21);
     gameEngine.addEntity(skeleton22);
+
+                                            //   x   y
+    var archer1 = new SkeletonArcher(gameEngine, 96, 3);
+    var archer2 = new SkeletonArcher(gameEngine, 166, 12);
+    var archer3 = new SkeletonArcher(gameEngine, 172, 5);
+    var archer4 = new SkeletonArcher(gameEngine, 243, 11);
+    var archer5 = new SkeletonArcher(gameEngine, 274, 7);
+    var archer6 = new SkeletonArcher(gameEngine, 400, 21);
+    var archer7 = new SkeletonArcher(gameEngine, 530, 13);
+    var archer8 = new SkeletonArcher(gameEngine, 547, 13);
+    var archer9 = new SkeletonArcher(gameEngine, 663, 8);
+
+
+
+    // gameEngine.addEntity(archer1);
+    // gameEngine.addEntity(archer2); 
+    // gameEngine.addEntity(archer3);
+    // gameEngine.addEntity(archer4); 
+    // gameEngine.addEntity(archer5);
+    // gameEngine.addEntity(archer6);
+    // gameEngine.addEntity(archer7); 
+    // gameEngine.addEntity(archer8);
+    // gameEngine.addEntity(archer9);
 
 
 
@@ -307,7 +330,7 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform4);
     gameEngine.addEntity(platform5);
     gameEngine.addEntity(platform6);
-    // gameEngine.addEntity(platform7);
+    gameEngine.addEntity(platform7);
     gameEngine.addEntity(platform8);
     gameEngine.addEntity(platform9);
 
