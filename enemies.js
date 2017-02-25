@@ -1,3 +1,5 @@
+var HEALTH = 20;
+
 //Constructor for wolf
 function Wolf(game) {
     var idleRightSpriteSheet = AM.getAsset("./img/wolfidleright.png");
@@ -38,7 +40,7 @@ Wolf.prototype.update = function() {
 var SKELETON_ID = 0;
 
 // START OF ENEMIES
-function Skeleton(game, x, y) {
+function Skeleton(game, gameState, x, y) {
     var idleLeftAnimationSpriteSheet = AM.getAsset("./img/skeletonidleleft.png");
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/skeletonidleright.png"); 
     var walkLeftAnimationSpriteSheet = AM.getAsset("./img/skeleton-walk-left.png");
@@ -49,11 +51,15 @@ function Skeleton(game, x, y) {
     var knightImpactRightSpriteSheet =  AM.getAsset("./img/knight-impact-right.png");
 
     this.id = SKELETON_ID;
+    
     SKELETON_ID++;
     
-    this.game = game;
-    this.ctx = game.ctx;
     this.name = "skeleton";
+    this.game = game;
+    this.state = gameState;
+    this.ctx = game.ctx;
+    
+    this.health = HEALTH;
 
     this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 3, 0.1, 8, true, 0.5);
     this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 3, 0.05, 8, true, 0.5);
@@ -237,6 +243,7 @@ Skeleton.prototype.update = function() {
                     //console.log(frame);
 
                     if (this.animationAttackRight.currentFrame() === 10) {
+                        this.state.updateHealth(entity);
 
                         //this.attacking = false;
 
@@ -291,7 +298,7 @@ Skeleton.prototype.update = function() {
                         if (knockBackCollidedWith) {
 
                             var distanceFromCollision = Math.abs((entity.x + entity.width) - knockBackCollidedWith.x);
-                            console.log(distanceFromCollision);
+                            //console.log(distanceFromCollision);
 
                             entity.x += distanceFromCollision;
                             entity.oldX = entity.x;
@@ -343,6 +350,7 @@ Skeleton.prototype.update = function() {
                     var skeletonAttackFrame = this.animationAttackLeft.currentFrame();
 
                     if (skeletonAttackFrame === 10) {
+                        this.state.updateHealth(entity);
 
                         var knockBackCollidedWith = null;
 
@@ -389,7 +397,7 @@ Skeleton.prototype.update = function() {
                         if (knockBackCollidedWith) {
    
                             var distanceFromCollision = Math.abs(entity.x - (knockBackCollidedWith.x + knockBackCollidedWith.width));
-                            console.log(distanceFromCollision);
+                            //console.log(distanceFromCollision);
 
 
                             entity.x -= distanceFromCollision;

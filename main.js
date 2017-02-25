@@ -4,9 +4,6 @@ function Portrait(ctx, spritesheet, x, y) {
     this.y = y;
     this.spritesheet = spritesheet;
     this.ctx = ctx;
-
-    console.log(this.spritesheet.src);
-
 }
 
 Portrait.prototype.draw = function() {
@@ -16,7 +13,90 @@ Portrait.prototype.draw = function() {
 
 Portrait.prototype.update = function() {};
 
+function ProgressBar(ctx, x, y) {
+    this.ctx = ctx;
+
+}
+
+function ProgressBar(ctx, x, y) {
+    this.ctx = ctx;
+    this.al = 0; // use it for Amount loaded
+    this.start = 4.72; //From where to start position of progress;
+    this.cw = x; //to get x cordinate;
+    this.ch = y; // to get y coordinate;
+    this.endAngle;
+    this.health;
+    this.hit = false;
+    this.state = "healthy";
+    this.diff = 0; //to load progress bar Slowly
+    this.quart = Math.PI / 2;
+    this.circ = Math.PI * 2;
+
+}
+
+ProgressBar.prototype.update = function() {
+
+    if (this.health >= 50) {
+        this.diff = (this.al / 100) * Math.PI * 2;
+        this.endAngle = this.diff + this.start;
+
+        if (this.al >= 56) {
+            clearTimeout(bar);
+        }
+        this.al++;
+    } else if (this.hit) {
+        this.health--;
+        this.quart = this.quart - .01;
+        var currentVal = (this.health * 2) / 100;
+        this.endAngle = ((this.circ) * currentVal) - this.quart;
+        this.start = -this.quart;
+        this.hit = false;
+    }
+
+    if (this.health <= 0) {
+        this.endAngle = this.start;
+    }
+};
+
+ProgressBar.prototype.draw = function() {
+    //console.log('here');
+    this.ctx.beginPath();
+    this.ctx.fillStyle = '#FFF'; // for color of circle
+    this.ctx.fill(); // fill function
+    this.ctx.strokeStyle = '#e7f2ba'; // for border color
+    this.ctx.stroke(); // Stroke function
+    this.ctx.fillStyle = '#000';
+    this.ctx.strokeStyle = '#b3cf3c';
+    this.ctx.lineWidth = 10;
+    this.ctx.beginPath();
+    
+    if (this.endAngle > .5) {
+        this.ctx.arc(this.cw, this.ch, 50, this.start, this.endAngle, false);
+        this.ctx.stroke();
+
+
+
+    } else {
+            this.ctx.strokeStyle = '#F00';
+            this.ctx.arc(this.cw, this.ch, 50, this.start, this.endAngle, false);
+        this.ctx.stroke();
+
+
+    }
+};
+
+ProgressBar.prototype.updateHealth = function(newHealth) {
+    this.health = newHealth;
+};
+
+ProgressBar.prototype.hasBeenHit = function(isHit) {
+    this.hit = isHit;
+};
+
+var bar;
+
 // the "main" code begins here
+
 var AM = new AssetManager();
 var gameState = new GameState();
 
@@ -101,45 +181,48 @@ AM.downloadAll(function() {
     var ctx = canvas.getContext("2d");
 
     var gameEngine = new GameEngine();
+    var gameState = new GameState(ctx, gameEngine);
 
     gameEngine.init(ctx, AM);
     gameEngine.start();
     //gameState.init(ctx, gameEngine);
 
-    //var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground.png"));
     var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground1.png"));
     var background = new Background(gameEngine, AM.getAsset("./img/background.png"));
     var midground = new Midground(gameEngine, AM.getAsset("./img/midground.png"));
-    // var grapple = new Grapple(gameEngine, canvas, ctx);
+    
+    var progressKnight = new ProgressBar(ctx, 69, 52);
+    var progressGunwoman = new ProgressBar(ctx, 182, 52);
+    var progressMage = new ProgressBar(ctx, 300, 52);
 
-    var knight = new Knight(gameEngine);
-    var gunwoman = new Gunwoman(gameEngine);
-    var mage = new Mage(gameEngine);
-    var wolf = new Wolf(gameEngine);
+    var knight = new Knight(gameEngine, gameState, progressKnight);
+    var gunwoman = new Gunwoman(gameEngine, gameState, progressGunwoman);
+    var mage = new Mage(gameEngine, gameState, progressMage);
+    
                                         //   x   y
-    var skeleton0 = new Skeleton(gameEngine, 5, 27);
-    var skeleton1 = new Skeleton(gameEngine, 10, 27);
-    var skeleton2 = new Skeleton(gameEngine, 40, 27);
-    var skeleton3 = new Skeleton(gameEngine, 50, 27);
-    var skeleton4 = new Skeleton(gameEngine, 144, 35);//BOTTOM TWO
-    var skeleton5 = new Skeleton(gameEngine, 174, 35);
-    var skeleton6 = new Skeleton(gameEngine, 168, 20);//SINGLE TOP ONE
-    var skeleton7 = new Skeleton(gameEngine, 235, 22);//TOP THREE BY THE TREE
-    var skeleton8 = new Skeleton(gameEngine, 255, 22);
-    var skeleton9 = new Skeleton(gameEngine, 285, 25);
-    var skeleton10 = new Skeleton(gameEngine, 235, 36);//TWO UNDER THE TREE
-    var skeleton11 = new Skeleton(gameEngine, 255, 36);
-    var skeleton12 = new Skeleton(gameEngine, 336, 10);//THE THREEIO 
-    var skeleton13 = new Skeleton(gameEngine, 360, 10);
-    var skeleton14 = new Skeleton(gameEngine, 348, 1);
-    var skeleton15 = new Skeleton(gameEngine, 335, 30);//UNDER THE THREEIO
-    var skeleton16 = new Skeleton(gameEngine, 400, 30);//SINGLE ONE BY THE TREE ON POL
-    var skeleton17 = new Skeleton(gameEngine, 485, 10);// SINGLE ON TOP OF THE SIGN
-    var skeleton18 = new Skeleton(gameEngine, 540, 35);//GUYS INSIDE THE SQURE SHAPE
-    var skeleton19 = new Skeleton(gameEngine, 528, 35);
-    var skeleton20 = new Skeleton(gameEngine, 580, 10);//SINGLE GUY BY TREE
-    var skeleton21 = new Skeleton(gameEngine, 650, 25);//
-    var skeleton22 = new Skeleton(gameEngine, 685, 25);
+    var skeleton0 = new Skeleton(gameEngine, gameState, 5, 27);
+    var skeleton1 = new Skeleton(gameEngine, gameState, 10, 27);
+    var skeleton2 = new Skeleton(gameEngine, gameState, 40, 27);
+    var skeleton3 = new Skeleton(gameEngine, gameState, 50, 27);
+    var skeleton4 = new Skeleton(gameEngine, gameState, 144, 35);//BOTTOM TWO
+    var skeleton5 = new Skeleton(gameEngine, gameState, 174, 35);
+    var skeleton6 = new Skeleton(gameEngine, gameState, 168, 20);//SINGLE TOP ONE
+    var skeleton7 = new Skeleton(gameEngine, gameState, 235, 22);//TOP THREE BY THE TREE
+    var skeleton8 = new Skeleton(gameEngine, gameState, 255, 22);
+    var skeleton9 = new Skeleton(gameEngine, gameState, 285, 25);
+    var skeleton10 = new Skeleton(gameEngine, gameState, 235, 36);//TWO UNDER THE TREE
+    var skeleton11 = new Skeleton(gameEngine, gameState, 255, 36);
+    var skeleton12 = new Skeleton(gameEngine, gameState, 336, 10);//THE THREEIO 
+    var skeleton13 = new Skeleton(gameEngine, gameState, 360, 10);
+    var skeleton14 = new Skeleton(gameEngine, gameState, 348, 1);
+    var skeleton15 = new Skeleton(gameEngine, gameState, 335, 30);//UNDER THE THREEIO
+    var skeleton16 = new Skeleton(gameEngine, gameState, 400, 30);//SINGLE ONE BY THE TREE ON POL
+    var skeleton17 = new Skeleton(gameEngine, gameState,485, 10);// SINGLE ON TOP OF THE SIGN
+    var skeleton18 = new Skeleton(gameEngine, gameState, 540, 35);//GUYS INSIDE THE SQURE SHAPE
+    var skeleton19 = new Skeleton(gameEngine, gameState, 528, 35);
+    var skeleton20 = new Skeleton(gameEngine, gameState, 580, 10);//SINGLE GUY BY TREE
+    var skeleton21 = new Skeleton(gameEngine, gameState, 650, 25);//
+    var skeleton22 = new Skeleton(gameEngine, gameState, 685, 25);
 
 
     var tree = new Tree(gameEngine);
@@ -375,14 +458,15 @@ AM.downloadAll(function() {
     gameEngine.addEntity(gunwomanPortraitRight);
     gameEngine.addEntity(magePortraitRight);
 
+    gameEngine.addEntity(progressKnight);
+    gameEngine.addEntity(progressGunwoman);
+    gameEngine.addEntity(progressMage);
+
     gameEngine.addPlayableCharacter(knight);
     gameEngine.addPlayableCharacter(gunwoman);
     gameEngine.addPlayableCharacter(mage);
 
     gameEngine.setCurrentCharacter(knight);
-
-
-    //gameEngine.setCurrentBackground(background);
     
     gameEngine.setCurrentBackground(background);
     gameEngine.setCurrentForeground(foreground);

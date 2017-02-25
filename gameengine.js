@@ -340,6 +340,45 @@ GameEngine.prototype.changeCharacter = function(newCharacter) {
     //console.log(this);
 }
 
+GameEngine.prototype.replaceCharacter = function() {
+    var oldCharacter = this.getCurrentCharacter();
+
+    if (oldCharacter.health === 0) {
+        for (var i = 0; i < this.playableCharacters.length; i++) {
+            if (this.playableCharacters[i] === oldCharacter) {
+                this.playableCharacters.splice(i, 1);
+            }
+        }
+
+        var newCharacter = this.playableCharacters[0];
+
+
+        // if (oldCharacter.hasFallen) {
+        //     var x = oldCharacter.x;
+        //     if (x >= 0 || x <= 110) {
+        //         newCharacter.canvasX = 109;
+        //         newCharacter.canvasY = 31;
+        //         newCharacter.x = 100;
+        //         newCharacter.y = 31;
+        //     }
+
+        // } else {
+            newCharacter.canvasX = oldCharacter.canvasX;
+            newCharacter.canvasY = oldCharacter.canvasY;
+
+            newCharacter.x = oldCharacter.x;
+            newCharacter.y = oldCharacter.y;
+
+        // }
+
+
+        
+        this.entities.unshift(newCharacter);
+        this.setCurrentCharacter(newCharacter);
+        this.removeEntity(oldCharacter.id);
+    }
+};
+
 GameEngine.prototype.addWolf = function(theWolf) {
     this.wolf = theWolf;
 };

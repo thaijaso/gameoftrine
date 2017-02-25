@@ -31,7 +31,7 @@ function jump(character) {
 
 }
 
-function Knight(game) {
+function Knight(game, gameState, progressBar) {
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/knightidleright.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/knightwalkright.png");
     var attackRightAnimationSpriteSheet = AM.getAsset("./img/knightattackright.png");
@@ -43,8 +43,10 @@ function Knight(game) {
     var jumpLeftAnimationSpriteSheet = AM.getAsset("./img/knightjumpleft.png");
 
     this.game = game;
+    this.state = gameState;
     this.ctx = game.ctx;
     this.name = "knight";
+    this.id = 1;
 
     this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.05, 14, true, 0.5);
     this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.035, 12, true, 0.5);
@@ -78,6 +80,10 @@ function Knight(game) {
     this.jumpTimeHeld = 0;
     this.jumpStartTime = 0;
     this.timeSinceJump = 0;
+    this.health = 50;
+    this.progressBar = progressBar;
+    this.hasFallen = false;
+    // this.progressBar.updateHealth(this.health);
 
     //this property is used for jumping.
     //Each animation shares this property 
@@ -271,6 +277,8 @@ Knight.prototype.knockBackRightCollide = function(other) {
 }
 
 Knight.prototype.update = function() {
+    this.progressBar.updateHealth(this.health);
+
     var gameEngine = this.game;
     //handle jumping
 
@@ -317,6 +325,7 @@ Knight.prototype.update = function() {
                     console.log('landed attack right');
 
                     if (this.animationAttackRight.currentFrame() === 10) {
+                        this.state.updateHealth(entity);
 
                         //knock back collision
                         var knockBackCollidedWith = null;
@@ -384,6 +393,7 @@ Knight.prototype.update = function() {
                     //console.log('landed attack left');
 
                     if (this.animationAttackLeft.currentFrame() === 10) {
+                        this.state.updateHealth(entity);
 
                         //knock back collision
                         var knockBackCollidedWith = null;
@@ -448,8 +458,6 @@ Knight.prototype.update = function() {
             }
         }
     }
-
-    
 
     //check if player collided with any platforms, skeletons, or boxes
     for (var i = 0; i < gameEngine.entities.length; i++) {
@@ -577,6 +585,15 @@ Knight.prototype.update = function() {
 
         //console.log(this.y);
     }
+
+    if (this.y >= 1000) {
+        this.health = 0;
+        this.hasFallen = true;
+        this.progressBar.updateHealth(this.health);
+        this.game.removeEntity(this);
+        this.game.replaceCharacter();
+
+    } 
 
     //check for movement/change character
     if (gameEngine.keyMap["KeyD"] && !this.collidedRight) {
@@ -782,7 +799,7 @@ Box.prototype.collideTop = function(other) {
 }
 
 //Constructor for mage
-function Mage(game) {
+function Mage(game, state, progressBar) {
 
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/mageIdleRight.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/mageWalkRight.png");
@@ -799,6 +816,8 @@ function Mage(game) {
     this.game = game;
     this.ctx = game.ctx;
     this.name = "mage";
+    this.state = state;
+    this.progressBar = progressBar;
 
     //this.animationCurrent = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 14, true, 0.5);
 
@@ -813,9 +832,8 @@ function Mage(game) {
     this.animationState = "idleRight";
 
     this.direction = "right";
-
-    // this.x = 34 * TILE_SIZE;
-    // this.y = 14 * TILE_SIZE;
+    this.health = 50;
+    this.progressBar.updateHealth(this.health);
 
     //for direction of collision
     this.oldX = 34 * TILE_SIZE;
@@ -1649,7 +1667,7 @@ Box.prototype.draw = function() {
 };
 
 //Constructor for gunwoman
-function Gunwoman(game) {
+function Gunwoman(game, state, progressBar) {
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanidleright.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanwalkright.png");
     var attackRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanattackright.png");
@@ -1667,6 +1685,9 @@ function Gunwoman(game) {
     this.game = game;
     this.ctx = game.ctx;
     this.name = "gunwoman";
+    this.progressBar = progressBar;
+    this.hasFallen = false;
+    this.id = 2;
 
     //this.animationCurrent = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 14, true, 0.5);
 
@@ -1688,6 +1709,8 @@ function Gunwoman(game) {
 
     this.width = 2 * TILE_SIZE;
     this.height = 4 * TILE_SIZE - 5;
+    this.health = 50;
+    this.progressBar.updateHealth(this.health);
 
     this.canvasX = 34 * TILE_SIZE;
     this.canvasY = 14 * TILE_SIZE;
