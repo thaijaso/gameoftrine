@@ -195,7 +195,7 @@ function Platform(game, x, y, width, height) {
 Platform.prototype.draw = function() {
     this.ctx.fillStyle = "#ff0000";
     //console.log(this.canvasX);
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     //console.log(this.canvasX);
     //this.ctx.fillRect(this.x, this.y, this.width, this.height);
 }

@@ -575,7 +575,7 @@ Knight.prototype.update = function() {
         this.canvasY += 5;
         this.y += 5;
 
-        console.log(this.y);
+        //console.log(this.y);
     }
 
     //check for movement/change character
@@ -689,7 +689,7 @@ Knight.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
 Knight.prototype.draw = function() {
     this.ctx.fillStyle = "black";
     //this.ctx.fillRect(this.x, this.y, this.width, this.height);
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
     if (this.animationState === "idleRight") {
 
@@ -2157,7 +2157,7 @@ Gunwoman.prototype.update = function() {
 
 
 Gunwoman.prototype.draw = function() {
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
     if (this.animationState === "idleRight") {
 

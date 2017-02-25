@@ -565,106 +565,106 @@ Skeleton.prototype.update = function() {
     var distanceFromHero = Math.abs(currentCharacter.x - this.x);
 
     //Skeleton AI
-    // if (distanceFromHero <= 400) {
+    if (distanceFromHero <= 400) {
 
 
-    //     if (distanceFromHero <= 80) {
+        if (distanceFromHero <= 80) {
 
             
         
-    //         if (!this.attacking) {
+            if (!this.attacking) {
 
-    //             if (this.direction === "right") {
+                if (this.direction === "right") {
 
-    //                 this.animationState = "attackRight";
+                    this.animationState = "attackRight";
 
-    //             } else {
+                } else {
 
-    //                 this.animationState = "attackLeft";
+                    this.animationState = "attackLeft";
                     
-    //             }
+                }
                 
-    //             this.attacking = true;
+                this.attacking = true;
                 
-    //         }  
+            }  
 
-    //     } else if (currentCharacter.x < this.x && !this.collidedLeft && !this.attacking) {
+        } else if (currentCharacter.x < this.x && !this.collidedLeft && !this.attacking) {
 
-    //         var colidEntity = this.collidedBottomEntity;
+            var colidEntity = this.collidedBottomEntity;
 
 
-    //         this.direction = "left";
-    //         this.animationState = "walkLeft";
-    //         if(colidEntity !== null && this.x/16 > colidEntity.x/16) {
-    //             console.log("come here");
-    //             this.oldX = this.x;
-    //             this.x -= 2;
-    //             this.canvasX -= 2 ;
-    //         }
+            this.direction = "left";
+            this.animationState = "walkLeft";
+            if(colidEntity !== null && this.x/16 > colidEntity.x/16) {
+                //console.log("come here");
+                this.oldX = this.x;
+                this.x -= 2;
+                this.canvasX -= 2 ;
+            }
              
         
-    //     } else if (currentCharacter.x > this.x && !this.collidedRight && !this.attacking) {
+        } else if (currentCharacter.x > this.x && !this.collidedRight && !this.attacking) {
 
 
-    //         var colidEntity = this.collidedBottomEntity;
+            var colidEntity = this.collidedBottomEntity;
 
-    //         if (colidEntity !== null) {
-    //             var colidX = colidEntity.x/16 + colidEntity.width/16;
-    //         }
+            if (colidEntity !== null) {
+                var colidX = colidEntity.x/16 + colidEntity.width/16;
+            }
 
             
-    //         this.direction = "right";
-    //         this.animationState = "walkRight";
+            this.direction = "right";
+            this.animationState = "walkRight";
 
-    //         if (this.x/16 + 2 < colidX) {
+            if (this.x/16 + 2 < colidX) {
                 
-    //             this.oldX = this.x;
-    //             this.x += 2;
-    //             this.canvasX += 2;
-    //         }
+                this.oldX = this.x;
+                this.x += 2;
+                this.canvasX += 2;
+            }
             
-    //     }
+        }
         
-    // } else {
-    //     console.log("come here");
-    //     // var random = Math.floor((Math.random() * 40) + 1);
+    } else {
+        //console.log("come here");
+        // var random = Math.floor((Math.random() * 40) + 1);
 
-    //     if (this.direction === "right") {
-    //         var colidEntity = this.collidedBottomEntity;
+        if (this.direction === "right") {
+            var colidEntity = this.collidedBottomEntity;
 
-    //         this.direction = "right";
-    //         this.animationState = "walkRight";
-    //         if (colidEntity !== null) {
-    //             var colidX = colidEntity.x + colidEntity.width;
-    //         }
+            this.direction = "right";
+            this.animationState = "walkRight";
+            if (colidEntity !== null) {
+                var colidX = colidEntity.x + colidEntity.width;
+            }
 
-    //         if (colidEntity !== null && this.x + 32 < colidX) {
+            if (colidEntity !== null && this.x + 32 < colidX) {
                 
-    //             this.oldX = this.x;
-    //             this.x += 2;
-    //             this.canvasX += 2;
-    //         } else {
-    //             this.direction = "left";
-    //             this.oldX = this.x;
-    //             // this.x += 3;
-    //             // this.canvasX += 3;
-    //         }           
+                this.oldX = this.x;
+                this.x += 2;
+                this.canvasX += 2;
+            } else {
+                this.direction = "left";
+                this.oldX = this.x;
+                // this.x += 3;
+                // this.canvasX += 3;
+            }           
             
-    //     } else {
-    //         var colidEntity = this.collidedBottomEntity;
+        } else {
+            var colidEntity = this.collidedBottomEntity;
 
-    //         this.direction = "left";
-    //         this.animationState = "walkLeft";
-    //         if(colidEntity !== null && this.x > colidEntity.x) {
-    //             console.log("come here");
-    //             this.oldX = this.x;
-    //             this.x -= 2;
-    //             this.canvasX -= 2 ;
-    //         } else {
-    //             this.direction = "right";
-    //         }
-    //     }
-    // }
+            this.direction = "left";
+            this.animationState = "walkLeft";
+            if(colidEntity !== null && this.x > colidEntity.x) {
+                //console.log("come here");
+                this.oldX = this.x;
+                this.x -= 2;
+                this.canvasX -= 2 ;
+            } else {
+                this.direction = "right";
+            }
+        }
+    }
 
     if (this.id === 0) {
 

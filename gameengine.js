@@ -126,6 +126,8 @@ GameEngine.prototype.startInput = function() {
             var collidedLeftEntity = that.currentCharacter.collidedLeftEntity;
             var collidedRightEntity = that.currentCharacter.collidedRightEntity;
 
+            var lastGroundY = that.currentCharacter.lastGroundY;
+
 
             if (e.code === "Digit1" && that.playableCharacters[i].name === "knight") {
                 
@@ -169,6 +171,8 @@ GameEngine.prototype.startInput = function() {
             that.currentCharacter.collidedBottomEntity = collidedBottomEntity;
             that.currentCharacter.collidedLeftEntity = collidedLeftEntity;
             that.currentCharacter.collidedRightEntity = collidedRightEntity;
+
+            that.currentCharacter.lastGroundY = lastGroundY;
 
         }
 
