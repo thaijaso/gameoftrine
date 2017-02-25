@@ -1644,7 +1644,7 @@ Box.prototype.update = function() {
 Box.prototype.draw = function() {
     this.ctx.fillStyle = "#ff0000";
     this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
-    this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
 
 };
 
@@ -1687,7 +1687,7 @@ function Gunwoman(game) {
     this.oldY = 14 * TILE_SIZE;
 
     this.width = 2 * TILE_SIZE;
-    this.height = 4 * TILE_SIZE -5;
+    this.height = 4 * TILE_SIZE - 5;
 
     this.canvasX = 34 * TILE_SIZE;
     this.canvasY = 14 * TILE_SIZE;
@@ -2157,6 +2157,8 @@ Gunwoman.prototype.update = function() {
 
 
 Gunwoman.prototype.draw = function() {
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+
     if (this.animationState === "idleRight") {
 
         this.animationIdleRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);

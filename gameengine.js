@@ -81,37 +81,6 @@ GameEngine.prototype.startInput = function() {
         var rect = that.ctx.canvas.getBoundingClientRect();
         that.clickX = e.clientX - rect.left;
         that.clickY = e.clientY - rect.top;
-        // console.log("x: " + x + " y: " + y);
-
-
-        //  if (e.which === 1 && !that.didLeftClick) { //Left Mouse button pressed
-        //      that.didLeftClick = true;
-
-        //  } else if (e.which === 2) { //Middle Mouse button pressed  
-
-        //      console.log('Middle Mouse Button Pressed');
-
-        // } else if (e.which === 3 && currentCharacter.name === "gunwoman" && rightClickCount === 0) { //Right Mouse button pressed, add wolf
-        //      console.log('Right Mouse Button Pressed');
-        //      rightClickCount++;
-        //      that.drawWolf = true;
-        //      that.addEntity(that.wolf);
-        //  } else if (e.which == 3 && currentCharacter.name === "gunwoman" && rightClickCount >= 1) {
-
-        //      rightClickCount++;
-
-        //      if (rightClickCount === 2) {
-        //          that.wolfAttack = true;
-        //          that.wolfIsRight = true;
-        //      } else if (rightClickCount >= 2) {
-        //          rightClickCount = 1;
-        //      }
-
-        //  } else {
-        //      console.log('Mouse Button Undetected');
-        //  }
-
-        //console.log("rightClickCount: " + rightClickCount);
 
     }, false);
 
@@ -138,72 +107,68 @@ GameEngine.prototype.startInput = function() {
         that.keyMap[e.code] = true;
 
         for (var i = 0; i < that.playableCharacters.length; i++) {
+            var newX = that.currentCharacter.x;
+            var newY = that.currentCharacter.y;
+
+            var oldX = that.currentCharacter.oldX;
+            var oldY = that.currentCharacter.oldY;
+
+            var newCanvasX = that.currentCharacter.canvasX;
+            var newCanvasY = that.currentCharacter.canvasY;
+
+            var collidedTop = that.currentCharacter.collidedTop;
+            var collidedBottom = that.currentCharacter.collidedBottom;
+            var collidedLeft = that.currentCharacter.collidedLeft;
+            var collidedRight = that.currentCharacter.collidedRight;
+
+            var collidedTopEntity = that.currentCharacter.collidedTopEntity;
+            var collidedBottomEntity = that.currentCharacter.collidedBottomEntity;
+            var collidedLeftEntity = that.currentCharacter.collidedLeftEntity;
+            var collidedRightEntity = that.currentCharacter.collidedRightEntity;
+
 
             if (e.code === "Digit1" && that.playableCharacters[i].name === "knight") {
-                var newX = that.currentCharacter.x;
-                var newY = that.currentCharacter.y;
-
-                var oldX = that.currentCharacter.oldX;
-                var oldY = that.currentCharacter.oldY;
-
-                var newCanvasX = that.currentCharacter.canvasX;
-                var newCanvasY = that.currentCharacter.canvasY;
+                
 
                 that.changeCharacter(that.playableCharacters[i]); 
 
-                that.currentCharacter.x = newX;
-                that.currentCharacter.y = newY;
-
-                that.currentCharacter.oldX = oldX;
-                that.currentCharacter.oldY = oldY;
-
-                that.currentCharacter.canvasX = newCanvasX;
-                that.currentCharacter.canvasY = newCanvasY;
+               
 
             } else if (e.code === "Digit2" && that.playableCharacters[i].name === "gunwoman") {
-                var newX = that.currentCharacter.x;
-                var newY = that.currentCharacter.y;
+                
 
-                var newCanvasX = that.currentCharacter.canvasX;
-                var newCanvasY = that.currentCharacter.canvasY;
+                that.changeCharacter(that.playableCharacters[i]); 
 
-                var oldX = that.currentCharacter.oldX;
-                var oldY = that.currentCharacter.oldY;
-
-                that.changeCharacter(that.playableCharacters[i]);
-
-                that.currentCharacter.x = newX;
-                that.currentCharacter.y = newY;
-
-                that.currentCharacter.oldX = oldX;
-                that.currentCharacter.oldY = oldY;
-
-                that.currentCharacter.canvasX = newCanvasX;
-                that.currentCharacter.canvasY = newCanvasY;
+                
 
             } else if (e.code === "Digit3" && that.playableCharacters[i].name === "mage") {
 
-                var newX = that.currentCharacter.x;
-                var newY = that.currentCharacter.y;
-
-                var oldX = that.currentCharacter.oldX;
-                var oldY = that.currentCharacter.oldY;
-
-                var newCanvasX = that.currentCharacter.canvasX;
-                var newCanvasY = that.currentCharacter.canvasY;
                 
-                that.changeCharacter(that.playableCharacters[i]);
 
-                that.currentCharacter.x = newX;
-                that.currentCharacter.y = newY;
+                that.changeCharacter(that.playableCharacters[i]); 
 
-                that.currentCharacter.oldX = oldX;
-                that.currentCharacter.oldY = oldY;
-
-                that.currentCharacter.canvasX = newCanvasX;
-                that.currentCharacter.canvasY = newCanvasY;
+                
 
             }
+
+            that.currentCharacter.x = newX;
+            that.currentCharacter.y = newY;
+
+            that.currentCharacter.oldX = oldX;
+            that.currentCharacter.oldY = oldY;
+
+            that.currentCharacter.canvasX = newCanvasX;
+            that.currentCharacter.canvasY = newCanvasY;
+
+            that.currentCharacter.collidedTop = collidedTop;
+            that.currentCharacter.collidedBottom = collidedBottom;
+            that.currentCharacter.collidedLeft = collidedLeft;
+            that.currentCharacter.collidedRight = collidedRight;
+
+            that.currentCharacter.collidedTopEntity = collidedTopEntity;
+            that.currentCharacter.collidedBottomEntity = collidedBottomEntity;
+            that.currentCharacter.collidedLeftEntity = collidedLeftEntity;
+            that.currentCharacter.collidedRightEntity = collidedRightEntity;
 
         }
 

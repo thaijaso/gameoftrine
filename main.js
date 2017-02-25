@@ -154,28 +154,28 @@ AM.downloadAll(function() {
     
     gameEngine.addEntity(skeleton0);
     gameEngine.addEntity(skeleton1);
-    gameEngine.addEntity(skeleton2);
-    gameEngine.addEntity(skeleton3);
+    // gameEngine.addEntity(skeleton2);
+    // gameEngine.addEntity(skeleton3);
                       
-    gameEngine.addEntity(skeleton4); 
-    gameEngine.addEntity(skeleton5); 
-    gameEngine.addEntity(skeleton6);
-    gameEngine.addEntity(skeleton7);
-    gameEngine.addEntity(skeleton8);
-    gameEngine.addEntity(skeleton9);
-    gameEngine.addEntity(skeleton10);
-    gameEngine.addEntity(skeleton11);
-    gameEngine.addEntity(skeleton12);
-    gameEngine.addEntity(skeleton13);
-    gameEngine.addEntity(skeleton14);
-    gameEngine.addEntity(skeleton15);
-    gameEngine.addEntity(skeleton16);
-    gameEngine.addEntity(skeleton17);
-    gameEngine.addEntity(skeleton18);
-    gameEngine.addEntity(skeleton19);
-    gameEngine.addEntity(skeleton20);
-    gameEngine.addEntity(skeleton21);
-    gameEngine.addEntity(skeleton22);
+    // gameEngine.addEntity(skeleton4); 
+    // gameEngine.addEntity(skeleton5); 
+    // gameEngine.addEntity(skeleton6);
+    // gameEngine.addEntity(skeleton7);
+    // gameEngine.addEntity(skeleton8);
+    // gameEngine.addEntity(skeleton9);
+    // gameEngine.addEntity(skeleton10);
+    // gameEngine.addEntity(skeleton11);
+    // gameEngine.addEntity(skeleton12);
+    // gameEngine.addEntity(skeleton13);
+    // gameEngine.addEntity(skeleton14);
+    // gameEngine.addEntity(skeleton15);
+    // gameEngine.addEntity(skeleton16);
+    // gameEngine.addEntity(skeleton17);
+    // gameEngine.addEntity(skeleton18);
+    // gameEngine.addEntity(skeleton19);
+    // gameEngine.addEntity(skeleton20);
+    // gameEngine.addEntity(skeleton21);
+    // gameEngine.addEntity(skeleton22);
 
                                             //   x   y
     var archer1 = new SkeletonArcher(gameEngine, 96, 3);
@@ -187,8 +187,6 @@ AM.downloadAll(function() {
     var archer7 = new SkeletonArcher(gameEngine, 530, 13);
     var archer8 = new SkeletonArcher(gameEngine, 547, 13);
     var archer9 = new SkeletonArcher(gameEngine, 663, 8);
-
-
 
     // gameEngine.addEntity(archer1);
     // gameEngine.addEntity(archer2); 
@@ -370,23 +368,16 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform89); // ladder
     gameEngine.addEntity(platform90); // mini platform
 
-
-    
     gameEngine.addEntity(foreground);
     gameEngine.addEntity(tree);
-
 
     gameEngine.addEntity(knightPortraitRight);
     gameEngine.addEntity(gunwomanPortraitRight);
     gameEngine.addEntity(magePortraitRight);
 
-
-
     gameEngine.addPlayableCharacter(knight);
     gameEngine.addPlayableCharacter(gunwoman);
     gameEngine.addPlayableCharacter(mage);
-
-
 
     gameEngine.setCurrentCharacter(knight);
 
