@@ -96,6 +96,7 @@ function Skeleton(game, x, y) {
     this.collidedRightEntity = null;
     this.collidedTopEntity = null;
     this.collidedBottomEntity = null;
+    this.random = 0;
 }
 
 Skeleton.prototype.collide = function(other) {
@@ -337,7 +338,6 @@ Skeleton.prototype.update = function() {
                         }
                     }
                     
-
                 } else if (this.direction === "left" && this.collideAttackLeft(entity)) {
                     
                     var skeletonAttackFrame = this.animationAttackLeft.currentFrame();
@@ -589,23 +589,81 @@ Skeleton.prototype.update = function() {
             }  
 
         } else if (currentCharacter.x < this.x && !this.collidedLeft && !this.attacking) {
-        
+
+            var colidEntity = this.collidedBottomEntity;
+
+
             this.direction = "left";
             this.animationState = "walkLeft";
-            this.oldX = this.x;
-            this.x -= 2;
-            this.canvasX -= 2 ; 
+            if(colidEntity !== null && this.x/16 > colidEntity.x/16) {
+                console.log("come here");
+                this.oldX = this.x;
+                this.x -= 2;
+                this.canvasX -= 2 ;
+            }
+             
         
         } else if (currentCharacter.x > this.x && !this.collidedRight && !this.attacking) {
 
+
+            var colidEntity = this.collidedBottomEntity;
+
+            if (colidEntity !== null) {
+                var colidX = colidEntity.x/16 + colidEntity.width/16;
+            }
+
+            
             this.direction = "right";
             this.animationState = "walkRight";
-            this.oldX = this.x;
-            this.x += 2;
-            this.canvasX += 2;
 
+            if (this.x/16 + 2 < colidX) {
+                
+                this.oldX = this.x;
+                this.x += 2;
+                this.canvasX += 2;
+            }
+            
         }
         
+    } else {
+        console.log("come here");
+        // var random = Math.floor((Math.random() * 40) + 1);
+
+        if (this.direction === "right") {
+            var colidEntity = this.collidedBottomEntity;
+
+            this.direction = "right";
+            this.animationState = "walkRight";
+            if (colidEntity !== null) {
+                var colidX = colidEntity.x + colidEntity.width;
+            }
+
+            if (colidEntity !== null && this.x + 32 < colidX) {
+                
+                this.oldX = this.x;
+                this.x += 2;
+                this.canvasX += 2;
+            } else {
+                this.direction = "left";
+                this.oldX = this.x;
+                // this.x += 3;
+                // this.canvasX += 3;
+            }           
+            
+        } else {
+            var colidEntity = this.collidedBottomEntity;
+
+            this.direction = "left";
+            this.animationState = "walkLeft";
+            if(colidEntity !== null && this.x > colidEntity.x) {
+                console.log("come here");
+                this.oldX = this.x;
+                this.x -= 2;
+                this.canvasX -= 2 ;
+            } else {
+                this.direction = "right";
+            }
+        }
     }
 
     if (this.id === 0) {

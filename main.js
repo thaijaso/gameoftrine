@@ -177,12 +177,13 @@ AM.downloadAll(function() {
     
     gameEngine.addEntity(knight);
     //gameEngine.addEntity(gunwoman);
-    /*
+    
     gameEngine.addEntity(skeleton0);
+    
     gameEngine.addEntity(skeleton1);
     gameEngine.addEntity(skeleton2);
     gameEngine.addEntity(skeleton3);
-                      */  
+                      
     gameEngine.addEntity(skeleton4); 
     gameEngine.addEntity(skeleton5); 
     gameEngine.addEntity(skeleton6);
