@@ -174,7 +174,6 @@ GameEngine.prototype.startInput = function() {
                 var newX = that.currentCharacter.x;
                 var newY = that.currentCharacter.y;
 
-
                 var newCanvasX = that.currentCharacter.canvasX;
                 var newCanvasY = that.currentCharacter.canvasY;
 
@@ -396,10 +395,9 @@ GameEngine.prototype.addWolf = function(theWolf) {
 
 //entities are drawn on the map
 GameEngine.prototype.addEntity = function(entity) {
-    // console.log('Added Entity ' + entity);
-    if (entity.name === "bullet" || entity.name === "box") {
+
+    if (entity.name === "bullet" || entity.name === "box" || entity.name === "arrow") {
         this.entities.unshift(entity);
-        // this.entities.splice(0,0,entity);
 
     } else {
         this.entities.push(entity);
