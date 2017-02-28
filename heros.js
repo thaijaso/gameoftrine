@@ -2263,34 +2263,33 @@ Gunwoman.prototype.draw = function() {
 
 var id = 0;
 
+
 function Bullet(gameEngine) {
     this.id = id;
     id++;
-    this.startTime = gameEngine.timer.gameTime;
-
     this.game = gameEngine;
     this.currentCharacter = gameEngine.getCurrentCharacter();
     this.ctx = this.game.ctx;
     this.name = "bullet";
+
     this.x = this.currentCharacter.canvasX;
     this.y = this.currentCharacter.canvasY + 14;
     this.direction = this.currentCharacter.direction;
     this.canvasX = this.currentCharacter.canvasX;
     this.canvasY = this.currentCharacter.canvasY + 14;
+    this.targetX = this.game.clickX;
+    this.targetY = this.game.clickY;
 
-    this.x1 = this.x;
-    this.x2 = this.game.clickX;
-    this.y1 = this.y;
-    this.y2 = this.game.clickY;
-    this.f = 0;
+    this.dx = this.targetX - this.canvasX;
+    this.dy = this.targetY - this.canvasY ;
+    this.distance = Math.sqrt(this.dy * this.dy + this.dx * this.dx);
+    this.angle = Math.atan2(this.dy, this.dx);
 
-    // this.slope = (this.endY - this.canvasY) / (this.endX - this.canvasX);
-    // this.angle = Math.atan(this.slope);
-    // this.speed = 2;
+    this.speed = 10;
 
-    this.rightDistance = 0;
-    this.leftDistance = 0;
-    this.distance = 700;
+    this.b_dy = Math.sin(this.angle) * this.speed;
+    this.b_dx = Math.cos(this.angle) * this.speed;
+    this.distance = 0;
 
     this.width = 5;
     this.height = 3;
@@ -2301,23 +2300,19 @@ function Bullet(gameEngine) {
 
 Bullet.prototype.update = function() {
 
-    this.canvasX = this.x1 + (this.x2 - this.x1) * this.f;
-    this.canvasY = this.y1 + (this.y2 - this.y1) * this.f;
+    this.canvasY += this.b_dy;
+    this.canvasX += this.b_dx;
+    this.distance++;
 
-    if (this.f < 5) {
-
-        this.f += .05;
-    } else {
+    if(this.distance >= 200) {
+        distance = 0;
         this.game.removeEntity(this.id);
-
     }
-    // var timeSince = this.game.timer.gameTime - this.startTime;
-    // this.canvasY = (1 - timeSince) * this.y1 + (timeSince * this.y2);
-    // this.canvasX = (1 - timeSince) * this.x1 + (timeSince * this.x2);
 
 };
 
 Bullet.prototype.draw = function() {
     this.ctx.fillStyle = "#000000";
     this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+
 };
