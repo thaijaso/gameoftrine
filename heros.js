@@ -2316,3 +2316,59 @@ Bullet.prototype.draw = function() {
     this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
 };
+
+
+
+//Constructor for wolf
+function Wolf(game) {
+    var idleRightSpriteSheet = AM.getAsset("./img/wolfidleright.png");
+    var walkRightSpriteSheet = AM.getAsset("./img/wolfwalkright.png");
+    var attackRightSpriteSheet = AM.getAsset("./img/wolfattackright.png");
+	//var idleLeftSpriteSheet = AM.getAsset("./img/wolfidleright.png");
+
+    // var jumpRightSpriteSheet = AM.getAsset("./img/gunwomanjumpright.png");
+
+    this.name = "wolf";
+
+  //  this.animationCurrent = new Animation(this, idleRightSpriteSheet, 192, 192, 4, 0.1, 12, true, .5);
+    this.animationIdleRight = new Animation(this, idleRightSpriteSheet, 192, 192, 4, 0.1, 12, true, .5);
+    this.animationWalkRight = new Animation(this, walkRightSpriteSheet, 192, 192, 4, 0.05, 12, true, .5);
+    this.animationAttackRight = new Animation(this, attackRightSpriteSheet, 288, 192, 3, 0.04, 12, false, .5);
+	this.animationIdleLeft = new Animation(this, idleRightSpriteSheet, 192, 192, 4, 0.1, 12, true, .5);
+
+    // this.animationJumpRight = new Animation(this, jumpRightSpriteSheet, 192, 192, 4, 0.04, 12, false, 1);
+	
+	this.currChar = game.getCurrentCharacter();
+	this.animationState = "idleRight";
+
+    this.state = "idleRight";
+    this.x = this.currChar.x;
+    this.y = this.currChar.y;
+	this.canvasX = this.currChar.canvasX;
+	this.canvasY = this.currChar.canvasY;
+    this.speed = 100;
+    this.game = game;
+    this.jumping = false
+    this.ctx = game.ctx;
+
+    this.jumping = false;
+    this.radius = 100;
+    this.ground = 400;
+    Entity.call(this, this.game, 0, 400);
+}
+
+Wolf.prototype.draw = function() {
+	var gunwomanState = this.currChar.animationState;
+	if(gunwomanState === "idleRight") {
+		this.animationIdleRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
+	} else if(gunwomanState === "walkRight") {
+		this.animationWalkRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
+	} else if(gunwomanState=== "idleLeft") {
+		this.animayion
+	}
+}
+
+Wolf.prototype.update = function() {
+	
+    Entity.prototype.update.call(this);
+}

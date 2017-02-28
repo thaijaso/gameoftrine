@@ -1,41 +1,6 @@
 var HEALTH = 2;
 
-//Constructor for wolf
-function Wolf(game) {
-    var idleRightSpriteSheet = AM.getAsset("./img/wolfidleright.png");
-    var walkRightSpriteSheet = AM.getAsset("./img/wolfwalkright.png");
-    var attackRightSpriteSheet = AM.getAsset("./img/wolfattackright.png");
-    // var jumpRightSpriteSheet = AM.getAsset("./img/gunwomanjumpright.png");
 
-    this.name = "wolf";
-
-    this.animationCurrent = new Animation(this, idleRightSpriteSheet, 192, 192, 4, 0.1, 12, true, 1);
-    this.animationIdleRight = new Animation(this, idleRightSpriteSheet, 192, 192, 4, 0.1, 12, true, 1);
-    this.animationWalkRight = new Animation(this, walkRightSpriteSheet, 192, 192, 4, 0.05, 12, true, 1);
-    this.animationAttackRight = new Animation(this, attackRightSpriteSheet, 288, 192, 3, 0.04, 12, false, 1);
-    // this.animationJumpRight = new Animation(this, jumpRightSpriteSheet, 192, 192, 4, 0.04, 12, false, 1);
-
-    this.state = "idleRight";
-    //this.x = 0;
-    //this.y = 0;
-    this.speed = 100;
-    this.game = game;
-    this.jumping = false
-    this.ctx = game.ctx;
-
-    this.jumping = false;
-    this.radius = 100;
-    this.ground = 400;
-    Entity.call(this, this.game, 0, 400);
-}
-
-Wolf.prototype.draw = function() {
-    this.animationCurrent.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
-}
-
-Wolf.prototype.update = function() {
-    Entity.prototype.update.call(this);
-}
 
 var SKELETON_ID = 0;
 

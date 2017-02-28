@@ -14,7 +14,7 @@ function GameEngine() {
     this.currentForeground = null;
     this.currentMidground = null;
     this.currentCharacter = null;
-    this.wolf = null;
+    //this.wolf = new Wolf(this);
     this.wolfAttack = false;
     this.entities = [];
     this.playableCharacters = [];
@@ -73,6 +73,7 @@ GameEngine.prototype.startInput = function() {
     var rightClickCount = 0;
     this.ctx.canvas.addEventListener("mousedown", function(e) {
         var currentCharacter = that.getCurrentCharacter();
+		 console.log(e);
 
 
         that.click = getXandY(e);
@@ -83,6 +84,24 @@ GameEngine.prototype.startInput = function() {
         that.clickX = e.clientX - rect.left;
         that.clickY = e.clientY - rect.top;
 
+		if (e.which === 3 && currentCharacter.name === "gunwoman" && rightClickCount === 0) { //Right Mouse button pressed, add wolf
+             console.log('Right Mouse Button Pressed');
+             rightClickCount++;
+             that.drawWolf = true;
+			 var wolf = new Wolf(that);
+			//that.addEntity(wolf);
+        } else if (e.which == 3 && currentCharacter.name === "gunwoman" && rightClickCount >= 1) {
+
+            rightClickCount++;
+
+           if (rightClickCount === 2) {
+                that.wolfAttack = true;
+                that.wolfIsRight = true;
+             } else if (rightClickCount >= 2) {
+                 rightClickCount = 1;
+             }
+		}
+
     }, false);
 
     this.ctx.canvas.addEventListener("mouseup", function(e) {
@@ -90,6 +109,7 @@ GameEngine.prototype.startInput = function() {
     }, false);
 
      this.ctx.canvas.addEventListener("click", function (e) {
+		 
         var charac = that.currentCharacter;
         if(charac.name === "mage"){
             var box = new Box(that, e.clientX, e.clientY);
@@ -99,7 +119,7 @@ GameEngine.prototype.startInput = function() {
         var theX = (charac.x - charac.canvasX) + e.clientX;
         //console.log("the x = " + theX/16);
         //console.log("the y = " + e.clientY/16);
-        
+
 
     }, false);
 
@@ -131,26 +151,26 @@ GameEngine.prototype.startInput = function() {
 
 
             if (e.code === "Digit1" && that.playableCharacters[i].name === "knight") {
-                
+
 
                 that.changeCharacter(that.playableCharacters[i]); 
 
-               
+
 
             } else if (e.code === "Digit2" && that.playableCharacters[i].name === "gunwoman") {
-                
+
 
                 that.changeCharacter(that.playableCharacters[i]); 
 
-                
+
 
             } else if (e.code === "Digit3" && that.playableCharacters[i].name === "mage") {
 
-                
+
 
                 that.changeCharacter(that.playableCharacters[i]); 
 
-                
+
 
             }
 
@@ -204,8 +224,8 @@ GameEngine.prototype.startInput = function() {
 
     this.ctx.canvas.addEventListener("contextmenu", function(e) {
         that.click = getXandY(e);
-        console.log(e);
-        console.log("Right Click Event - X,Y " + e.clientX + ", " + e.clientY);
+        //console.log(e);
+        //console.log("Right Click Event - X,Y " + e.clientX + ", " + e.clientY);
         e.preventDefault();
     }, false);
 
@@ -266,13 +286,13 @@ GameEngine.prototype.update = function() {
 GameEngine.prototype.draw = function() {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
-    
+
     for (var i = this.entities.length - 1; i >= 0; i--) {
         var entity = this.entities[i];   
 
         entity.draw(this.ctx);
     }
-    
+
     this.ctx.restore();
 }
 
@@ -375,7 +395,7 @@ GameEngine.prototype.replaceCharacter = function() {
         // }
 
 
-        
+
         this.entities.unshift(newCharacter);
         this.setCurrentCharacter(newCharacter);
         this.removeEntity(oldCharacter.id);
@@ -390,7 +410,7 @@ GameEngine.prototype.addWolf = function(theWolf) {
 //entities are drawn on the map
 GameEngine.prototype.addEntity = function(entity) {
 
-    if (entity.name === "box" || entity.name === "bullet" || entity.name === "arrow") {
+    if (entity.name === "box" || entity.name === "bullet" || entity.name === "arrow" || entity.name === "wolf") {
 
         this.entities.splice(1, 0, entity); //add entity after knight index, ie index 1
 
@@ -442,3 +462,4 @@ Entity.prototype.rotateAndCache = function(image, angle) {
     //offscreenCtx.strokeRect(0,0,size,size);
     return offscreenCanvas;
 }
+										

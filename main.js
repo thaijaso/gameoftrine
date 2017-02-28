@@ -7,7 +7,7 @@ function Portrait(ctx, spritesheet, x, y) {
 }
 
 Portrait.prototype.draw = function() {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y, 121 , 101);
+    this.ctx.drawImage(this.spritesheet, this.x, this.y, 130 , 101);
 };
 
 
@@ -66,19 +66,26 @@ ProgressBar.prototype.draw = function() {
     this.ctx.strokeStyle = '#e7f2ba'; // for border color
     this.ctx.stroke(); // Stroke function
     this.ctx.fillStyle = '#000';
-    this.ctx.strokeStyle = '#b3cf3c';
-    this.ctx.lineWidth = 10;
+    this.ctx.strokeStyle = '#37d613';
+    this.ctx.lineWidth = 20;
     this.ctx.beginPath();
-    
-    if (this.endAngle > .5) {
+
+    if (this.endAngle < .5) {
+		this.ctx.strokeStyle = '#F00';
         this.ctx.arc(this.cw, this.ch, 50, this.start, this.endAngle, false);
         this.ctx.stroke();
 
+    } else if(this.endAngle < 2.5 && this.endAngle > .5) {
+		this.ctx.strokeStyle = '#ffff13 ';
+        this.ctx.arc(this.cw, this.ch, 50, this.start, this.endAngle, false);
+        this.ctx.stroke();
 
+	}
 
-    } else {
-            this.ctx.strokeStyle = '#F00';
-            this.ctx.arc(this.cw, this.ch, 50, this.start, this.endAngle, false);
+	else {
+		this.ctx.strokeStyle = '#37d613';
+
+        this.ctx.arc(this.cw, this.ch, 50, this.start, this.endAngle, false);
         this.ctx.stroke();
 
 
@@ -172,7 +179,7 @@ AM.queueDownload("./img/arrow.png");
 
 AM.downloadAll(function() {
     var canvas = document.getElementById("gameWorld");
-    
+
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     canvas.focus();
@@ -184,20 +191,21 @@ AM.downloadAll(function() {
 
 
     gameEngine.init(ctx, AM, gameState);
-    
+
 
     var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground.png"));
     var background = new Background(gameEngine, AM.getAsset("./img/background.png"));
     var midground = new Midground(gameEngine, AM.getAsset("./img/midground.png"));
-    
-    var progressKnight = new ProgressBar(ctx, 69, 62);
-    var progressGunwoman = new ProgressBar(ctx, 187, 62);
-    var progressMage = new ProgressBar(ctx, 305, 62);
+
+    var progressKnight = new ProgressBar(ctx, 74, 72);
+    var progressGunwoman = new ProgressBar(ctx, 205, 72);
+    var progressMage = new ProgressBar(ctx, 335, 72);
 
     var knight = new Knight(gameEngine, gameState, progressKnight);
     var gunwoman = new Gunwoman(gameEngine, gameState, progressGunwoman);
     var mage = new Mage(gameEngine, gameState, progressMage);
-    
+	//var wolf = new Wolf(gameEngine);
+
                                         //   x   y
     var skeleton0 = new Skeleton(gameEngine, gameState, 68, 24);
     var skeleton1 = new Skeleton(gameEngine, gameState, 70, 24);
@@ -226,19 +234,19 @@ AM.downloadAll(function() {
 
     var tree = new Tree(gameEngine);
 
-    var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"), 4.9, 10);
-    var gunwomanPortraitRight = new Portrait(ctx, AM.getAsset("./img/gunwomanPORTRAITright.png"), 140, 10);
-    var magePortraitRight = new Portrait(ctx, AM.getAsset("./img/magePORTRAITright.png"), 240, 10);
+    var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"), 4.9, 20);
+    var gunwomanPortraitRight = new Portrait(ctx, AM.getAsset("./img/gunwomanPORTRAITright.png"), 155, 20);
+    var magePortraitRight = new Portrait(ctx, AM.getAsset("./img/magePORTRAITright.png"), 265, 20);
 
 
     //an entity is any element drawn on the map
     gameEngine.addEntity(knight);
-    
+
     gameEngine.addEntity(skeleton0);
     gameEngine.addEntity(skeleton1);
     gameEngine.addEntity(skeleton2);
     gameEngine.addEntity(skeleton3);
-                      
+
     gameEngine.addEntity(skeleton4); 
     gameEngine.addEntity(skeleton5); 
     gameEngine.addEntity(skeleton6);
@@ -291,7 +299,7 @@ AM.downloadAll(function() {
     var platform7 = new Platform(gameEngine, 95.5, 6.8, 3, 2);
     var platform8 = new Platform(gameEngine, 119, 31, 5, 4);
     var platform9 = new Platform(gameEngine, 129, 33, 3, 2);
-    
+
     var platform11 = new Platform(gameEngine, 134, 37, 50.5, 1);
     var platform26 = new Platform(gameEngine, 160.5, 12, 3, 2);
     var platform27 = new Platform(gameEngine, 143.5, 28, 3, 1.5);
@@ -308,7 +316,7 @@ AM.downloadAll(function() {
     var platform38 = new Platform(gameEngine, 249.5, 38, 13, 4);
     var platform39 = new Platform(gameEngine, 272.5, 37.5, 2, 2);
     var platform40 = new Platform(gameEngine, 284.5, 39.5, 2, 2);
-   
+
     var platform42 = new Platform(gameEngine, 296, 38, 3, 2);
     var platform43 = new Platform(gameEngine, 312, 36, 3, 2);
     var platform44 = new Platform(gameEngine, 242.5, 11, 3, 2);
@@ -370,7 +378,7 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform8);
     gameEngine.addEntity(platform9);
 
-    
+
     // Major Platform 2
     gameEngine.addEntity(platform11); // main platform
     gameEngine.addEntity(platform26); // mini floating platform
@@ -379,7 +387,7 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform29); // bigger floating platform
     gameEngine.addEntity(platform30); // tiny floating platform (to platform 3)
 
-    
+
     // Major Platform 3
     gameEngine.addEntity(platform31); // floating mini platform
     gameEngine.addEntity(platform32); // floating platform
@@ -391,7 +399,7 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform38); // platform under floating platform 2
     gameEngine.addEntity(platform39); // tiny floating platform 1
     gameEngine.addEntity(platform40); // tiny floating platform 2
-    
+
     gameEngine.addEntity(platform42); // mini platform (under floating platform 2)
     gameEngine.addEntity(platform43); // mini platform 2, go to major platform 4
     gameEngine.addEntity(platform44); // mini platform (in sky)
@@ -466,7 +474,7 @@ AM.downloadAll(function() {
     gameEngine.addPlayableCharacter(mage);
 
     gameEngine.setCurrentCharacter(knight);
-    
+
     gameEngine.setCurrentBackground(background);
     gameEngine.setCurrentForeground(foreground);
 
@@ -478,3 +486,4 @@ AM.downloadAll(function() {
 
     console.log("All Done!");
 });
+					
