@@ -1,4 +1,4 @@
-var HEALTH = 20;
+var HEALTH = 2;
 
 //Constructor for wolf
 function Wolf(game) {
@@ -351,6 +351,7 @@ Skeleton.prototype.update = function() {
                     var skeletonAttackFrame = this.animationAttackLeft.currentFrame();
 
                     if (skeletonAttackFrame === 10) {
+                        
                         this.state.updateHealth(entity);
 
                         var knockBackCollidedWith = null;

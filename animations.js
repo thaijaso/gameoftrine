@@ -234,7 +234,7 @@ function Tree(gameEngine) {
     this.height = 7 * TILE_SIZE;
 
     this.canvasX = 29 * TILE_SIZE;
-    this.canvasY = 25 * TILE_SIZE;
+    this.canvasY = 22 * TILE_SIZE;
 }
 
 Tree.prototype.draw = function() {

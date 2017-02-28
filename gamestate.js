@@ -11,6 +11,12 @@ GameState.prototype.draw = function() {}
 
 GameState.prototype.update = function() {
 
+    var gameEngine = this.game;
+    var currentCharacter = gameEngine.getCurrentCharacter();
+
+    if (currentCharacter.x >= 10839 && currentCharacter.y === 357) {
+        window.alert("Next level");
+    }
 
 };
 
@@ -81,10 +87,12 @@ GameState.prototype.updateHealth = function(entity) {
 
         for (var i = 0; i < this.game.entities.length; i++) {
             var e = this.game.entities[i];
+            
             if (e.id === entity.id) {
-
+                console.log('entity id: ' + entity.id);
                 entity.health = entity.health - 1;
             }
+            
             if (entity.health <= 0 && e.id === entity.id) {
                 this.game.entities.splice(i, 1);
             }

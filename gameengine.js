@@ -29,10 +29,11 @@ function GameEngine() {
     this.surfaceHeight = null;
 }
 
-GameEngine.prototype.init = function(ctx, assetManager) {
+GameEngine.prototype.init = function(ctx, assetManager, gameState) {
     this.ctx = ctx;
     this.surfaceWidth = this.ctx.canvas.width;
     this.surfaceHeight = this.ctx.canvas.height;
+    this.gameState = gameState;
     this.assetManager = assetManager;
     this.timer = new Timer();
     this.startInput();
@@ -96,8 +97,8 @@ GameEngine.prototype.startInput = function() {
         }
 
         var theX = (charac.x - charac.canvasX) + e.clientX;
-        console.log("the x = " + theX/16);
-        console.log("the y = " + e.clientY/16);
+        //console.log("the x = " + theX/16);
+        //console.log("the y = " + e.clientY/16);
         
 
     }, false);
@@ -254,10 +255,12 @@ GameEngine.prototype.update = function() {
         entity.update();
 
         if (entitiesCount != this.entities.length) {
-            console.log('bullet added');
+            //console.log('bullet added');
             i++;
         }
     }
+
+    this.gameState.update();
 }
 
 GameEngine.prototype.draw = function() {

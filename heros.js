@@ -46,7 +46,6 @@ function Knight(game, gameState, progressBar) {
     this.state = gameState;
     this.ctx = game.ctx;
     this.name = "knight";
-    this.id = 1;
 
     this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.05, 14, true, 0.5);
     this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.035, 12, true, 0.5);
@@ -61,7 +60,7 @@ function Knight(game, gameState, progressBar) {
     this.direction = "right";
 
     this.x = 34 * TILE_SIZE;
-    this.y = 27 * TILE_SIZE;
+    this.y = 24 * TILE_SIZE;
 
     this.oldX = 34 * TILE_SIZE;
     this.oldY = 27 * TILE_SIZE;
@@ -280,7 +279,6 @@ Knight.prototype.update = function() {
     this.progressBar.updateHealth(this.health);
 
     var gameEngine = this.game;
-    //handle jumping
 
     if (this.jumping) {
 
@@ -319,12 +317,14 @@ Knight.prototype.update = function() {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = this.game.entities[i];
 
-            if (entity.name === "skeleton") {
+            if (entity.name === "skeleton" && !entity.attacked) {
 
                 if (this.direction === "right" && this.collideAttackRight(entity)) {
-                    console.log('landed attack right');
+                    //console.log('landed attack right');
 
                     if (this.animationAttackRight.currentFrame() === 10) {
+                        entity.attacked = true;
+                        
                         this.state.updateHealth(entity);
 
                         //knock back collision
@@ -459,6 +459,24 @@ Knight.prototype.update = function() {
         }
     }
 
+    //check to see if attack animation is done so that 
+    //we can can set all the entity.attacked properties to false.
+    //this means that we can safely attack an enemy and decrease their health.
+    //the resason we have to do this is because update will get to frame 10 twice
+    //but we only want to decrease health once per attack
+    if (this.animationAttackRight.isDone()) {
+        this.animationAttackRight.elapsedTime = 0;
+
+        for (var i = 0; i < gameEngine.entities.length; i++) {
+            var entity = gameEngine.entities[i];
+            
+            if (entity.name === "skeleton") {
+                entity.attacked = false;
+            }
+        }
+        
+    }
+
     //check if player collided with any platforms, skeletons, or boxes
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.game.entities[i];
@@ -466,7 +484,6 @@ Knight.prototype.update = function() {
         if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
 
             if (this !== entity && this.collide(entity)) {
-                //console.log('colliding');
 
                 this.collidedWith = entity;
 
@@ -512,7 +529,7 @@ Knight.prototype.update = function() {
                         this.y += 3;
                         this.canvasY += 3;
 
-                        console.log(this.y);
+                        //console.log(this.y);
                     } 
                 }
             }
