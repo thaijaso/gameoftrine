@@ -60,7 +60,7 @@ function Knight(game, gameState, progressBar) {
     this.direction = "right";
 
     this.x = 34 * TILE_SIZE;
-    this.y = 24 * TILE_SIZE;
+    this.y = 27 * TILE_SIZE;
 
     this.oldX = 34 * TILE_SIZE;
     this.oldY = 27 * TILE_SIZE;
@@ -603,14 +603,14 @@ Knight.prototype.update = function() {
         //console.log(this.y);
     }
 
-    if (this.y >= 1000) {
-        this.health = 0;
-        this.hasFallen = true;
-        this.progressBar.updateHealth(this.health);
-        this.game.removeEntity(this);
-        this.game.replaceCharacter();
+    // if (this.y >= 1000) {
+    //     this.health = 0;
+    //     this.hasFallen = true;
+    //     this.progressBar.updateHealth(this.health);
+    //     this.game.removeEntity(this);
+    //     this.game.replaceCharacter();
 
-    } 
+    // } 
 
     //check for movement/change character
     if (gameEngine.keyMap["KeyD"] && !this.collidedRight) {

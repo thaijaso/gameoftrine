@@ -200,7 +200,7 @@ AM.downloadAll(function() {
     
                                         //   x   y
     var skeleton0 = new Skeleton(gameEngine, gameState, 68, 24);
-    var skeleton1 = new Skeleton(gameEngine, gameState, 70, 24);
+    var skeleton1 = new Skeleton(gameEngine, gameState, 72, 24);
     var skeleton2 = new Skeleton(gameEngine, gameState, 75, 24);
     var skeleton3 = new Skeleton(gameEngine, gameState, 80, 24);
     var skeleton4 = new Skeleton(gameEngine, gameState, 144, 32);//BOTTOM TWO
@@ -234,10 +234,10 @@ AM.downloadAll(function() {
     //an entity is any element drawn on the map
     gameEngine.addEntity(knight);
     
-    gameEngine.addEntity(skeleton0);
-    gameEngine.addEntity(skeleton1);
-    gameEngine.addEntity(skeleton2);
-    gameEngine.addEntity(skeleton3);
+    //gameEngine.addEntity(skeleton0);
+    //gameEngine.addEntity(skeleton1);
+    //gameEngine.addEntity(skeleton2);
+    //gameEngine.addEntity(skeleton3);
                       
     gameEngine.addEntity(skeleton4); 
     gameEngine.addEntity(skeleton5); 
@@ -280,9 +280,11 @@ AM.downloadAll(function() {
     // gameEngine.addEntity(archer8);
     // gameEngine.addEntity(archer9);
 
-                                            //x,  y, width, height
-    var platform0 = new Platform(gameEngine, 0, 0, 1, 100)
-    var platform1 = new Platform(gameEngine, 0, 28, 110, 1);
+                                                   //x,  y, width, height
+    var tutorialPlatform0 = new Platform(gameEngine, 0, 39, 42, 1)
+    var tutorialPlatform1 = new Platform(gameEngine, 41, 28, 1, 11);
+    
+    var platform1 = new Platform(gameEngine, 42, 28, 78, 1);
     var platform2 = new Platform(gameEngine, 64, 22, 3, 2);
     var platform3 = new Platform(gameEngine, 75, 19, 3, 2);
     var platform4 = new Platform(gameEngine, 88, 18, 3, 1.5);
@@ -358,6 +360,10 @@ AM.downloadAll(function() {
     var platform88 = new Platform(gameEngine, 642, 26, 15, 1.5);
     var platform89 = new Platform(gameEngine, 667, 26, 31.5, 1.5);
     var platform90 = new Platform(gameEngine, 662, 8, 3, 2);
+
+    //Tutorial Platform
+    gameEngine.addEntity(tutorialPlatform0);
+    gameEngine.addEntity(tutorialPlatform1);
 
     // Major Platform 1
     gameEngine.addEntity(platform1);
