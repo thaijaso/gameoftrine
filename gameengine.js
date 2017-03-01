@@ -89,7 +89,7 @@ GameEngine.prototype.startInput = function() {
              rightClickCount++;
              that.drawWolf = true;
 			 var wolf = new Wolf(that);
-			//that.addEntity(wolf);
+			 that.addEntity(wolf);
         } else if (e.which == 3 && currentCharacter.name === "gunwoman" && rightClickCount >= 1) {
 
             rightClickCount++;
