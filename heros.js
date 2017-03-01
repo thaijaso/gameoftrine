@@ -2265,12 +2265,10 @@ Gunwoman.prototype.draw = function() {
     }
 }
 
-var id = 0;
+
 
 
 function Bullet(gameEngine) {
-    this.id = id;
-    id++;
     this.game = gameEngine;
     this.currentCharacter = gameEngine.getCurrentCharacter();
     this.ctx = this.game.ctx;
@@ -2297,8 +2295,6 @@ function Bullet(gameEngine) {
 
     this.width = 5;
     this.height = 3;
-
-
 }
 
 
@@ -2310,7 +2306,7 @@ Bullet.prototype.update = function() {
 
     if(this.distance >= 200) {
         distance = 0;
-        this.game.removeEntity(this.id);
+        this.game.removeEntity(this);
     }
 
 };

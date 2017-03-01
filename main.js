@@ -246,10 +246,10 @@ AM.downloadAll(function() {
     //an entity is any element drawn on the map
     gameEngine.addEntity(knight);
     
-    //gameEngine.addEntity(skeleton0);
-    //gameEngine.addEntity(skeleton1);
-    //gameEngine.addEntity(skeleton2);
-    //gameEngine.addEntity(skeleton3);
+    gameEngine.addEntity(skeleton0);
+    gameEngine.addEntity(skeleton1);
+    gameEngine.addEntity(skeleton2);
+    gameEngine.addEntity(skeleton3);
                       
     gameEngine.addEntity(skeleton4); 
     gameEngine.addEntity(skeleton5); 

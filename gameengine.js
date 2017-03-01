@@ -238,13 +238,13 @@ GameEngine.prototype.loop = function() {
     this.draw();
 }
 
-GameEngine.prototype.removeEntity = function(info) {
+GameEngine.prototype.removeEntity = function(entity) {
     var entitiesCount = this.entities.length;
     var temp = null;
 
     for (var i = 0; i < this.entities.length; i++) {
         var e = this.entities[i];
-        if (e.id === info) {
+        if (e === entity) {
             temp = this.entities.splice(i, 1);
         }
     }
