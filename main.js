@@ -142,6 +142,10 @@ AM.queueDownload("./img/gunwomanPORTRAITright.png");
 AM.queueDownload("./img/wolfidleright.png");
 AM.queueDownload("./img/wolfattackright.png");
 AM.queueDownload("./img/wolfwalkright.png");
+AM.queueDownload("./img/wolf-walk-left.png");
+AM.queueDownload("./img/wolf-idle-left.png");
+
+
 
 //mage
 AM.queueDownload("./img/mageWalkRight.png");
