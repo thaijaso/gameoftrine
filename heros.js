@@ -612,6 +612,10 @@ Knight.prototype.update = function() {
 
     // } 
 
+    if (gameEngine.keyMap["KeyT"]) {
+        console.log(this.x);
+    }
+
     //check for movement/change character
     if (gameEngine.keyMap["KeyD"] && !this.collidedRight) {
 

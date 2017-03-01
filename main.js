@@ -189,9 +189,7 @@ AM.downloadAll(function() {
     var gameEngine = new GameEngine();
     var gameState = new GameState(ctx, gameEngine);
 
-
     gameEngine.init(ctx, AM, gameState);
-
 
     var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground.png"));
     var background = new Background(gameEngine, AM.getAsset("./img/background.png"));
@@ -233,6 +231,8 @@ AM.downloadAll(function() {
 
 
     var tree = new Tree(gameEngine);
+
+    var tooltip = new Tooltip(gameEngine);
 
     var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"), 4.9, 20);
     var gunwomanPortraitRight = new Portrait(ctx, AM.getAsset("./img/gunwomanPORTRAITright.png"), 155, 20);
@@ -464,6 +464,7 @@ AM.downloadAll(function() {
     gameEngine.addEntity(platform89); // ladder
     gameEngine.addEntity(platform90); // mini platform
 
+    gameEngine.addEntity(tooltip);
     gameEngine.addEntity(foreground);
     gameEngine.addEntity(tree);
 

@@ -195,7 +195,7 @@ function Platform(game, x, y, width, height) {
 Platform.prototype.draw = function() {
     this.ctx.fillStyle = "#ff0000";
     //console.log(this.canvasX);
-    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     //console.log(this.canvasX);
     //this.ctx.fillRect(this.x, this.y, this.width, this.height);
 }
@@ -217,7 +217,7 @@ Platform.prototype.update = function() {
 
 
 function Tree(gameEngine) {
-    this.game = gameEngine
+    this.game = gameEngine;
 
     var treeSpriteSheet = AM.getAsset("./img/treeleaffall.png");
 
@@ -237,10 +237,6 @@ function Tree(gameEngine) {
     this.canvasY = 33 * TILE_SIZE;
 }
 
-Tree.prototype.draw = function() {
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.canvasX + 1.5, this.canvasY - 2.0);
-};
-
 Tree.prototype.update = function() {
     var gameEngine = this.game;
     var currentCharacter = gameEngine.getCurrentCharacter();
@@ -252,6 +248,71 @@ Tree.prototype.update = function() {
     } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
         this.canvasX += 3;
+    }
+}
+
+Tree.prototype.draw = function() {
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.canvasX + 1.5, this.canvasY - 2.0);
+};
+
+
+
+function Tooltip(gameEngine) {
+    this.game = gameEngine;
+    this.ctx = this.game.ctx;
+    
+    this.currentMessage = "Press A and D for movement";
+    
+    this.messages = ["Press A and D for movement",
+                     "Left click to attack", 
+                     "Press spacebar to jump",
+                     "Press 3 to switch to Mage Mariott",
+                     "Left click to summon boxes"];
+
+    this.showedMovementTip = false;
+    this.showedJumpTip = false;
+    this.showedBoxTip = false;
+    
+    this.canvasX = 30 * TILE_SIZE;
+    this.canvasY = 15 * TILE_SIZE;
+    this.width = 10 * TILE_SIZE;
+    this.height = 3 * TILE_SIZE;
+}
+
+Tooltip.prototype.update = function() {
+    var gameEngine = this.game;
+
+    if ((gameEngine.keyMap["KeyA"] || gameEngine.keyMap["KeyD"]) && !this.showedMovementTip) {
+        
+        this.showedMovementTip = true;
+        this.currentMessage = this.messages[1];
+
+    } else if (gameEngine.keyMap["1"] && !this.showedAttackTip) {
+
+        this.showedAttackTip = true;
+        this.currentMessage = this.messages[2];
+
+    } else if (gameEngine.keyMap["Space"] && !this.showedJumpTip) {
+
+        this.showedJumpTip = true;
+        this.currentMessage = this.messages[3];
+
+    } else if (gameEngine.keyMap["Digit3"] && !this.showedBoxTip) {
+
+        this.showedBoxTip = true;
+        this.currentMessage = this.messages[4];
+    }
+}
+
+Tooltip.prototype.draw = function() {
+    var gameEngine = this.game;
+    var currentCharacter = gameEngine.getCurrentCharacter();
+
+
+    if (currentCharacter.x < 655) {
+        this.ctx.fillStyle = "black";
+        this.ctx.font = "bold 16px Arial";
+        this.ctx.fillText(this.currentMessage, this.canvasX, this.canvasY);
     }
 }
 
