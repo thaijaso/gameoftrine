@@ -296,7 +296,7 @@ AM.downloadAll(function() {
     var tutorialPlatform0 = new Platform(gameEngine, 0, 39, 42, 1)
     var tutorialPlatform1 = new Platform(gameEngine, 41, 28, 1, 11);
     
-    var platform1 = new Platform(gameEngine, 42, 28, 78, 1);
+    var platform1 = new Platform(gameEngine, 42, 28, 68.5, 1);
     var platform2 = new Platform(gameEngine, 64, 22, 3, 2);
     var platform3 = new Platform(gameEngine, 75, 19, 3, 2);
     var platform4 = new Platform(gameEngine, 88, 18, 3, 1.5);
