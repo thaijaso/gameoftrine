@@ -143,6 +143,7 @@ AM.queueDownload("./img/wolfattackright.png");
 AM.queueDownload("./img/wolfwalkright.png");
 AM.queueDownload("./img/wolf-walk-left.png");
 AM.queueDownload("./img/wolf-idle-left.png");
+AM.queueDownload("./img/wolf-attack-left.png");
 
 
 
@@ -246,9 +247,9 @@ AM.downloadAll(function() {
     gameEngine.addEntity(knight);
     
     gameEngine.addEntity(skeleton0);
-    gameEngine.addEntity(skeleton1);
-    gameEngine.addEntity(skeleton2);
-    gameEngine.addEntity(skeleton3);
+    //gameEngine.addEntity(skeleton1);
+    //gameEngine.addEntity(skeleton2);
+    //gameEngine.addEntity(skeleton3);
                       
     gameEngine.addEntity(skeleton4); 
     gameEngine.addEntity(skeleton5); 

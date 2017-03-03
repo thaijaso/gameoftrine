@@ -19,7 +19,6 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
     var gameEngine = this.entity.gameEngine.getGameEngine();
     var gameState = this.entity.gameState;
     var currentCharacter = gameState.getCurrentCharacter();
-    var wolf = gameEngine.getWolf();
 
     this.elapsedTime += tick;
 

@@ -15,7 +15,6 @@ function GameEngine() {
     this.currentForeground = null;
     this.currentMidground = null;
     this.currentCharacter = null;
-    this.wolfAttack = false;
     this.entities = [];
     this.playableCharacters = [];
     this.playableCharacterIndex = 0;
@@ -24,7 +23,6 @@ function GameEngine() {
     this.assetManager = null;
     this.clickX = 0;
     this.clickY = 0;
-    this.drawWolf = false;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
 }
@@ -72,9 +70,7 @@ GameEngine.prototype.startInput = function() {
     //attack
     var rightClickCount = 0;
     this.ctx.canvas.addEventListener("mousedown", function(e) {
-        var currentCharacter = that.getCurrentCharacter();
-		 //console.log(e);
-
+        var currentCharacter = that.gameState.getCurrentCharacter();
 
         that.click = getXandY(e);
         that.keyMap[e.which] = true;
@@ -84,23 +80,10 @@ GameEngine.prototype.startInput = function() {
         that.clickX = e.clientX - rect.left;
         that.clickY = e.clientY - rect.top;
 
-		if (e.which === 3 && currentCharacter.name === "gunwoman" && rightClickCount === 0) { //Right Mouse button pressed, add wolf
-             console.log('Right Mouse Button Pressed');
-             rightClickCount++;
-             that.drawWolf = true;
-			 var wolf = new Wolf(that);
-			 that.addEntity(wolf);
-        } else if (e.which == 3 && currentCharacter.name === "gunwoman" && rightClickCount >= 1) {
-
-            rightClickCount++;
-
-           if (rightClickCount === 2) {
-                that.wolfAttack = true;
-                that.wolfIsRight = true;
-             } else if (rightClickCount >= 2) {
-                 rightClickCount = 1;
-             }
-		}
+		// if (e.which === 3 && currentCharacter.name === "gunwoman" ) { //Right Mouse button pressed, add wolf
+		// 	 var wolf = new Wolf(that, currentCharacter.gameState);
+		// 	 that.addEntity(wolf);
+  //       } 
 
     }, false);
 
@@ -328,11 +311,6 @@ GameEngine.prototype.setCurrentPortrait = function(ctx, image) {
 GameEngine.prototype.getCurrentCharacter = function() {
         return this.currentCharacter;
     }
-    //get the wolf
-GameEngine.prototype.getWolf = function() {
-    return this.wolf;
-};
-
 
 GameEngine.prototype.changeCharacter = function(newCharacter) {
     var oldCharacter = this.getCurrentCharacter()
@@ -396,9 +374,6 @@ GameEngine.prototype.replaceCharacter = function() {
     }
 };
 
-GameEngine.prototype.addWolf = function(theWolf) {
-    this.wolf = theWolf;
-};
 
 
 //entities are drawn on the map

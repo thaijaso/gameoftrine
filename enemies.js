@@ -200,8 +200,8 @@ Skeleton.prototype.update = function() {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = this.gameEngine.entities[i];
 
-            if (entity.name === "knight" || entity.name === "gunwoman" || entity.name === "mage") {
-
+            if (entity.name === "knight" || entity.name === "gunwoman" || entity.name === "mage" || entity.name === "wolf") {
+                //console.log(entity.name);
                 if (this.direction === "right" && this.collideAttackRight(entity)) {
                     //console.log('skeleton landed attack right');
 
