@@ -22,7 +22,7 @@ GameState.prototype.update = function() {
 
 GameState.prototype.updateHealth = function(entity) {
 
-    if (entity.name === "knight" || entity.name === "gunwoman" || entity.name === "mage") {
+    if (entity.name === "knight" || entity.name === "gunwoman" || entity.name === "mage" || entity.name === "wolf") {
         entity.health = entity.health - 1;
         entity.progressBar.updateHealth(entity.health);
         entity.progressBar.hasBeenHit(true);

@@ -18,7 +18,6 @@ function Animation(entity, spriteSheet, frameWidth, frameHeight, sheetWidth, fra
 Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
     var gameEngine = this.entity.game.getGameEngine();
     var currentCharacter = gameEngine.getCurrentCharacter();
-    var wolf = gameEngine.getWolf();
 
     this.elapsedTime += tick;
 
