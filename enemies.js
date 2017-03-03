@@ -5,7 +5,7 @@ var HEALTH = 2;
 var SKELETON_ID = 0;
 
 // START OF ENEMIES
-function Skeleton(game, gameState, x, y) {
+function Skeleton(gameEngine, gameState, x, y) {
     var idleLeftAnimationSpriteSheet = AM.getAsset("./img/skeletonidleleft.png");
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/skeletonidleright.png"); 
     var walkLeftAnimationSpriteSheet = AM.getAsset("./img/skeleton-walk-left.png");
@@ -20,9 +20,9 @@ function Skeleton(game, gameState, x, y) {
     SKELETON_ID++;
     
     this.name = "skeleton";
-    this.game = game;
-    this.state = gameState;
-    this.ctx = game.ctx;
+    this.gameEngine = gameEngine;
+    this.gameState = gameState;
+    this.ctx = gameEngine.ctx;
     
     this.health = HEALTH;
 
@@ -190,14 +190,15 @@ Skeleton.prototype.knockBackRightCollide = function(other) {
 }
 
 Skeleton.prototype.update = function() {
-    var gameEngine = this.game;
-    var currentCharacter = gameEngine.getCurrentCharacter();
+    var gameEngine = this.gameEngine;
+    var gameState = this.gameState;
+    var currentCharacter = gameState.getCurrentCharacter();
     var background = gameEngine.getCurrentBackground();
     var foreground = gameEngine.getCurrentForeground();
 
     if (this.attacking) {
         for (var i = 0; i < gameEngine.entities.length; i++) {
-            var entity = this.game.entities[i];
+            var entity = this.gameEngine.entities[i];
 
             if (entity.name === "knight" || entity.name === "gunwoman" || entity.name === "mage") {
 
@@ -208,7 +209,7 @@ Skeleton.prototype.update = function() {
                     //console.log(frame);
 
                     if (this.animationAttackRight.currentFrame() === 10) {
-                        this.state.updateHealth(entity);
+                        this.gameState.updateHealth(entity);
 
                         //this.attacking = false;
 
@@ -317,7 +318,7 @@ Skeleton.prototype.update = function() {
 
                     if (skeletonAttackFrame === 10) {
                         
-                        this.state.updateHealth(entity);
+                        this.gameState.updateHealth(entity);
 
                         var knockBackCollidedWith = null;
 
@@ -416,7 +417,7 @@ Skeleton.prototype.update = function() {
     
     //check if enemy collided with any platforms
     for (var i = 0; i < gameEngine.entities.length; i++) {
-        var entity = this.game.entities[i];
+        var entity = this.gameEngine.entities[i];
 
         if (this !== entity && 
             (entity.name === "platform" || 
@@ -474,7 +475,7 @@ Skeleton.prototype.update = function() {
         var stillColliding = false;
 
         for (var i = 0; i < gameEngine.entities.length; i++) {
-            var entity = this.game.entities[i];
+            var entity = this.gameEngine.entities[i];
 
             if (entity.name === "platform" || 
                 entity.name === "knight" || 
@@ -500,7 +501,7 @@ Skeleton.prototype.update = function() {
         } else { //still colliding
 
             for (var i = 0; i < gameEngine.entities.length; i++) {
-                var entity = this.game.entities[i];
+                var entity = this.gameEngine.entities[i];
 
                 if (this !== entity && 
                     (entity.name === "platform" || 
@@ -734,32 +735,32 @@ Skeleton.prototype.draw = function() {
 
     if (this.animationState === "idleRight") {
 
-        this.animationIdleRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 10, this.canvasY - 4);
+        this.animationIdleRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 10, this.canvasY - 4);
 
     } else if (this.animationState === "idleLeft") {
 
-        this.animationIdleLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 20, this.canvasY - 4);
+        this.animationIdleLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 20, this.canvasY - 4);
 
     } else if (this.animationState === "walkLeft") {
 
-        this.animationWalkLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 20, this.canvasY - 4);
+        this.animationWalkLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 20, this.canvasY - 4);
 
     } else if (this.animationState === "walkRight") {
 
-        this.animationWalkRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 12, this.canvasY - 4);        
+        this.animationWalkRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 12, this.canvasY - 4);        
 
     } else if (this.animationState === "attackLeft") {
 
-        this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 115, this.canvasY - 52);
+        this.animationAttackLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 115, this.canvasY - 52);
 
     } else if (this.animationState === "attackRight") {
 
-        this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 10, this.canvasY - 52);
+        this.animationAttackRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 10, this.canvasY - 52);
     }
 
     if (this.attacked) {
 
-        this.animationKnightImpactRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 10, this.canvasY + 15);
+        this.animationKnightImpactRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 10, this.canvasY + 15);
     }
 };
 

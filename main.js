@@ -105,7 +105,6 @@ var bar;
 // the "main" code begins here
 
 var AM = new AssetManager();
-var gameState = new GameState();
 
 AM.queueDownload("./img/background.png");
 AM.queueDownload("./img/midground.png");
@@ -195,9 +194,9 @@ AM.downloadAll(function() {
 
     gameEngine.init(ctx, AM, gameState);
 
-    var foreground = new Foreground(gameEngine, AM.getAsset("./img/foreground.png"));
-    var background = new Background(gameEngine, AM.getAsset("./img/background.png"));
-    var midground = new Midground(gameEngine, AM.getAsset("./img/midground.png"));
+    var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground.png"));
+    var background = new Background(gameEngine, gameState, AM.getAsset("./img/background.png"));
+    var midground = new Midground(gameEngine, gameState, AM.getAsset("./img/midground.png"));
 
     var progressKnight = new ProgressBar(ctx, 74, 72);
     var progressGunwoman = new ProgressBar(ctx, 205, 72);
@@ -234,9 +233,9 @@ AM.downloadAll(function() {
     var skeleton22 = new Skeleton(gameEngine, gameState, 685, 22);
 
 
-    var tree = new Tree(gameEngine);
+    var tree = new Tree(gameEngine, gameState);
 
-    var tooltip = new Tooltip(gameEngine);
+    var tooltip = new Tooltip(gameEngine, gameState);
 
     var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"), 4.9, 20);
     var gunwomanPortraitRight = new Portrait(ctx, AM.getAsset("./img/gunwomanPORTRAITright.png"), 155, 20);
@@ -293,91 +292,91 @@ AM.downloadAll(function() {
     // gameEngine.addEntity(archer9);
 
                                                    //x,  y, width, height
-    var tutorialPlatform0 = new Platform(gameEngine, 0, 39, 42, 1)
-    var tutorialPlatform1 = new Platform(gameEngine, 41, 28, 1, 11);
+    var tutorialPlatform0 = new Platform(gameEngine, gameState, 0, 39, 42, 1)
+    var tutorialPlatform1 = new Platform(gameEngine, gameState, 41, 28, 1, 11);
     
-    var platform1 = new Platform(gameEngine, 42, 28, 68.5, 1);
-    var platform2 = new Platform(gameEngine, 64, 22, 3, 2);
-    var platform3 = new Platform(gameEngine, 75, 19, 3, 2);
-    var platform4 = new Platform(gameEngine, 88, 18, 3, 1.5);
-    var platform5 = new Platform(gameEngine, 94, 18, 5, 1.5);
-    var platform6 = new Platform(gameEngine, 102, 18, 7.5, 1.5);
-    var platform7 = new Platform(gameEngine, 95.5, 6.8, 3, 2);
-    var platform8 = new Platform(gameEngine, 119, 31, 5, 4);
-    var platform9 = new Platform(gameEngine, 129, 33, 3, 2);
+    var platform1 = new Platform(gameEngine, gameState, 42, 28, 68.5, 1);
+    var platform2 = new Platform(gameEngine, gameState, 64, 22, 3, 2);
+    var platform3 = new Platform(gameEngine, gameState, 75, 19, 3, 2);
+    var platform4 = new Platform(gameEngine, gameState, 88, 18, 3, 1.5);
+    var platform5 = new Platform(gameEngine, gameState, 94, 18, 5, 1.5);
+    var platform6 = new Platform(gameEngine, gameState, 102, 18, 7.5, 1.5);
+    var platform7 = new Platform(gameEngine, gameState, 95.5, 6.8, 3, 2);
+    var platform8 = new Platform(gameEngine, gameState, 119, 31, 5, 4);
+    var platform9 = new Platform(gameEngine, gameState, 129, 33, 3, 2);
 
-    var platform11 = new Platform(gameEngine, 134, 37, 50.5, 1);
-    var platform26 = new Platform(gameEngine, 160.5, 12, 3, 2);
-    var platform27 = new Platform(gameEngine, 143.5, 28, 3, 1.5);
-    var platform28 = new Platform(gameEngine, 153.5, 21, 23, 1);
-    var platform29 = new Platform(gameEngine, 168.5, 5, 8, 5);
-    var platform30 = new Platform(gameEngine, 187.5, 25, 2, 2);
-    var platform31 = new Platform(gameEngine, 202, 29, 3, 2);
-    var platform32 = new Platform(gameEngine, 211.5, 25, 6, 4);
-    var platform33 = new Platform(gameEngine, 220.5, 38, 2, 2);
-    var platform34 = new Platform(gameEngine, 227.75, 38, 18, 4);
-    var platform35 = new Platform(gameEngine, 224.5, 23, 38, 6);
-    var platform36 = new Platform(gameEngine, 260.5, 26, 26, 1.5);
-    var platform37 = new Platform(gameEngine, 286.5, 26, 23, 6);
-    var platform38 = new Platform(gameEngine, 249.5, 38, 13, 4);
-    var platform39 = new Platform(gameEngine, 272.5, 37.5, 2, 2);
-    var platform40 = new Platform(gameEngine, 284.5, 39.5, 2, 2);
+    var platform11 = new Platform(gameEngine, gameState, 134, 37, 50.5, 1);
+    var platform26 = new Platform(gameEngine, gameState, 160.5, 12, 3, 2);
+    var platform27 = new Platform(gameEngine, gameState, 143.5, 28, 3, 1.5);
+    var platform28 = new Platform(gameEngine, gameState, 153.5, 21, 23, 1);
+    var platform29 = new Platform(gameEngine, gameState, 168.5, 5, 8, 5);
+    var platform30 = new Platform(gameEngine, gameState, 187.5, 25, 2, 2);
+    var platform31 = new Platform(gameEngine, gameState, 202, 29, 3, 2);
+    var platform32 = new Platform(gameEngine, gameState, 211.5, 25, 6, 4);
+    var platform33 = new Platform(gameEngine, gameState, 220.5, 38, 2, 2);
+    var platform34 = new Platform(gameEngine, gameState, 227.75, 38, 18, 4);
+    var platform35 = new Platform(gameEngine, gameState, 224.5, 23, 38, 6);
+    var platform36 = new Platform(gameEngine, gameState, 260.5, 26, 26, 1.5);
+    var platform37 = new Platform(gameEngine, gameState, 286.5, 26, 23, 6);
+    var platform38 = new Platform(gameEngine, gameState, 249.5, 38, 13, 4);
+    var platform39 = new Platform(gameEngine, gameState, 272.5, 37.5, 2, 2);
+    var platform40 = new Platform(gameEngine, gameState, 284.5, 39.5, 2, 2);
 
-    var platform42 = new Platform(gameEngine, 296, 38, 3, 2);
-    var platform43 = new Platform(gameEngine, 312, 36, 3, 2);
-    var platform44 = new Platform(gameEngine, 242.5, 11, 3, 2);
-    var platform45 = new Platform(gameEngine, 270.5, 7, 8, 5);
-    var platform46 = new Platform(gameEngine, 319.5, 29.5, 2, 2);
-    var platform47 = new Platform(gameEngine, 326.5, 32, 21.5, 1);
-    var platform48 = new Platform(gameEngine, 327.5, 21.5, 2, 2);
-    var platform49 = new Platform(gameEngine, 333, 14, 9, 1);
-    var platform50 = new Platform(gameEngine, 344, 8, 12.5, 1);
-    var platform51 = new Platform(gameEngine, 357, 14, 9, 1);
-    var platform52 = new Platform(gameEngine, 348.5, 15.5, 2, 2);
-    var platform53 = new Platform(gameEngine, 353.5, 32, 3, 5);
-    var platform54 = new Platform(gameEngine, 361.5, 32, 3, 5);
-    var platform55 = new Platform(gameEngine, 369.5, 32, 3, 5);
-    var platform56 = new Platform(gameEngine, 379.5, 27, 3, 2);
-    var platform57 = new Platform(gameEngine, 388, 33, 33, 1.5);
-    var platform58 = new Platform(gameEngine, 419.5, 16, 5.5, 26);
-    var platform59 = new Platform(gameEngine, 399, 21, 5.5, 4);
-    var platform60 = new Platform(gameEngine, 415.5, 21, 3, 2);
-    var platform61 = new Platform(gameEngine, 435.5, 24, 5, 18);
-    var platform62 = new Platform(gameEngine, 441.5, 21, 2, 2);
-    var platform63 = new Platform(gameEngine, 447.5, 17, 2, 2);
-    var platform64 = new Platform(gameEngine, 452.8, 11, 2, 2);
-    var platform65 = new Platform(gameEngine, 456.5, 6, 5, 36);
-    var platform66 = new Platform(gameEngine, 471.5, 11, 2, 2);
-    var platform67 = new Platform(gameEngine, 468, 24, 3, 2);
-    var platform68 = new Platform(gameEngine, 479, 36, 3, 2);
-    var platform69 = new Platform(gameEngine, 479.5, 14, 13.5, 7);
-    var platform70 = new Platform(gameEngine, 492, 32, 14, 4);
-    var platform71 = new Platform(gameEngine, 515, 19, 2, 8);
-    var platform72 = new Platform(gameEngine, 515, 19, 19, 3);
-    var platform73 = new Platform(gameEngine, 515, 35, 1, 7);
-    var platform74 = new Platform(gameEngine, 543, 19, 13, 3);
-    var platform75 = new Platform(gameEngine, 556, 19, 1, 23);
-    var platform76 = new Platform(gameEngine, 516, 37, 40, 1);
-    var platform77 = new Platform(gameEngine, 523.5, 30, 2, 2);
-    var platform78 = new Platform(gameEngine, 532, 30, 14, 1);
-    var platform79 = new Platform(gameEngine, 527, 13, 5, 4);
-    var platform80 = new Platform(gameEngine, 545, 13, 5, 4);
-    var platform81 = new Platform(gameEngine, 559, 16, 11, 1.5);
-    var platform82 = new Platform(gameEngine, 570, 13, 23, 5);
-    var platform83 = new Platform(gameEngine, 599.5, 28, 3, 14);
-    var platform84 = new Platform(gameEngine, 611.5, 24, 3, 18);
-    var platform85 = new Platform(gameEngine, 622.5, 33, 3, 9);
-    var platform86 = new Platform(gameEngine, 630.5, 19, 3, 24);
-    var platform87 = new Platform(gameEngine, 641.5, 24, 3, 18);
-    var platform88 = new Platform(gameEngine, 642, 26, 15, 1.5);
-    var platform89 = new Platform(gameEngine, 667, 26, 31.5, 1.5);
-    var platform90 = new Platform(gameEngine, 662, 8, 3, 2);
+    var platform42 = new Platform(gameEngine, gameState, 296, 38, 3, 2);
+    var platform43 = new Platform(gameEngine, gameState, 312, 36, 3, 2);
+    var platform44 = new Platform(gameEngine, gameState, 242.5, 11, 3, 2);
+    var platform45 = new Platform(gameEngine, gameState, 270.5, 7, 8, 5);
+    var platform46 = new Platform(gameEngine, gameState, 319.5, 29.5, 2, 2);
+    var platform47 = new Platform(gameEngine, gameState, 326.5, 32, 21.5, 1);
+    var platform48 = new Platform(gameEngine, gameState, 327.5, 21.5, 2, 2);
+    var platform49 = new Platform(gameEngine, gameState, 333, 14, 9, 1);
+    var platform50 = new Platform(gameEngine, gameState, 344, 8, 12.5, 1);
+    var platform51 = new Platform(gameEngine, gameState, 357, 14, 9, 1);
+    var platform52 = new Platform(gameEngine, gameState, 348.5, 15.5, 2, 2);
+    var platform53 = new Platform(gameEngine, gameState, 353.5, 32, 3, 5);
+    var platform54 = new Platform(gameEngine, gameState, 361.5, 32, 3, 5);
+    var platform55 = new Platform(gameEngine, gameState, 369.5, 32, 3, 5);
+    var platform56 = new Platform(gameEngine, gameState, 379.5, 27, 3, 2);
+    var platform57 = new Platform(gameEngine, gameState, 388, 33, 33, 1.5);
+    var platform58 = new Platform(gameEngine, gameState, 419.5, 16, 5.5, 26);
+    var platform59 = new Platform(gameEngine, gameState, 399, 21, 5.5, 4);
+    var platform60 = new Platform(gameEngine, gameState, 415.5, 21, 3, 2);
+    var platform61 = new Platform(gameEngine, gameState, 435.5, 24, 5, 18);
+    var platform62 = new Platform(gameEngine, gameState, 441.5, 21, 2, 2);
+    var platform63 = new Platform(gameEngine, gameState, 447.5, 17, 2, 2);
+    var platform64 = new Platform(gameEngine, gameState, 452.8, 11, 2, 2);
+    var platform65 = new Platform(gameEngine, gameState, 456.5, 6, 5, 36);
+    var platform66 = new Platform(gameEngine, gameState, 471.5, 11, 2, 2);
+    var platform67 = new Platform(gameEngine, gameState, 468, 24, 3, 2);
+    var platform68 = new Platform(gameEngine, gameState, 479, 36, 3, 2);
+    var platform69 = new Platform(gameEngine, gameState, 479.5, 14, 13.5, 7);
+    var platform70 = new Platform(gameEngine, gameState, 492, 32, 14, 4);
+    var platform71 = new Platform(gameEngine, gameState, 515, 19, 2, 8);
+    var platform72 = new Platform(gameEngine, gameState, 515, 19, 19, 3);
+    var platform73 = new Platform(gameEngine, gameState, 515, 35, 1, 7);
+    var platform74 = new Platform(gameEngine, gameState, 543, 19, 13, 3);
+    var platform75 = new Platform(gameEngine, gameState, 556, 19, 1, 23);
+    var platform76 = new Platform(gameEngine, gameState, 516, 37, 40, 1);
+    var platform77 = new Platform(gameEngine, gameState, 523.5, 30, 2, 2);
+    var platform78 = new Platform(gameEngine, gameState, 532, 30, 14, 1);
+    var platform79 = new Platform(gameEngine, gameState, 527, 13, 5, 4);
+    var platform80 = new Platform(gameEngine, gameState, 545, 13, 5, 4);
+    var platform81 = new Platform(gameEngine, gameState, 559, 16, 11, 1.5);
+    var platform82 = new Platform(gameEngine, gameState, 570, 13, 23, 5);
+    var platform83 = new Platform(gameEngine, gameState, 599.5, 28, 3, 14);
+    var platform84 = new Platform(gameEngine, gameState, 611.5, 24, 3, 18);
+    var platform85 = new Platform(gameEngine, gameState, 622.5, 33, 3, 9);
+    var platform86 = new Platform(gameEngine, gameState, 630.5, 19, 3, 24);
+    var platform87 = new Platform(gameEngine, gameState, 641.5, 24, 3, 18);
+    var platform88 = new Platform(gameEngine, gameState, 642, 26, 15, 1.5);
+    var platform89 = new Platform(gameEngine, gameState, 667, 26, 31.5, 1.5);
+    var platform90 = new Platform(gameEngine, gameState, 662, 8, 3, 2);
 
     //Tutorial Platform
     gameEngine.addEntity(tutorialPlatform0);
     gameEngine.addEntity(tutorialPlatform1);
 
-    // Major Platform 1
+    //Major Platform 1
     gameEngine.addEntity(platform1);
     gameEngine.addEntity(platform2);
     gameEngine.addEntity(platform3);
@@ -484,11 +483,11 @@ AM.downloadAll(function() {
     gameEngine.addPlayableCharacter(gunwoman);
     gameEngine.addPlayableCharacter(mage);
 
-    gameEngine.setCurrentCharacter(knight);
+    //gameEngine.setCurrentCharacter(knight);
+    gameState.setCurrentCharacter(knight);
 
     gameEngine.setCurrentBackground(background);
     gameEngine.setCurrentForeground(foreground);
-
 
     gameEngine.addEntity(midground);
     gameEngine.addEntity(background);

@@ -10,11 +10,11 @@ window.requestAnimFrame = (function() {
 })();
 
 function GameEngine() {
+    this.gameState = null;
     this.currentBackground = null;
     this.currentForeground = null;
     this.currentMidground = null;
     this.currentCharacter = null;
-    //this.wolf = new Wolf(this);
     this.wolfAttack = false;
     this.entities = [];
     this.playableCharacters = [];
@@ -73,7 +73,7 @@ GameEngine.prototype.startInput = function() {
     var rightClickCount = 0;
     this.ctx.canvas.addEventListener("mousedown", function(e) {
         var currentCharacter = that.getCurrentCharacter();
-		 console.log(e);
+		 //console.log(e);
 
 
         that.click = getXandY(e);
@@ -108,15 +108,16 @@ GameEngine.prototype.startInput = function() {
 
     }, false);
 
-     this.ctx.canvas.addEventListener("click", function (e) {
+    this.ctx.canvas.addEventListener("click", function (e) {
 		 
-        var charac = that.currentCharacter;
-        if(charac.name === "mage"){
-            var box = new Box(that, e.clientX, e.clientY);
-            that.addEntity(box);
-        }
+        // var charac = that.gameState.getCurrentCharacter();
+        
+        // if (charac.name === "mage"){
+        //     var box = new Box(that, e.clientX, e.clientY);
+        //     that.addEntity(box);
+        // }
 
-        var theX = (charac.x - charac.canvasX) + e.clientX;
+        // var theX = (charac.x - charac.canvasX) + e.clientX;
         //console.log("the x = " + theX/16);
         //console.log("the y = " + e.clientY/16);
 
@@ -125,75 +126,68 @@ GameEngine.prototype.startInput = function() {
 
     this.ctx.canvas.addEventListener("keydown", function(e) {
 
+        var gameState = that.gameState;
+        var currentCharacter = that.gameState.getCurrentCharacter();
+
         that.keyMap[e.code] = true;
 
         for (var i = 0; i < that.playableCharacters.length; i++) {
-            var newX = that.currentCharacter.x;
-            var newY = that.currentCharacter.y;
+            var newX = currentCharacter.x;
+            var newY = currentCharacter.y;
 
-            var oldX = that.currentCharacter.oldX;
-            var oldY = that.currentCharacter.oldY;
+            var oldX = currentCharacter.oldX;
+            var oldY = currentCharacter.oldY;
 
-            var newCanvasX = that.currentCharacter.canvasX;
-            var newCanvasY = that.currentCharacter.canvasY;
+            var newCanvasX = currentCharacter.canvasX;
+            var newCanvasY = currentCharacter.canvasY;
 
-            var collidedTop = that.currentCharacter.collidedTop;
-            var collidedBottom = that.currentCharacter.collidedBottom;
-            var collidedLeft = that.currentCharacter.collidedLeft;
-            var collidedRight = that.currentCharacter.collidedRight;
+            var collidedTop = currentCharacter.collidedTop;
+            var collidedBottom = currentCharacter.collidedBottom;
+            var collidedLeft = currentCharacter.collidedLeft;
+            var collidedRight = currentCharacter.collidedRight;
 
-            var collidedTopEntity = that.currentCharacter.collidedTopEntity;
-            var collidedBottomEntity = that.currentCharacter.collidedBottomEntity;
-            var collidedLeftEntity = that.currentCharacter.collidedLeftEntity;
-            var collidedRightEntity = that.currentCharacter.collidedRightEntity;
+            var collidedTopEntity = currentCharacter.collidedTopEntity;
+            var collidedBottomEntity = currentCharacter.collidedBottomEntity;
+            var collidedLeftEntity = currentCharacter.collidedLeftEntity;
+            var collidedRightEntity = currentCharacter.collidedRightEntity;
 
-            var lastGroundY = that.currentCharacter.lastGroundY;
+            var lastGroundY = currentCharacter.lastGroundY;
 
 
             if (e.code === "Digit1" && that.playableCharacters[i].name === "knight") {
 
-
-                that.changeCharacter(that.playableCharacters[i]); 
-
-
+                that.gameState.changeCharacter(that.playableCharacters[i]);
 
             } else if (e.code === "Digit2" && that.playableCharacters[i].name === "gunwoman") {
 
-
-                that.changeCharacter(that.playableCharacters[i]); 
-
+                that.gameState.changeCharacter(that.playableCharacters[i]); 
 
 
             } else if (e.code === "Digit3" && that.playableCharacters[i].name === "mage") {
 
-
-
-                that.changeCharacter(that.playableCharacters[i]); 
-
-
-
+                that.gameState.changeCharacter(that.playableCharacters[i]); 
             }
 
-            that.currentCharacter.x = newX;
-            that.currentCharacter.y = newY;
+            that.gameState.currentCharacter.x = newX;
+            that.gameState.currentCharacter.y = newY;
 
-            that.currentCharacter.oldX = oldX;
-            that.currentCharacter.oldY = oldY;
+            that.gameState.currentCharacter.oldX = oldX;
+            that.gameState.currentCharacter.oldY = oldY;
 
-            that.currentCharacter.canvasX = newCanvasX;
-            that.currentCharacter.canvasY = newCanvasY;
+            that.gameState.currentCharacter.canvasX = newCanvasX;
+            that.gameState.currentCharacter.canvasY = newCanvasY;
 
-            that.currentCharacter.collidedTop = collidedTop;
-            that.currentCharacter.collidedBottom = collidedBottom;
-            that.currentCharacter.collidedLeft = collidedLeft;
-            that.currentCharacter.collidedRight = collidedRight;
+            that.gameState.currentCharacter.collidedTop = collidedTop;
+            that.gameState.currentCharacter.collidedBottom = collidedBottom;
+            that.gameState.currentCharacter.collidedLeft = collidedLeft;
+            that.gameState.currentCharacter.collidedRight = collidedRight;
 
-            that.currentCharacter.collidedTopEntity = collidedTopEntity;
-            that.currentCharacter.collidedBottomEntity = collidedBottomEntity;
-            that.currentCharacter.collidedLeftEntity = collidedLeftEntity;
-            that.currentCharacter.collidedRightEntity = collidedRightEntity;
+            that.gameState.currentCharacter.collidedTopEntity = collidedTopEntity;
+            that.gameState.currentCharacter.collidedBottomEntity = collidedBottomEntity;
+            that.gameState.currentCharacter.collidedLeftEntity = collidedLeftEntity;
+            that.gameState.currentCharacter.collidedRightEntity = collidedRightEntity;
 
-            that.currentCharacter.lastGroundY = lastGroundY;
+            that.gameState.currentCharacter.lastGroundY = lastGroundY;
 
         }
 

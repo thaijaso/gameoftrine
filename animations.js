@@ -16,8 +16,9 @@ function Animation(entity, spriteSheet, frameWidth, frameHeight, sheetWidth, fra
 }
 
 Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
-    var gameEngine = this.entity.game.getGameEngine();
-    var currentCharacter = gameEngine.getCurrentCharacter();
+    var gameEngine = this.entity.gameEngine.getGameEngine();
+    var gameState = this.entity.gameState;
+    var currentCharacter = gameState.getCurrentCharacter();
     var wolf = gameEngine.getWolf();
 
     this.elapsedTime += tick;
@@ -99,12 +100,13 @@ Animation.prototype.isDone = function() {
 // END ENEMIES
 
 // no inheritance
-function Background(game, spritesheet) {
+function Background(gameEngine, gameState, spritesheet) {
+    this.gameEngine = gameEngine;
+    this.gameState = gameState;
+    this.ctx = gameEngine.ctx;
+    this.spritesheet = spritesheet;
     this.x = 0;
     this.y = 0;
-    this.spritesheet = spritesheet;
-    this.game = game;
-    this.ctx = game.ctx;
 }
 
 Background.prototype.draw = function() {
@@ -114,8 +116,8 @@ Background.prototype.draw = function() {
 
 
 Background.prototype.update = function() {
-    var gameEngine = this.game;
-    var currentCharacter = gameEngine.getCurrentCharacter();
+    var gameEngine = this.gameEngine;
+    var currentCharacter = this.gameState.getCurrentCharacter();
 
     if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
         this.x = this.x - 1;
@@ -124,12 +126,13 @@ Background.prototype.update = function() {
     }
 };
 
-function Foreground(game, spritesheet) {
+function Foreground(gameEngine, gameState, spritesheet) {
+    this.gameEngine = gameEngine;
+    this.ctx = gameEngine.ctx;
+    this.gameState = gameState;
     this.x = 0;
     this.y = 0;
     this.spritesheet = spritesheet;
-    this.game = game;
-    this.ctx = game.ctx;
 }
 
 Foreground.prototype.draw = function() {
@@ -137,8 +140,8 @@ Foreground.prototype.draw = function() {
 };
 
 Foreground.prototype.update = function() {
-    var gameEngine = this.game;
-    var currentCharacter = gameEngine.getCurrentCharacter();
+    var gameEngine = this.gameEngine;
+    var currentCharacter = this.gameState.getCurrentCharacter();
 
     //console.log(currentCharacter.collidedLeft);
 
@@ -150,12 +153,13 @@ Foreground.prototype.update = function() {
     }
 }
 
-function Midground(game, spritesheet) {
+function Midground(gameEngine, gameState, spritesheet) {
+    this.gameEngine = gameEngine;
+    this.ctx = gameEngine.ctx;
+    this.gameState = gameState;
+    this.spritesheet = spritesheet;
     this.x = 0;
     this.y = 0;
-    this.spritesheet = spritesheet;
-    this.game = game;
-    this.ctx = game.ctx;
 }
 
 Midground.prototype.draw = function() {
@@ -165,8 +169,8 @@ Midground.prototype.draw = function() {
 
 Midground.prototype.update = function() {
     //console.log(this.x);
-    var gameEngine = this.game;
-    var currentCharacter = gameEngine.getCurrentCharacter();
+    var gameEngine = this.gameEngine;
+    var currentCharacter = this.gameState.getCurrentCharacter();
 
     if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
         this.x -= 0.8;
@@ -175,10 +179,11 @@ Midground.prototype.update = function() {
     }
 }
 
-function Platform(game, x, y, width, height) {
+function Platform(gameEngine, gameState, x, y, width, height) {
     this.name = "platform";
-    this.game = game;
-    this.ctx = game.ctx;
+    this.gameEngine = gameEngine;
+    this.gameState = gameState;
+    this.ctx = gameEngine.ctx;
 
     this.x = x * TILE_SIZE; //game world x and y coordinates
     this.y = y * TILE_SIZE;
@@ -201,8 +206,8 @@ Platform.prototype.draw = function() {
 }
 
 Platform.prototype.update = function() {
-    var gameEngine = this.game;
-    var currentCharacter = gameEngine.getCurrentCharacter();
+    var gameEngine = this.gameEngine;
+    var currentCharacter = this.gameState.getCurrentCharacter();
 
     if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
@@ -214,10 +219,9 @@ Platform.prototype.update = function() {
     }
 }
 
-
-
-function Tree(gameEngine) {
-    this.game = gameEngine;
+function Tree(gameEngine, gameState) {
+    this.gameEngine = gameEngine;
+    this.gameState = gameState;
 
     var treeSpriteSheet = AM.getAsset("./img/treeleaffall.png");
 
@@ -225,7 +229,7 @@ function Tree(gameEngine) {
 
     this.animation = new Animation(this, treeSpriteSheet, 190, 183, 5, 0.05, 22, true, 1);
 
-    this.ctx = this.game.ctx;
+    this.ctx = this.gameEngine.ctx;
 
     //this.x = 29 * TILE_SIZE;
     //this.y = 25 * TILE_SIZE;
@@ -238,8 +242,8 @@ function Tree(gameEngine) {
 }
 
 Tree.prototype.update = function() {
-    var gameEngine = this.game;
-    var currentCharacter = gameEngine.getCurrentCharacter();
+    var gameEngine = this.gameEngine;
+    var currentCharacter = this.gameState.getCurrentCharacter();
 
     if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
@@ -252,13 +256,15 @@ Tree.prototype.update = function() {
 }
 
 Tree.prototype.draw = function() {
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.canvasX + 1.5, this.canvasY - 2.0);
+    this.animation.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX + 1.5, this.canvasY - 2.0);
 };
 
 
 
-function Tooltip(gameEngine) {
+function Tooltip(gameEngine, gameState) {
     this.game = gameEngine;
+    this.gameState = gameState;
+    
     this.ctx = this.game.ctx;
     
     this.currentMessage = "Press A and D for movement";
@@ -306,7 +312,8 @@ Tooltip.prototype.update = function() {
 
 Tooltip.prototype.draw = function() {
     var gameEngine = this.game;
-    var currentCharacter = gameEngine.getCurrentCharacter();
+    var gameState = this.gameState;
+    var currentCharacter = gameState.getCurrentCharacter();
 
 
     if (currentCharacter.x < 655) {

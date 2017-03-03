@@ -31,7 +31,7 @@ function jump(character) {
 
 }
 
-function Knight(game, gameState, progressBar) {
+function Knight(gameEngine, gameState, progressBar) {
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/knightidleright.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/knightwalkright.png");
     var attackRightAnimationSpriteSheet = AM.getAsset("./img/knightattackright.png");
@@ -42,9 +42,9 @@ function Knight(game, gameState, progressBar) {
     var jumpRightAnimationSpriteSheet = AM.getAsset("./img/knightjumpright.png");
     var jumpLeftAnimationSpriteSheet = AM.getAsset("./img/knightjumpleft.png");
 
-    this.game = game;
-    this.state = gameState;
-    this.ctx = game.ctx;
+    this.gameEngine = gameEngine;
+    this.gameState = gameState;
+    this.ctx = gameEngine.ctx;
     this.name = "knight";
 
     this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.05, 14, true, 0.5);
@@ -278,7 +278,7 @@ Knight.prototype.knockBackRightCollide = function(other) {
 Knight.prototype.update = function() {
     this.progressBar.updateHealth(this.health);
 
-    var gameEngine = this.game;
+    var gameEngine = this.gameEngine;
 
     if (this.jumping) {
 
@@ -315,7 +315,7 @@ Knight.prototype.update = function() {
     if (this.attacking) {
 
         for (var i = 0; i < gameEngine.entities.length; i++) {
-            var entity = this.game.entities[i];
+            var entity = this.gameEngine.entities[i];
 
             if (entity.name === "skeleton" && !entity.attacked) {
 
@@ -325,7 +325,7 @@ Knight.prototype.update = function() {
                     if (this.animationAttackRight.currentFrame() === 10) {
                         entity.attacked = true;
 
-                        this.state.updateHealth(entity);
+                        this.gameState.updateHealth(entity);
 
                         //knock back collision
                         var knockBackCollidedWith = null;
@@ -393,7 +393,7 @@ Knight.prototype.update = function() {
                     //console.log('landed attack left');
 
                     if (this.animationAttackLeft.currentFrame() === 10) {
-                        this.state.updateHealth(entity);
+                        this.gameState.updateHealth(entity);
 
                         //knock back collision
                         var knockBackCollidedWith = null;
@@ -479,7 +479,7 @@ Knight.prototype.update = function() {
 
     //check if player collided with any platforms, skeletons, or boxes
     for (var i = 0; i < gameEngine.entities.length; i++) {
-        var entity = this.game.entities[i];
+        var entity = this.gameEngine.entities[i];
 
         if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
 
@@ -541,7 +541,7 @@ Knight.prototype.update = function() {
         var stillColliding = false;
 
         for (var i = 0; i < gameEngine.entities.length; i++) {
-            var entity = this.game.entities[i];
+            var entity = this.gameEngine.entities[i];
 
             if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
                 if (this != entity && this.collide(entity)) {
@@ -562,7 +562,7 @@ Knight.prototype.update = function() {
         } else { //still colliding
 
             for (var i = 0; i < gameEngine.entities.length; i++) {
-                var entity = this.game.entities[i];
+                var entity = this.gameEngine.entities[i];
 
                 if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
                     //check if still colliding right with a platform we collided right with
@@ -731,96 +731,96 @@ Knight.prototype.draw = function() {
 
     if (this.animationState === "idleRight") {
 
-        this.animationIdleRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
+        this.animationIdleRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
 
     } else if (this.animationState === "walkRight") {
 
-        this.animationWalkRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
+        this.animationWalkRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
 
     } else if (this.animationState === "jumpRight") {
 
-        this.animationJumpRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
+        this.animationJumpRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY - 2);
 
     } else if (this.animationState === "attackRight") {
 
-        this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY - 2);
+        this.animationAttackRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 48, this.canvasY - 2);
 
     } else if (this.animationState === "idleLeft") {
 
-        this.animationIdleLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY - 2);
+        this.animationIdleLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 33, this.canvasY - 2);
 
     } else if (this.animationState === "walkLeft") {
 
-        this.animationWalkLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY - 2);
+        this.animationWalkLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 33, this.canvasY - 2);
 
     } else if (this.animationState === "jumpLeft") {
 
-        this.animationJumpLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 30, this.canvasY - 2);
+        this.animationJumpLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 30, this.canvasY - 2);
 
     } else if (this.animationState === "attackLeft") {
 
-        this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 68, this.canvasY - 2);
+        this.animationAttackLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 68, this.canvasY - 2);
     }
 }
 
 
-//checks for all sides collision
-Box.prototype.collide = function(other) {
-    return this.x <= other.x + other.width &&
-        this.x + this.width >= other.x &&
-        this.y <= other.y + other.height &&
-        this.height + this.y >= other.y;
-};
+// //checks for all sides collision
+// Box.prototype.collide = function(other) {
+//     return this.x <= other.x + other.width &&
+//         this.x + this.width >= other.x &&
+//         this.y <= other.y + other.height &&
+//         this.height + this.y >= other.y;
+// };
 
-//Returns true if Knight collided on his bottom 
-//This function assumes there was a collision
-//Should not be called if there was no collision
-Box.prototype.collideBottom = function(other) {
-    if (this.oldY + this.height < other.y && 
-        this.y + this.height >= other.y) {
+// //Returns true if Knight collided on his bottom 
+// //This function assumes there was a collision
+// //Should not be called if there was no collision
+// Box.prototype.collideBottom = function(other) {
+//     if (this.oldY + this.height < other.y && 
+//         this.y + this.height >= other.y) {
 
-        console.log('box collided bottom');
-    }
+//         console.log('box collided bottom');
+//     }
 
-    return this.oldY + this.height < other.y && 
-        this.y + this.height >= other.y;
-}
+//     return this.oldY + this.height < other.y && 
+//         this.y + this.height >= other.y;
+// }
 
-Box.prototype.collideLeft = function(other) {
-    if (this.oldX > other.x + other.width && //was not colliding
-        this.x <= other.x + other.width) {
+// Box.prototype.collideLeft = function(other) {
+//     if (this.oldX > other.x + other.width && //was not colliding
+//         this.x <= other.x + other.width) {
 
-        console.log('collide left');
-    }
+//         console.log('collide left');
+//     }
 
-    return this.oldX > other.x + other.width && //was not colliding
-        this.x <= other.x + other.width;
-}
+//     return this.oldX > other.x + other.width && //was not colliding
+//         this.x <= other.x + other.width;
+// }
 
-Box.prototype.collideRight = function(other) {
-    if (this.oldX + this.width < other.x &&
-        this.x + this.width >= other.x) {
+// Box.prototype.collideRight = function(other) {
+//     if (this.oldX + this.width < other.x &&
+//         this.x + this.width >= other.x) {
 
-        console.log('colided right');
-    }
+//         console.log('colided right');
+//     }
 
-    return this.oldX + this.width < other.x &&
-        this.x + this.width >= other.x;
-}
+//     return this.oldX + this.width < other.x &&
+//         this.x + this.width >= other.x;
+// }
 
-Box.prototype.collideTop = function(other) {
-    if (this.oldY > other.y + other.height &&
-        this.y <= other.y + other.height) {
+// Box.prototype.collideTop = function(other) {
+//     if (this.oldY > other.y + other.height &&
+//         this.y <= other.y + other.height) {
 
-        console.log('colided top');
-    }
+//         console.log('colided top');
+//     }
 
-    return this.oldY > other.y + other.height &&
-        this.y <= other.y + other.height;
-}
+//     return this.oldY > other.y + other.height &&
+//         this.y <= other.y + other.height;
+// }
 
 //Constructor for mage
-function Mage(game, state, progressBar) {
+function Mage(gameEngine, gameState, progressBar) {
 
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/mageIdleRight.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/mageWalkRight.png");
@@ -834,13 +834,11 @@ function Mage(game, state, progressBar) {
     var jumpLeftAnimationSpriteSheet = AM.getAsset("./img/magejumpleft.png");
 
 
-    this.game = game;
-    this.ctx = game.ctx;
+    this.gameEngine = gameEngine;
+    this.ctx = gameEngine.ctx;
+    this.gameState = gameState;
     this.name = "mage";
-    this.state = state;
     this.progressBar = progressBar;
-
-    //this.animationCurrent = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 14, true, 0.5);
 
     this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.05, 10, true, 0.5);
     this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 3, 0.035, 8, true, 0.5);
@@ -899,34 +897,34 @@ function Mage(game, state, progressBar) {
 Mage.prototype.draw = function() {
     if (this.animationState === "idleRight") {
 
-        this.animationIdleRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 10, this.canvasY);
+        this.animationIdleRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 10, this.canvasY);
 
     } else if (this.animationState === "walkRight") {
 
-        this.animationWalkRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 10, this.canvasY);
+        this.animationWalkRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 10, this.canvasY);
 
     } else if (this.animationState === "jumpRight") {
 
-        this.animationJumpRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 10, this.canvasY);
+        this.animationJumpRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 10, this.canvasY);
 
     } else if (this.animationState === "attackRight") {
 
-        this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 55, this.canvasY);
+        this.animationAttackRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 55, this.canvasY);
 
     } else if (this.animationState === "idleLeft") {
 
-        this.animationIdleLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 20, this.canvasY);
+        this.animationIdleLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 20, this.canvasY);
     } else if (this.animationState === "walkLeft") {
 
-        this.animationWalkLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 20, this.canvasY);
+        this.animationWalkLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 20, this.canvasY);
 
     } else if (this.animationState === "jumpLeft") {
 
-        this.animationJumpLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 20, this.canvasY);
+        this.animationJumpLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 20, this.canvasY);
 
     } else if (this.animationState === "attackLeft") {
 
-        this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 68, this.canvasY);
+        this.animationAttackLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 68, this.canvasY);
     }
 }
 
@@ -1070,7 +1068,8 @@ Mage.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
 
 
 Mage.prototype.update = function() {
-    var gameEngine = this.game;
+    var gameEngine = this.gameEngine;
+    var gameState = this.gameState;
 
     //handle jumping
     if (this.jumping) {
@@ -1107,7 +1106,7 @@ Mage.prototype.update = function() {
 
     //check if player collided with any platforms
     for (var i = 0; i < gameEngine.entities.length; i++) {
-        var entity = this.game.entities[i];
+        var entity = this.gameEngine.entities[i];
 
         if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
 
@@ -1165,7 +1164,7 @@ Mage.prototype.update = function() {
         var stillColliding = false;
 
         for (var i = 0; i < gameEngine.entities.length; i++) {
-            var entity = this.game.entities[i];
+            var entity = this.gameEngine.entities[i];
 
             if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
                 if (this != entity && this.collide(entity)) {
@@ -1183,7 +1182,7 @@ Mage.prototype.update = function() {
         } else { //still colliding
 
             for (var i = 0; i < gameEngine.entities.length; i++) {
-                var entity = this.game.entities[i];
+                var entity = this.gameEngine.entities[i];
 
                 if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
                     //check if still colliding right with a platform we collided right with
@@ -1233,7 +1232,7 @@ Mage.prototype.update = function() {
 
     } 
 
-    //handle animation changes
+    //handle animation changes and summon box if click pressed
     if (this.direction === "right") {
 
         if (gameEngine.keyMap["1"] && gameEngine.keyMap["KeyD"] && !this.attacking) {
@@ -1242,11 +1241,17 @@ Mage.prototype.update = function() {
             this.animationState = "attackRight";
             this.animationAttackRight.elapsedTime = 0;
 
+            var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
+            gameEngine.addEntity(box);
+
         } else if (gameEngine.keyMap["1"] && !this.attacking && this.jumping) {
 
             this.attacking = true;
             this.animationState = "attackRight";
             this.animationAttackRight.elapsedTime = 0;
+
+            var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
+            gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["Space"] && !this.jumping && this.collidedBottom) { //jump only if not already jumping
 
@@ -1259,6 +1264,9 @@ Mage.prototype.update = function() {
             this.attacking = true;
             this.animationState = "attackRight";
             this.animationAttackRight.elapsedTime = 0;
+
+            var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
+            gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["KeyD"] && !this.jumping && !this.attacking) { //only walk if not jumping
 
@@ -1277,11 +1285,17 @@ Mage.prototype.update = function() {
             this.animationState = "attackLeft";
             this.animationAttackLeft.elapsedTime = 0;
 
+            var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
+            gameEngine.addEntity(box);
+
         } else if (gameEngine.keyMap["1"] && !this.attacking && this.jumping) {
 
             this.attacking = true;
             this.animationState = "attackLeft";
             this.animationAttackLeft.elapsedTime = 0;
+
+            var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
+            gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["Space"] && !this.jumping && this.collidedBottom) { //jump only if not already jumping
 
@@ -1295,6 +1309,9 @@ Mage.prototype.update = function() {
             this.animationState = "attackLeft";
             this.animationAttackLeft.elapsedTime = 0;
 
+            var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
+            gameEngine.addEntity(box);
+
         } else if (gameEngine.keyMap["KeyA"] && !this.jumping && !this.attacking) { //only walk if not jumping
 
             this.animationState = "walkLeft";
@@ -1306,182 +1323,18 @@ Mage.prototype.update = function() {
     }
 }
 
-Box.prototype.update = function() {
-
-    var gameEngine = this.game;
-    var currentCharacter = gameEngine.getCurrentCharacter();
-
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        var entity = this.game.entities[i];
-
-        if (entity.name === "platform" || entity.name === "box") {
-
-            if (this != entity && this.collide(entity)) {
-                //console.log('colliding');
-
-
-                this.collidedWith = entity;
-
-                if (this.collideBottom(entity)) {
-                    this.collidedBottom = true;
-                    this.lastGroundY = this.collidedWith.y;
-                    this.jumping = false;
-                    this.jumpReleased = true;
-                    this.jumpElapsedTime = 0;
-
-                }  else if (this.collideTop(entity)) {
-
-                    this.collidedTop = true;
-                    this.collidedTopPlatform = entity;
-                    //this.oldY = this.y;
-                    this.canvasY += 3;
-                    this.y += 3;
-                    this.jumping = false;
-
-                } else if (this.collideLeft(entity)) {
-                    //fall after colliding left
-                    this.collidedLeft = true;
-                    this.collidedLeftPlatform = entity;
-
-                    if (!this.collidedBottom && !this.jumping) {
-                        this.oldY = this.y;
-                        this.canvasY += 3;
-                        this.y += 3;
-                    } 
-
-                } else if (this.collideRight(entity)) {
-
-                    this.collidedRight = true;
-                    this.collidedRightPlatform = entity;
-
-                    if (!this.collidedBottom && !this.jumping) {
-                        this.oldY = this.y;
-                        this.y += 5;
-                        this.canvasY += 5;
-                    }
-                }
-            }
-        }
-    }
-
-    if (this.collidedWith) {
-        var stillColliding = false;
-
-        for (var i = 0; i < gameEngine.entities.length; i++) {
-            var entity = this.game.entities[i];
-
-            if (entity.name === "platform" || entity.name === "box") {
-                if (this != entity && this.collide(entity)) {
-                    stillColliding = true;
-                }
-            }
-        }
-
-        if (!stillColliding) {
-            this.collidedWith = null;
-            this.collidedLeft = false;
-            this.collidedRight = false;
-            this.collidedBottom = false;
-            this.collidedTop = false;
-
-        } else { //still colliding
-
-            for (var i = 0; i < gameEngine.entities.length; i++) {
-                var entity = this.game.entities[i];
-
-                if (entity.name === "platform" || entity.name === "box") {
-                    //check if still colliding right with a platform we collided right with
-                    if (this.collidedRightPlatform === entity &&  
-                        !this.collideRight(entity)) {
-
-                        this.collidedRight = false;
-                    } else if (this.collidedLeftPlatform === entity &&
-                        !this.collideLeft(entity)) {
-
-                        this.collidedLeft = false;
-
-                    } else if (this.collidedTopPlatform === entity && 
-                        !this.collideTop(entity)) {
-
-                        //this.collidedTop = false;
-                    }
-                }
-            }
-        }
-
-    } else if (!this.jumping) { //player has not collided therefore fall
-
-        this.oldY = this.y;
-
-        this.canvasY += 5;
-        this.y += 5;
-    }
-    if (gameEngine.keyMap["KeyD"]  && !currentCharacter.collidedRight) {
-
-        this.canvasX -= 3;
-
-    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
-
-        this.canvasX += 3;
-    }
-}
-
-function Box(game, x, y) {
+function Box(gameEngine, gameState, x, y) {
     this.radius = 10;
     this.name = "box";
-    this.game = game;
-    this.ctx = game.ctx;
-    // this.colors = ["Green", "Green", "Blue", "Red"];
-    // this.setNotIt();
-    // x = Math.random();
-    // console.log("random = " + x);
-    // Entity.call(this, game, this.radius + .5 * (255 - this.radius * 2), this.radius + .5 * (1 - this.radius * 2));
-
-    // this.direction = "right";
-
-    // this.x = 26 * TILE_SIZE;
-    // this.y = 14 * TILE_SIZE;
-
-    // this.width = .78 * TILE_SIZE;
-    // this.height = .78 * TILE_SIZE;
-
-    // this.canvasX = 26 * TILE_SIZE;
-    // this.canvasY = 14 * TILE_SIZE;
-
-    // this.lastGroundY = null; //y coord of platform last collided with
-
-
-    // var currentCharacter = that.getCurrentCharacter();
-
-    // var rect = that.ctx.canvas.getBoundingClientRect();
-    // var xCord = x;
-    // var yCord = y;
-    // console.log("The x: " + xCord + " and y: " + yCord);
-
-    // this.canvasX = xCord/TILE_SIZE;
-    // this.canvasY = yCord/TILE_SIZE;
-
-    // this.width = 2;
-    // this.height = 2;
-
-    // this.gameEngine = that;
-
-    // this.x = (currentCharacter.x - currentCharacter.canvasX) + xCord;
-    // this.y = yCord/TILE_SIZE;
-
-    // var platformBox = new Platform(this.gameEngine, this.canvasX, this.canvasY, 2, 2);
-
-    /*platformBox.x = this.x;
-    // console.log(platformBox); 
-    this.gameEngine.addEntity(platformBox);*/
-    // var gameEngine = new GameEngine();
-
+    this.gameEngine = gameEngine;
+    this.ctx = gameEngine.ctx;
+    this.gameState = gameState;
 
     //this property is used for jumping.
     //Each animation shares this property 
     //to do jump + attack, etc.
 
-    var currentCharacter = game.getCurrentCharacter();
+    var currentCharacter = gameState.getCurrentCharacter();
     this.x = (currentCharacter.x - currentCharacter.canvasX) + x;
 
     this.oldX = (currentCharacter.x - currentCharacter.canvasX) + x;
@@ -1496,12 +1349,14 @@ function Box(game, x, y) {
     this.width = 2 * TILE_SIZE;
     this.height = 2 * TILE_SIZE;
 
+    this.jumping = false;
 
     this.collidedWith = null; //checks to see which entity the knight collided with
     this.collidedLeft = false; //checks to see if knight collided on its left side
     this.collidedRight = false; 
     this.collidedBottom = false;
     this.collidedTop = false; 
+
 };
 
 //checks for all sides collision
@@ -1561,12 +1416,11 @@ Box.prototype.collideTop = function(other) {
 
 
 Box.prototype.update = function() {
-
-    var gameEngine = this.game;
-    var currentCharacter = gameEngine.getCurrentCharacter();
+    var gameEngine = this.gameEngine;
+    var currentCharacter = this.gameState.getCurrentCharacter();
 
     for (var i = 0; i < gameEngine.entities.length; i++) {
-        var entity = this.game.entities[i];
+        var entity = gameEngine.entities[i];
 
         if (entity.name === "platform" || entity.name === "box") {
 
@@ -1622,7 +1476,7 @@ Box.prototype.update = function() {
         var stillColliding = false;
 
         for (var i = 0; i < gameEngine.entities.length; i++) {
-            var entity = this.game.entities[i];
+            var entity = gameEngine.entities[i];
 
             if (entity.name === "platform") {
                 if (this != entity && this.collide(entity)) {
@@ -1641,7 +1495,7 @@ Box.prototype.update = function() {
         } else { //still colliding
 
             for (var i = 0; i < gameEngine.entities.length; i++) {
-                var entity = this.game.entities[i];
+                var entity = this.gameEngine.entities[i];
 
                 if (entity.name === "platform") {
                     //check if still colliding right with a platform we collided right with
@@ -1664,6 +1518,8 @@ Box.prototype.update = function() {
         }
 
     } else if (!this.jumping) { //player has not collided therefore fall
+
+        //console.log('here');
 
         this.oldY = this.y;
 
@@ -1688,7 +1544,7 @@ Box.prototype.draw = function() {
 };
 
 //Constructor for gunwoman
-function Gunwoman(game, state, progressBar) {
+function Gunwoman(gameEngine, gameState, progressBar) {
     var idleRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanidleright.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanwalkright.png");
     var attackRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanattackright.png");
@@ -1703,14 +1559,12 @@ function Gunwoman(game, state, progressBar) {
     var jumpLeftAnimationSpriteSheet = AM.getAsset("./img/gunwomanjumpleft.png");
 
 
-    this.game = game;
-    this.ctx = game.ctx;
+    this.gameEngine = gameEngine;
+    this.gameState = gameState
+    this.ctx = gameEngine.ctx;
     this.name = "gunwoman";
     this.progressBar = progressBar;
     this.hasFallen = false;
-    this.id = 2;
-
-    //this.animationCurrent = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 14, true, 0.5);
 
     this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 5, 0.05, 22, true, 0.5);
     this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.035, 12, true, 0.5);
@@ -1924,7 +1778,9 @@ Gunwoman.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
 };
 
 Gunwoman.prototype.update = function() {
-    var gameEngine = this.game;
+    var gameEngine = this.gameEngine;
+    var gameState = this.gameState;
+
     //handle jumping
     if (this.jumping) {
         this.collidedBottom = false;
@@ -1960,7 +1816,7 @@ Gunwoman.prototype.update = function() {
 
     //check if player collided with any platforms
     for (var i = 0; i < gameEngine.entities.length; i++) {
-        var entity = this.game.entities[i];
+        var entity = this.gameEngine.entities[i];
 
         if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
 
@@ -2018,7 +1874,7 @@ Gunwoman.prototype.update = function() {
         var stillColliding = false;
 
         for (var i = 0; i < gameEngine.entities.length; i++) {
-            var entity = this.game.entities[i];
+            var entity = this.gameEngine.entities[i];
 
             if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
                 if (this != entity && this.collide(entity)) {
@@ -2039,7 +1895,7 @@ Gunwoman.prototype.update = function() {
         } else { //still colliding
 
             for (var i = 0; i < gameEngine.entities.length; i++) {
-                var entity = this.game.entities[i];
+                var entity = this.gameEngine.entities[i];
 
                 if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box") {
                     //check if still colliding right with a platform we collided right with
@@ -2092,13 +1948,13 @@ Gunwoman.prototype.update = function() {
         gameEngine.keyMap["1"] && this.animationAttackRightUp.currentFrame() === 9 ||
         gameEngine.keyMap["1"] && this.animationAttackLeft.currentFrame() === 8) {
 
-        var newBullet = new Bullet(gameEngine);
+        var newBullet = new Bullet(gameEngine, gameState);
         gameEngine.addEntity(newBullet);
 
 
     } else if (gameEngine.keyMap["1"] && gameEngine.keyMap["KeyD"] && this.animationAttackRight.currentFrame() === 8) {
 
-        var newBullet = new Bullet(gameEngine);
+        var newBullet = new Bullet(gameEngine, gameState);
         gameEngine.addEntity(newBullet);
 
     }
@@ -2205,21 +2061,21 @@ Gunwoman.prototype.draw = function() {
 
     if (this.animationState === "idleRight") {
 
-        this.animationIdleRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationIdleRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
 
     } else if (this.animationState === "walkRight") {
 
-        this.animationWalkRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationWalkRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
 
     } else if (this.animationState === "jumpRight") {
 
-        this.animationJumpRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationJumpRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
 
     } else if (this.animationState === "attackRight") {
 
-        if (this.game.clickX > this.canvasX) {
+        if (this.gameEngine.clickX > this.canvasX) {
 
-            this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY);
+            this.animationAttackRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 48, this.canvasY);
 
         } else {
 
@@ -2229,21 +2085,21 @@ Gunwoman.prototype.draw = function() {
 
     } else if (this.animationState === "idleLeft") { // START LEFT HERE
 
-        this.animationIdleLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY);
+        this.animationIdleLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 33, this.canvasY);
 
     } else if (this.animationState === "walkLeft") {
 
-        this.animationWalkLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY);
+        this.animationWalkLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 33, this.canvasY);
 
     } else if (this.animationState === "jumpLeft") {
 
-        this.animationJumpLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 33, this.canvasY);
+        this.animationJumpLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 33, this.canvasY);
 
     } else if (this.animationState === "attackLeft") {
 
-        if (this.game.clickX < this.canvasX) {
+        if (this.gameEngine.clickX < this.canvasX) {
 
-            this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 81, this.canvasY);
+            this.animationAttackLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 81, this.canvasY);
 
         } else {
 
@@ -2253,9 +2109,9 @@ Gunwoman.prototype.draw = function() {
 
     } else if (this.animationState === "attackRightUp") {
 
-        if (this.game.clickX > this.canvasX) {
+        if (this.gameEngine.clickX > this.canvasX) {
 
-            this.animationAttackRightUp.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 48, this.canvasY);
+            this.animationAttackRightUp.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 48, this.canvasY);
 
         } else {
 
@@ -2265,13 +2121,13 @@ Gunwoman.prototype.draw = function() {
     }
 }
 
+function Bullet(gameEngine, gameState) {
+    this.gameEngine = gameEngine;
+    this.ctx = this.gameEngine.ctx;
+    this.gameState = gameState;
 
-
-
-function Bullet(gameEngine) {
-    this.game = gameEngine;
-    this.currentCharacter = gameEngine.getCurrentCharacter();
-    this.ctx = this.game.ctx;
+    this.currentCharacter = gameState.getCurrentCharacter();
+    
     this.name = "bullet";
 
     this.x = this.currentCharacter.canvasX;
@@ -2279,8 +2135,8 @@ function Bullet(gameEngine) {
     this.direction = this.currentCharacter.direction;
     this.canvasX = this.currentCharacter.canvasX;
     this.canvasY = this.currentCharacter.canvasY + 14;
-    this.targetX = this.game.clickX;
-    this.targetY = this.game.clickY;
+    this.targetX = this.gameEngine.clickX;
+    this.targetY = this.gameEngine.clickY;
 
     this.dx = this.targetX - this.canvasX;
     this.dy = this.targetY - this.canvasY ;
@@ -2297,16 +2153,15 @@ function Bullet(gameEngine) {
     this.height = 3;
 }
 
-
 Bullet.prototype.update = function() {
 
     this.canvasY += this.b_dy;
     this.canvasX += this.b_dx;
     this.distance++;
 
-    if(this.distance >= 200) {
+    if (this.distance >= 200) {
         distance = 0;
-        this.game.removeEntity(this);
+        this.gameEngine.removeEntity(this);
     }
 
 };
@@ -2314,10 +2169,7 @@ Bullet.prototype.update = function() {
 Bullet.prototype.draw = function() {
     this.ctx.fillStyle = "#000000";
     this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
-
 };
-
-
 
 //Constructor for wolf
 function Wolf(game) {

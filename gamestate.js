@@ -1,23 +1,27 @@
 function GameState(ctx, gameEngine) {
     this.ctx = ctx;
-    this.game = gameEngine;
+    this.gameEngine = gameEngine;
     this.charactersAlive = 3;
+    this.currentCharacter = null;
+    this.playableCharacters = [];
+    this.playableCharacterIndex = 0;
 }
-
-
-
 
 GameState.prototype.draw = function() {}
 
 GameState.prototype.update = function() {
 
-    var gameEngine = this.game;
-    var currentCharacter = gameEngine.getCurrentCharacter();
+    var gameEngine = this.gameEngine;
+    var currentCharacter = this.getCurrentCharacter();
 
     if (currentCharacter.x >= 10839 && currentCharacter.y === 357) {
-        window.alert("Next level");
-    }
 
+        window.alert("Next level");
+
+    } else if (currentCharacter.y > 700) {
+
+        console.log('died');
+    }
 };
 
 GameState.prototype.updateHealth = function(entity) {
@@ -34,8 +38,6 @@ GameState.prototype.updateHealth = function(entity) {
                 //this.game.replaceCharacter();
                 this.charactersAlive--;
 
-                
-            
             } else if (this.charactersAlive === 0) {
                 window.alert('gameover');
             }
@@ -44,17 +46,39 @@ GameState.prototype.updateHealth = function(entity) {
     
     } else if (entity.name === "skeleton") {
 
-        for (var i = 0; i < this.game.entities.length; i++) {
-            var e = this.game.entities[i];
+        for (var i = 0; i < this.gameEngine.entities.length; i++) {
+            var e = this.gameEngine.entities[i];
             
             if (e.id === entity.id) {
-                console.log('entity id: ' + entity.id);
+                //console.log('entity id: ' + entity.id);
                 entity.health = entity.health - 1;
             }
             
             if (entity.health <= 0 && e.id === entity.id) {
-                this.game.entities.splice(i, 1);
+                this.gameEngine.entities.splice(i, 1);
             }
         }
     }
 };
+
+GameState.prototype.setCurrentCharacter = function(character) {
+    this.currentCharacter = character;
+}
+
+GameState.prototype.getCurrentCharacter = function() {
+    return this.currentCharacter;
+}
+
+GameState.prototype.changeCharacter = function(newCharacter) {
+    var oldCharacter = this.getCurrentCharacter()
+
+    //removes the old character from the entities array
+    for (var i = 0; i < this.gameEngine.entities.length; i++) { //perhaps make entities a map to find the old character faster??
+        if (oldCharacter === this.gameEngine.entities[i]) {
+            this.gameEngine.entities.splice(i, 1);
+        }
+    }
+
+    this.gameEngine.entities.unshift(newCharacter);
+    this.setCurrentCharacter(newCharacter);
+}
