@@ -13,16 +13,20 @@ GameState.prototype.draw = function() {}
 GameState.prototype.update = function() {
 
     var gameEngine = this.gameEngine;
-    var currentCharacter = this.getCurrentCharacter();
+    if (!gameEngine.startMenu) {
+        var currentCharacter = this.getCurrentCharacter();
 
-    if (currentCharacter.x >= 10839 && currentCharacter.y === 357) {
+        if (currentCharacter.x >= 10839 && currentCharacter.y === 357) {
 
-        window.alert("Next level");
+            window.alert("Next level");
 
-    } else if (currentCharacter.y > 700) {
+        } else if (currentCharacter.y > 700) {
 
-        console.log('died');
+            console.log('died');
+        }
+
     }
+
 };
 
 GameState.prototype.updateHealth = function(entity) {
@@ -42,19 +46,19 @@ GameState.prototype.updateHealth = function(entity) {
             } else if (this.charactersAlive === 0) {
                 window.alert('gameover');
             }
-            
+
         }
-    
+
     } else if (entity.name === "skeleton") {
 
         for (var i = 0; i < this.gameEngine.entities.length; i++) {
             var e = this.gameEngine.entities[i];
-            
+
             if (e.id === entity.id) {
                 //console.log('entity id: ' + entity.id);
                 entity.health = entity.health - 1;
             }
-            
+
             if (entity.health <= 0 && e.id === entity.id) {
                 this.gameEngine.entities.splice(i, 1);
             }

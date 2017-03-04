@@ -23,8 +23,11 @@ function GameEngine() {
     this.assetManager = null;
     this.clickX = 0;
     this.clickY = 0;
+    this.mouseHoverX = 0;
+    this.mouseHoverY = 0;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
+    this.startMenu = true;
 }
 
 GameEngine.prototype.init = function(ctx, assetManager, gameState) {
@@ -80,21 +83,25 @@ GameEngine.prototype.startInput = function() {
         that.clickX = e.clientX - rect.left;
         that.clickY = e.clientY - rect.top;
 
-		// if (e.which === 3 && currentCharacter.name === "gunwoman" ) { //Right Mouse button pressed, add wolf
-		// 	 var wolf = new Wolf(that, currentCharacter.gameState);
-		// 	 that.addEntity(wolf);
-  //       } 
+        // if (e.which === 3 && currentCharacter.name === "gunwoman" ) { //Right Mouse button pressed, add wolf
+        //   var wolf = new Wolf(that, currentCharacter.gameState);
+        //   that.addEntity(wolf);
+        //       } 
 
     }, false);
 
     this.ctx.canvas.addEventListener("mouseup", function(e) {
 
     }, false);
+    this.ctx.canvas.addEventListener("mousemove", function(e) {
+        that.mouseHoverX = e.clientX;
+        that.mouseHoverY = e.clientY;
+    })
 
-    this.ctx.canvas.addEventListener("click", function (e) {
-		 
+    this.ctx.canvas.addEventListener("click", function(e) {
+
         // var charac = that.gameState.getCurrentCharacter();
-        
+
         // if (charac.name === "mage"){
         //     var box = new Box(that, e.clientX, e.clientY);
         //     that.addEntity(box);
@@ -143,12 +150,12 @@ GameEngine.prototype.startInput = function() {
 
             } else if (e.code === "Digit2" && that.playableCharacters[i].name === "gunwoman") {
 
-                that.gameState.changeCharacter(that.playableCharacters[i]); 
+                that.gameState.changeCharacter(that.playableCharacters[i]);
 
 
             } else if (e.code === "Digit3" && that.playableCharacters[i].name === "mage") {
 
-                that.gameState.changeCharacter(that.playableCharacters[i]); 
+                that.gameState.changeCharacter(that.playableCharacters[i]);
             }
 
             that.gameState.currentCharacter.x = newX;
@@ -265,7 +272,7 @@ GameEngine.prototype.draw = function() {
     this.ctx.save();
 
     for (var i = this.entities.length - 1; i >= 0; i--) {
-        var entity = this.entities[i];   
+        var entity = this.entities[i];
 
         entity.draw(this.ctx);
     }
@@ -309,8 +316,8 @@ GameEngine.prototype.setCurrentPortrait = function(ctx, image) {
 
 //get the current character playing
 GameEngine.prototype.getCurrentCharacter = function() {
-        return this.currentCharacter;
-    }
+    return this.currentCharacter;
+}
 
 GameEngine.prototype.changeCharacter = function(newCharacter) {
     var oldCharacter = this.getCurrentCharacter()
@@ -358,11 +365,11 @@ GameEngine.prototype.replaceCharacter = function() {
         //     }
 
         // } else {
-            newCharacter.canvasX = oldCharacter.canvasX;
-            newCharacter.canvasY = oldCharacter.canvasY;
+        newCharacter.canvasX = oldCharacter.canvasX;
+        newCharacter.canvasY = oldCharacter.canvasY;
 
-            newCharacter.x = oldCharacter.x;
-            newCharacter.y = oldCharacter.y;
+        newCharacter.x = oldCharacter.x;
+        newCharacter.y = oldCharacter.y;
 
         // }
 
@@ -431,4 +438,3 @@ Entity.prototype.rotateAndCache = function(image, angle) {
     //offscreenCtx.strokeRect(0,0,size,size);
     return offscreenCanvas;
 }
-										

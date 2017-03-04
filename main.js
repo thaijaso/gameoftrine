@@ -7,7 +7,7 @@ function Portrait(ctx, spritesheet, x, y) {
 }
 
 Portrait.prototype.draw = function() {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y, 130 , 101);
+    this.ctx.drawImage(this.spritesheet, this.x, this.y, 130, 101);
 };
 
 
@@ -71,19 +71,17 @@ ProgressBar.prototype.draw = function() {
     this.ctx.beginPath();
 
     if (this.endAngle < .5) {
-		this.ctx.strokeStyle = '#F00';
+        this.ctx.strokeStyle = '#F00';
         this.ctx.arc(this.cw, this.ch, 50, this.start, this.endAngle, false);
         this.ctx.stroke();
 
-    } else if(this.endAngle < 2.5 && this.endAngle > .5) {
-		this.ctx.strokeStyle = '#ffff13 ';
+    } else if (this.endAngle < 2.5 && this.endAngle > .5) {
+        this.ctx.strokeStyle = '#ffff13 ';
         this.ctx.arc(this.cw, this.ch, 50, this.start, this.endAngle, false);
         this.ctx.stroke();
 
-	}
-
-	else {
-		this.ctx.strokeStyle = '#37d613';
+    } else {
+        this.ctx.strokeStyle = '#37d613';
 
         this.ctx.arc(this.cw, this.ch, 50, this.start, this.endAngle, false);
         this.ctx.stroke();
@@ -101,10 +99,126 @@ ProgressBar.prototype.hasBeenHit = function(isHit) {
 };
 
 var bar;
+var pressedPlay = false;
+
+function GameMenu(gameEngine) {
+    this.game = gameEngine;
+    this.ctx = gameEngine.ctx;
+    this.canvas = this.ctx.canvas;
+    this.backgroundImg = AM.getAsset("./img/gamemenubackground.jpg");
+    this.logoImg = AM.getAsset("./img/logoimg1.png");
+    this.playImg = AM.getAsset("./img/playImg.png");
+    this.controlsImg = AM.getAsset("./img/controlsImg.png");
+    this.skeletonImg = AM.getAsset("./img/skeletonforstart.png");
+
+    this.width = this.ctx.canvas.width;
+    this.height = this.ctx.canvas.height;
+    this.mouseX = 0;
+    this.mouseY = 0;
+
+    var centerForLogo = this.width / 2 - 700 / 2;
+    var centerForbtns = (this.width / 2 - 700 / 2) + 250;
+    var centerY = this.height / 2 - 450 / 2;
+    this.buttonX = [centerForLogo, centerForbtns, centerForbtns - 40];
+    this.buttonY = [centerY - 30, centerY + 210, centerY + 280]; // 450
+    this.buttonWidth = [700, 150, 250];
+    this.buttonHeight = [150, 75, 75];
+
+    this.skeletonVisible1 = false;
+    this.skeletonVisible2 = false;
+
+
+}
+
+GameMenu.prototype.update = function() {
+    this.mouseX = this.game.clickX;
+    this.mouseY = this.game.clickY;
+    var mouseHoverX = this.game.mouseHoverX;
+    var mouseHoverY = this.game.mouseHoverY;
+    if (this.mouseX >= this.buttonX[1] && this.mouseX <= this.buttonX[1] + 100 && this.mouseY >= this.buttonY[1] && this.mouseY <= this.buttonY[1] + 75) {
+        createGame(this.game, this, this.game.gameState);
+        this.game.startMenu = false;
+
+    } else if (this.mouseX >= this.buttonX[2] && this.mouseX <= this.buttonX[2] + 100 && this.mouseY >= this.buttonY[2] && this.mouseY <= this.buttonY[2] + 75) {
+        this.game.removeEntity(this);
+        var gameControls = new GameControls(this.game);
+        this.game.addEntity(gameControls);
+
+    }
+    if (mouseHoverX >= this.buttonX[1] && mouseHoverX <= this.buttonX[1] + 150 && mouseHoverY >= this.buttonY[1] - 50 && mouseHoverY <= this.buttonY[1] + 75) {
+        this.skeletonVisible1 = true;
+    } else {
+        this.skeletonVisible1 = false;
+    }
+
+    if (mouseHoverX >= this.buttonX[2] && mouseHoverX <= this.buttonX[2] + 250 && mouseHoverY >= this.buttonY[2] && mouseHoverY <= this.buttonY[2] + 75) {
+        this.skeletonVisible2 = true;
+    } else {
+        this.skeletonVisible2 = false;
+    }
+
+
+
+};
+
+
+GameMenu.prototype.draw = function() {
+    this.ctx.drawImage(this.backgroundImg, 0, 0, this.width, this.height + 100);
+    this.ctx.drawImage(this.logoImg, this.buttonX[0], this.buttonY[0], this.buttonWidth[0], this.buttonHeight[0]);
+    this.ctx.drawImage(this.playImg, this.buttonX[1], this.buttonY[1], this.buttonWidth[1], this.buttonHeight[1]);
+    this.ctx.drawImage(this.controlsImg, this.buttonX[2], this.buttonY[2], this.buttonWidth[2], this.buttonHeight[2]);
+    if (this.skeletonVisible1) {
+        this.ctx.drawImage(this.skeletonImg, this.buttonX[1] - 90, this.buttonY[1] - 20, 100, 90);
+    }
+    if (this.skeletonVisible2) {
+        this.ctx.drawImage(this.skeletonImg, this.buttonX[2] - 90, this.buttonY[2] - 20, 100, 90);
+    }
+
+};
+
+
+function GameControls(gameEngine) {
+    this.game = gameEngine;
+    this.ctx = gameEngine.ctx;
+    this.canvas = this.ctx.canvas;
+    this.width = this.ctx.canvas.width;
+    this.height = this.ctx.canvas.height;
+    this.img = AM.getAsset("./img/controlsmenu.png");
+}
+
+GameControls.prototype.update = function() {
+    var mouseX = this.game.clickX;
+    var mouseY = this.game.clickY;
+
+    // console.log(mouseX + " " + mouseY);
+    if (mouseX >= 30 && mouseX <= 300 && mouseY >= this.height - 200 & mouseY < this.height) {
+        this.game.removeEntity(this);
+        var gameMenu = new GameMenu(this.game);
+        this.game.addEntity(gameMenu);
+
+    }
+
+};
+
+GameControls.prototype.draw = function() {
+
+    this.ctx.drawImage(this.img, 0, 0, this.width, this.height);
+
+
+};
+
 
 // the "main" code begins here
 
 var AM = new AssetManager();
+//game menu
+AM.queueDownload("./img/gamemenubackground.jpg");
+AM.queueDownload("./img/logoimg1.png");
+AM.queueDownload("./img/playImg.png");
+AM.queueDownload("./img/controlsImg.png");
+AM.queueDownload("./img/skeletonforstart.png");
+AM.queueDownload("./img/controlsmenu.png");
+
 
 AM.queueDownload("./img/background.png");
 AM.queueDownload("./img/midground.png");
@@ -195,6 +309,17 @@ AM.downloadAll(function() {
 
     gameEngine.init(ctx, AM, gameState);
 
+    var gameMenu = new GameMenu(gameEngine);
+    gameEngine.addEntity(gameMenu);
+
+    gameEngine.start();
+
+    console.log("All Done!");
+});
+
+
+function createGame(gameEngine, gameMenu, gameState) {
+    var ctx = gameEngine.ctx;
     var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground.png"));
     var background = new Background(gameEngine, gameState, AM.getAsset("./img/background.png"));
     var midground = new Midground(gameEngine, gameState, AM.getAsset("./img/midground.png"));
@@ -206,31 +331,31 @@ AM.downloadAll(function() {
     var knight = new Knight(gameEngine, gameState, progressKnight);
     var gunwoman = new Gunwoman(gameEngine, gameState, progressGunwoman);
     var mage = new Mage(gameEngine, gameState, progressMage);
-	//var wolf = new Wolf(gameEngine);
+    //var wolf = new Wolf(gameEngine);
 
-                                        //   x   y
+    //   x   y
     var skeleton0 = new Skeleton(gameEngine, gameState, 68, 24);
     var skeleton1 = new Skeleton(gameEngine, gameState, 72, 24);
     var skeleton2 = new Skeleton(gameEngine, gameState, 75, 24);
     var skeleton3 = new Skeleton(gameEngine, gameState, 80, 24);
-    var skeleton4 = new Skeleton(gameEngine, gameState, 144, 32);//BOTTOM TWO
+    var skeleton4 = new Skeleton(gameEngine, gameState, 144, 32); //BOTTOM TWO
     var skeleton5 = new Skeleton(gameEngine, gameState, 174, 32);
-    var skeleton6 = new Skeleton(gameEngine, gameState, 168, 17);//SINGLE TOP ONE
-    var skeleton7 = new Skeleton(gameEngine, gameState, 235, 19);//TOP THREE BY THE TREE
+    var skeleton6 = new Skeleton(gameEngine, gameState, 168, 17); //SINGLE TOP ONE
+    var skeleton7 = new Skeleton(gameEngine, gameState, 235, 19); //TOP THREE BY THE TREE
     var skeleton8 = new Skeleton(gameEngine, gameState, 255, 19);
     var skeleton9 = new Skeleton(gameEngine, gameState, 285, 22);
-    var skeleton10 = new Skeleton(gameEngine, gameState, 235, 33);//TWO UNDER THE TREE
+    var skeleton10 = new Skeleton(gameEngine, gameState, 235, 33); //TWO UNDER THE TREE
     var skeleton11 = new Skeleton(gameEngine, gameState, 255, 33);
-    var skeleton12 = new Skeleton(gameEngine, gameState, 336, 7);//THE THREEIO 
+    var skeleton12 = new Skeleton(gameEngine, gameState, 336, 7); //THE THREEIO 
     var skeleton13 = new Skeleton(gameEngine, gameState, 360, 7);
     var skeleton14 = new Skeleton(gameEngine, gameState, 348, 1);
-    var skeleton15 = new Skeleton(gameEngine, gameState, 335, 27);//UNDER THE THREEIO
-    var skeleton16 = new Skeleton(gameEngine, gameState, 400, 27);//SINGLE ONE BY THE TREE ON POL
-    var skeleton17 = new Skeleton(gameEngine, gameState, 485, 10);// SINGLE ON TOP OF THE SIGN
-    var skeleton18 = new Skeleton(gameEngine, gameState, 540, 32);//GUYS INSIDE THE SQURE SHAPE
+    var skeleton15 = new Skeleton(gameEngine, gameState, 335, 27); //UNDER THE THREEIO
+    var skeleton16 = new Skeleton(gameEngine, gameState, 400, 27); //SINGLE ONE BY THE TREE ON POL
+    var skeleton17 = new Skeleton(gameEngine, gameState, 485, 10); // SINGLE ON TOP OF THE SIGN
+    var skeleton18 = new Skeleton(gameEngine, gameState, 540, 32); //GUYS INSIDE THE SQURE SHAPE
     var skeleton19 = new Skeleton(gameEngine, gameState, 528, 32);
-    var skeleton20 = new Skeleton(gameEngine, gameState, 580, 7);//SINGLE GUY BY TREE
-    var skeleton21 = new Skeleton(gameEngine, gameState, 650, 22);//
+    var skeleton20 = new Skeleton(gameEngine, gameState, 580, 7); //SINGLE GUY BY TREE
+    var skeleton21 = new Skeleton(gameEngine, gameState, 650, 22); //
     var skeleton22 = new Skeleton(gameEngine, gameState, 685, 22);
 
 
@@ -245,14 +370,14 @@ AM.downloadAll(function() {
 
     //an entity is any element drawn on the map
     gameEngine.addEntity(knight);
-    
+
     gameEngine.addEntity(skeleton0);
     //gameEngine.addEntity(skeleton1);
     //gameEngine.addEntity(skeleton2);
     //gameEngine.addEntity(skeleton3);
-                      
-    gameEngine.addEntity(skeleton4); 
-    gameEngine.addEntity(skeleton5); 
+
+    gameEngine.addEntity(skeleton4);
+    gameEngine.addEntity(skeleton5);
     gameEngine.addEntity(skeleton6);
     gameEngine.addEntity(skeleton7);
     gameEngine.addEntity(skeleton8);
@@ -271,7 +396,7 @@ AM.downloadAll(function() {
     gameEngine.addEntity(skeleton21);
     gameEngine.addEntity(skeleton22);
 
-                                            //   x   y
+    //   x   y
     var archer1 = new SkeletonArcher(gameEngine, 96, 3);
     var archer2 = new SkeletonArcher(gameEngine, 166, 12);
     var archer3 = new SkeletonArcher(gameEngine, 172, 5);
@@ -292,10 +417,10 @@ AM.downloadAll(function() {
     // gameEngine.addEntity(archer8);
     // gameEngine.addEntity(archer9);
 
-                                                   //x,  y, width, height
+    //x,  y, width, height
     var tutorialPlatform0 = new Platform(gameEngine, gameState, 0, 39, 42, 1)
     var tutorialPlatform1 = new Platform(gameEngine, gameState, 41, 28, 1, 11);
-    
+
     var platform1 = new Platform(gameEngine, gameState, 42, 28, 68.5, 1);
     var platform2 = new Platform(gameEngine, gameState, 64, 22, 3, 2);
     var platform3 = new Platform(gameEngine, gameState, 75, 19, 3, 2);
@@ -492,9 +617,5 @@ AM.downloadAll(function() {
 
     gameEngine.addEntity(midground);
     gameEngine.addEntity(background);
-
-    gameEngine.start();
-
-    console.log("All Done!");
-});
-					
+    gameEngine.removeEntity(gameMenu);
+}
