@@ -325,6 +325,7 @@ AM.downloadAll(function() {
 
 function createGame(gameEngine, gameMenu, gameState) {
     var ctx = gameEngine.ctx;
+    this.audio = new Sound();
     var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground.png"));
     var background = new Background(gameEngine, gameState, AM.getAsset("./img/background1.png"));
     var midground = new Midground(gameEngine, gameState, AM.getAsset("./img/midground.png"));
