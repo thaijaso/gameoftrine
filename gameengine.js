@@ -21,8 +21,11 @@ function GameEngine() {
     this.assetManager = null;
     this.clickX = 0;
     this.clickY = 0;
+    this.mouseHoverX = 0;
+    this.mouseHoverY = 0;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
+    this.startMenu = true;
 }
 
 GameEngine.prototype.init = function(ctx, assetManager, gameState) {
@@ -79,6 +82,14 @@ GameEngine.prototype.startInput = function() {
     this.ctx.canvas.addEventListener("mouseup", function(e) {
 
     }, false);
+    
+    this.ctx.canvas.addEventListener("mousemove", function(e) {
+        that.mouseHoverX = e.clientX;
+        that.mouseHoverY = e.clientY;
+    })
+
+   
+
 
     this.ctx.canvas.addEventListener("click", function (e) {
 
@@ -97,27 +108,27 @@ GameEngine.prototype.startInput = function() {
     }, false);
 
     this.ctx.canvas.addEventListener("mousemove", function(e) {
-        //console.log(e);
+       
         that.mouse = getXandY(e);
+    
     }, false);
 
     this.ctx.canvas.addEventListener("mousewheel", function(e) {
-        //console.log(e);
+        
         that.wheel = e;
-        //console.log("Click Event - X,Y " + e.clientX + ", " + e.clientY + " Delta " + e.deltaY);
+        
     }, false);
 
 
     this.ctx.canvas.addEventListener("keypress", function(e) {
-        //console.log(e);
-        //console.log("Key Pressed Event - Char " + e.charCode + " Code " + e.keyCode);
+        
     }, false);
 
     this.ctx.canvas.addEventListener("contextmenu", function(e) {
+        
         that.click = getXandY(e);
-        //console.log(e);
-        //console.log("Right Click Event - X,Y " + e.clientX + ", " + e.clientY);
         e.preventDefault();
+
     }, false);
 
     console.log('Input started');
@@ -174,7 +185,7 @@ GameEngine.prototype.draw = function() {
     this.ctx.save();
 
     for (var i = this.entities.length - 1; i >= 0; i--) {
-        var entity = this.entities[i];   
+        var entity = this.entities[i];
 
         entity.draw(this.ctx);
     }
@@ -218,9 +229,9 @@ GameEngine.prototype.setCurrentPortrait = function(ctx, image) {
 
 //get the current character playing
 GameEngine.prototype.getCurrentCharacter = function() {
-        return this.currentCharacter;
-}
 
+    return this.currentCharacter;
+}
 
 //entities are drawn on the map
 GameEngine.prototype.addEntity = function(entity) {
@@ -287,4 +298,3 @@ Entity.prototype.rotateAndCache = function(image, angle) {
     //offscreenCtx.strokeRect(0,0,size,size);
     return offscreenCanvas;
 }
-										

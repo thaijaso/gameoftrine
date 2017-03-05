@@ -1,11 +1,17 @@
 /* to remove the top and left whitespace */
-* { 
-	margin:0; 
-	padding:0; 
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #272822;
 }
 
 
+/*
 /* To remove the scrollbars */
-canvas { 
-	display:block; 
-} 
+
+canvas {
+    display: block;
+}

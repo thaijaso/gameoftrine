@@ -741,8 +741,8 @@ Skeleton.prototype.update = function() {
 
 
 Skeleton.prototype.draw = function() {
-    this.ctx.fillRect(this.x, this.y, this.width, this.height);
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
     if (this.animationState === "idleRight") {
 

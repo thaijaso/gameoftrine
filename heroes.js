@@ -722,8 +722,8 @@ Knight.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
 
 Knight.prototype.draw = function() {
     this.ctx.fillStyle = "black";
-    this.ctx.fillRect(this.x, this.y, this.width, this.height);
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
     if (this.animationState === "idleRight") {
 
@@ -1271,6 +1271,7 @@ function Box(gameEngine, gameState, x, y) {
     this.gameEngine = gameEngine;
     this.ctx = gameEngine.ctx;
     this.gameState = gameState;
+    this.boxImg = AM.getAsset("./img/crate.png");
    
     this.x = (currentCharacter.x - currentCharacter.canvasX) + x;
     this.y = y;
@@ -1478,8 +1479,9 @@ Box.prototype.update = function() {
 }
 
 Box.prototype.draw = function() {
-    this.ctx.fillStyle = "#ff0000";
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    this.ctx.drawImage(this.boxImg, this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillStyle = "#ff0000";
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     //this.ctx.fillRect(this.x, this.y, this.width, this.height);
 
 };
@@ -2004,8 +2006,8 @@ Gunwoman.prototype.update = function() {
 
 Gunwoman.prototype.draw = function() {
     this.ctx.fillStyle = "black";
-    this.ctx.fillRect(this.x, this.y, this.width, this.height);
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
     if (this.animationState === "idleRight") {
 

@@ -27,75 +27,210 @@ GameState.prototype.draw = function() {}
 
 GameState.prototype.update = function() {
     var gameEngine = this.gameEngine;
-    var currentCharacter = this.getCurrentCharacter();
-
-    if (this.charactersAlive === 0) {
-        this.gameIsOver = true;
-    }
-
-    if (this.gameIsOver && !this.playAgainClicked) {
-
-        if (gameEngine.clickX >= 31 * TILE_SIZE && gameEngine.clickX <= 38 * TILE_SIZE &&
-            gameEngine.clickY >= 15 * TILE_SIZE - 30 && gameEngine.clickY <= 18 * TILE_SIZE) {
-
-            this.playAgainClicked = true;
-
-            this.reset();
-        } 
-    }
-
-    if (currentCharacter) {
+    
+    if (!gameEngine.startMenu) {
         
-        if (currentCharacter.x >= 10839 && currentCharacter.y === 357) { //check to see if at the end of level
+        var currentCharacter = this.getCurrentCharacter();
 
-            window.alert("Next level");
+        if (this.charactersAlive === 0) {
+            this.gameIsOver = true;
+        }
 
-        } else if (currentCharacter.y > 700) { //fell off map
+        if (this.gameIsOver && !this.playAgainClicked) {
 
-            if (currentCharacter === this.playableCharacters[0]) { //currentCharacter is knight
-                
-                this.knightIsAlive = false;
-                currentCharacter.progressBar.updateHealth(0);
+            if (gameEngine.clickX >= 31 * TILE_SIZE && gameEngine.clickX <= 38 * TILE_SIZE &&
+                gameEngine.clickY >= 15 * TILE_SIZE - 30 && gameEngine.clickY <= 18 * TILE_SIZE) {
 
-            } else if (currentCharacter === this.playableCharacters[1]) { //currentCharacter is gunwoman
+                this.playAgainClicked = true;
 
-                this.gunwomanIsAlive = false;
-                currentCharacter.progressBar.updateHealth(0);
+                this.reset();
+            } 
+        }
 
-            } else if (currentCharacter === this.playableCharacters[2]) { //currentCharacter is mage
+        if (currentCharacter) {
+            
+            if (currentCharacter.x >= 10839 && currentCharacter.y === 357) { //check to see if at the end of level
 
-                this.mageIsAlive = false;
-                currentCharacter.progressBar.updateHealth(0);
+                window.alert("Next level");
+
+            } else if (currentCharacter.y > 700) { //fell off map
+
+                if (currentCharacter === this.playableCharacters[0]) { //currentCharacter is knight
+                    
+                    this.knightIsAlive = false;
+                    currentCharacter.progressBar.updateHealth(0);
+
+                } else if (currentCharacter === this.playableCharacters[1]) { //currentCharacter is gunwoman
+
+                    this.gunwomanIsAlive = false;
+                    currentCharacter.progressBar.updateHealth(0);
+
+                } else if (currentCharacter === this.playableCharacters[2]) { //currentCharacter is mage
+
+                    this.mageIsAlive = false;
+                    currentCharacter.progressBar.updateHealth(0);
+                }
+
+                gameEngine.removeEntity(currentCharacter);
+                this.currentCharacter = null;
+                this.charactersAlive--;
+
+            } else if (gameEngine.keyMap["Digit1"] && this.knightIsAlive) {
+
+                    var x = currentCharacter.x;
+                    var y = currentCharacter.y;
+
+                    var oldX = currentCharacter.oldX;
+                    var oldY = currentCharacter.oldY;
+
+                    var canvasX = currentCharacter.canvasX;
+                    var canvasY = currentCharacter.canvasY;
+
+                    var collidedTop = currentCharacter.collidedTop;
+                    var collidedBottom = currentCharacter.collidedBottom;
+                    var collidedLeft = currentCharacter.collidedLeft;
+                    var collidedRight = currentCharacter.collidedRight;
+
+                    var collidedTopEntity = currentCharacter.collidedTopEntity;
+                    var collidedBottomEntity = currentCharacter.collidedBottomEntity;
+                    var collidedLeftEntity = currentCharacter.collidedLeftEntity;
+                    var collidedRightEntity = currentCharacter.collidedRightEntity;
+
+                    var lastGroundY = currentCharacter.lastGroundY;
+
+                    this.changeCharacter(this.playableCharacters[0]); //change to knight
+
+                    this.currentCharacter.x = x;
+                    this.currentCharacter.y = y;
+
+                    this.currentCharacter.oldX = oldX;
+                    this.currentCharacter.oldY = oldY;
+
+                    this.currentCharacter.canvasX = canvasX;
+                    this.currentCharacter.canvasY = canvasY;
+
+                    this.currentCharacter.collidedTop = collidedTop;
+                    this.currentCharacter.collidedBottom = collidedBottom;
+                    this.currentCharacter.collidedLeft = collidedLeft;
+                    this.currentCharacter.collidedRight = collidedRight;
+
+                    this.currentCharacter.collidedTopEntity = collidedTopEntity;
+                    this.currentCharacter.collidedBottomEntity = collidedBottomEntity;
+                    this.currentCharacter.collidedLeftEntity = collidedLeftEntity;
+                    this.currentCharacter.collidedRightEntity = collidedRightEntity;
+
+                    this.currentCharacter.lastGroundY = lastGroundY;            
+
+
+            } else if (gameEngine.keyMap["Digit2"] && this.gunwomanIsAlive) {
+
+                    var x = currentCharacter.x;
+                    var y = currentCharacter.y;
+
+                    var oldX = currentCharacter.oldX;
+                    var oldY = currentCharacter.oldY;
+
+                    var canvasX = currentCharacter.canvasX;
+                    var canvasY = currentCharacter.canvasY;
+
+                    var collidedTop = currentCharacter.collidedTop;
+                    var collidedBottom = currentCharacter.collidedBottom;
+                    var collidedLeft = currentCharacter.collidedLeft;
+                    var collidedRight = currentCharacter.collidedRight;
+
+                    var collidedTopEntity = currentCharacter.collidedTopEntity;
+                    var collidedBottomEntity = currentCharacter.collidedBottomEntity;
+                    var collidedLeftEntity = currentCharacter.collidedLeftEntity;
+                    var collidedRightEntity = currentCharacter.collidedRightEntity;
+
+                    var lastGroundY = currentCharacter.lastGroundY;
+
+                    this.changeCharacter(this.playableCharacters[1]); //change to gunwoman
+
+                    this.currentCharacter.x = x;
+                    this.currentCharacter.y = y;
+
+                    this.currentCharacter.oldX = oldX;
+                    this.currentCharacter.oldY = oldY;
+
+                    this.currentCharacter.canvasX = canvasX;
+                    this.currentCharacter.canvasY = canvasY;
+
+                    this.currentCharacter.collidedTop = collidedTop;
+                    this.currentCharacter.collidedBottom = collidedBottom;
+                    this.currentCharacter.collidedLeft = collidedLeft;
+                    this.currentCharacter.collidedRight = collidedRight;
+
+                    this.currentCharacter.collidedTopEntity = collidedTopEntity;
+                    this.currentCharacter.collidedBottomEntity = collidedBottomEntity;
+                    this.currentCharacter.collidedLeftEntity = collidedLeftEntity;
+                    this.currentCharacter.collidedRightEntity = collidedRightEntity;
+
+                    this.currentCharacter.lastGroundY = lastGroundY;
+
+            } else if (gameEngine.keyMap["Digit3"] && this.mageIsAlive) {
+
+                    var x = currentCharacter.x;
+                    var y = currentCharacter.y;
+
+                    var oldX = currentCharacter.oldX;
+                    var oldY = currentCharacter.oldY;
+
+                    var canvasX = currentCharacter.canvasX;
+                    var canvasY = currentCharacter.canvasY;
+
+                    var collidedTop = currentCharacter.collidedTop;
+                    var collidedBottom = currentCharacter.collidedBottom;
+                    var collidedLeft = currentCharacter.collidedLeft;
+                    var collidedRight = currentCharacter.collidedRight;
+
+                    var collidedTopEntity = currentCharacter.collidedTopEntity;
+                    var collidedBottomEntity = currentCharacter.collidedBottomEntity;
+                    var collidedLeftEntity = currentCharacter.collidedLeftEntity;
+                    var collidedRightEntity = currentCharacter.collidedRightEntity;
+
+                    var lastGroundY = currentCharacter.lastGroundY;
+
+                    this.changeCharacter(this.playableCharacters[2]); //change to mage
+
+                    this.currentCharacter.x = x;
+                    this.currentCharacter.y = y;
+
+                    this.currentCharacter.oldX = oldX;
+                    this.currentCharacter.oldY = oldY;
+
+                    this.currentCharacter.canvasX = canvasX;
+                    this.currentCharacter.canvasY = canvasY;
+
+                    this.currentCharacter.collidedTop = collidedTop;
+                    this.currentCharacter.collidedBottom = collidedBottom;
+                    this.currentCharacter.collidedLeft = collidedLeft;
+                    this.currentCharacter.collidedRight = collidedRight;
+
+                    this.currentCharacter.collidedTopEntity = collidedTopEntity;
+                    this.currentCharacter.collidedBottomEntity = collidedBottomEntity;
+                    this.currentCharacter.collidedLeftEntity = collidedLeftEntity;
+                    this.currentCharacter.collidedRightEntity = collidedRightEntity;
+
+                    this.currentCharacter.lastGroundY = lastGroundY;
             }
+        }
 
-            gameEngine.removeEntity(currentCharacter);
-            this.currentCharacter = null;
-            this.charactersAlive--;
+        if (!currentCharacter) {
+            
+            if (gameEngine.keyMap["Digit1"] && this.knightIsAlive) {
 
-        } else if (gameEngine.keyMap["Digit1"] && this.knightIsAlive) {
+                var x = 34 * TILE_SIZE;
+                var y = 27 * TILE_SIZE;
 
-                var x = currentCharacter.x;
-                var y = currentCharacter.y;
+                var oldX = 34 * TILE_SIZE;
+                var oldY = 27 * TILE_SIZE;
 
-                var oldX = currentCharacter.oldX;
-                var oldY = currentCharacter.oldY;
+                var canvasX = 34 * TILE_SIZE;
+                var canvasY = 27 * TILE_SIZE;
 
-                var canvasX = currentCharacter.canvasX;
-                var canvasY = currentCharacter.canvasY;
 
-                var collidedTop = currentCharacter.collidedTop;
-                var collidedBottom = currentCharacter.collidedBottom;
-                var collidedLeft = currentCharacter.collidedLeft;
-                var collidedRight = currentCharacter.collidedRight;
-
-                var collidedTopEntity = currentCharacter.collidedTopEntity;
-                var collidedBottomEntity = currentCharacter.collidedBottomEntity;
-                var collidedLeftEntity = currentCharacter.collidedLeftEntity;
-                var collidedRightEntity = currentCharacter.collidedRightEntity;
-
-                var lastGroundY = currentCharacter.lastGroundY;
-
-                this.changeCharacter(this.playableCharacters[0]); //change to knight
+                this.changeCharacter(this.playableCharacters[0]); //change to gunwoman
 
                 this.currentCharacter.x = x;
                 this.currentCharacter.y = y;
@@ -106,41 +241,38 @@ GameState.prototype.update = function() {
                 this.currentCharacter.canvasX = canvasX;
                 this.currentCharacter.canvasY = canvasY;
 
-                this.currentCharacter.collidedTop = collidedTop;
-                this.currentCharacter.collidedBottom = collidedBottom;
-                this.currentCharacter.collidedLeft = collidedLeft;
-                this.currentCharacter.collidedRight = collidedRight;
+                this.currentForeground.canvasX = 0;
 
-                this.currentCharacter.collidedTopEntity = collidedTopEntity;
-                this.currentCharacter.collidedBottomEntity = collidedBottomEntity;
-                this.currentCharacter.collidedLeftEntity = collidedLeftEntity;
-                this.currentCharacter.collidedRightEntity = collidedRightEntity;
+                for (var i = 0; i < gameEngine.entities.length; i++) {
 
-                this.currentCharacter.lastGroundY = lastGroundY;            
+                    if (gameEngine.entities[i].name === "platform" || gameEngine.entities[i].name === "box" || gameEngine.entities[i].name === "tree") {
+                        
+                        var platform = gameEngine.entities[i];
+                        platform.canvasX = platform.initialCanvasX;
+                    
+                    } else if (gameEngine.entities[i].name === "skeleton") {
+                        
+                        var skeleton = gameEngine.entities[i];
+                        skeleton.x = skeleton.initialX;
+                        skeleton.canvasX = skeleton.initialCanvasX;
+                        skeleton.animationAttackRight.elapsedTime = 0;
+                        skeleton.animationAttackLeft.elapsedTime = 0;
+                        skeleton.attacking = false;
+                    
+                    }
+                }
 
+            } else if (gameEngine.keyMap["Digit2"] && this.gunwomanIsAlive) {
 
-        } else if (gameEngine.keyMap["Digit2"] && this.gunwomanIsAlive) {
+                var x = 34 * TILE_SIZE;
+                var y = 27 * TILE_SIZE;
 
-                var x = currentCharacter.x;
-                var y = currentCharacter.y;
+                var oldX = 34 * TILE_SIZE;
+                var oldY = 27 * TILE_SIZE;
 
-                var oldX = currentCharacter.oldX;
-                var oldY = currentCharacter.oldY;
+                var canvasX = 34 * TILE_SIZE;
+                var canvasY = 27 * TILE_SIZE;
 
-                var canvasX = currentCharacter.canvasX;
-                var canvasY = currentCharacter.canvasY;
-
-                var collidedTop = currentCharacter.collidedTop;
-                var collidedBottom = currentCharacter.collidedBottom;
-                var collidedLeft = currentCharacter.collidedLeft;
-                var collidedRight = currentCharacter.collidedRight;
-
-                var collidedTopEntity = currentCharacter.collidedTopEntity;
-                var collidedBottomEntity = currentCharacter.collidedBottomEntity;
-                var collidedLeftEntity = currentCharacter.collidedLeftEntity;
-                var collidedRightEntity = currentCharacter.collidedRightEntity;
-
-                var lastGroundY = currentCharacter.lastGroundY;
 
                 this.changeCharacter(this.playableCharacters[1]); //change to gunwoman
 
@@ -153,42 +285,42 @@ GameState.prototype.update = function() {
                 this.currentCharacter.canvasX = canvasX;
                 this.currentCharacter.canvasY = canvasY;
 
-                this.currentCharacter.collidedTop = collidedTop;
-                this.currentCharacter.collidedBottom = collidedBottom;
-                this.currentCharacter.collidedLeft = collidedLeft;
-                this.currentCharacter.collidedRight = collidedRight;
+                this.currentForeground.canvasX = 0;
 
-                this.currentCharacter.collidedTopEntity = collidedTopEntity;
-                this.currentCharacter.collidedBottomEntity = collidedBottomEntity;
-                this.currentCharacter.collidedLeftEntity = collidedLeftEntity;
-                this.currentCharacter.collidedRightEntity = collidedRightEntity;
+                for (var i = 0; i < gameEngine.entities.length; i++) {
 
-                this.currentCharacter.lastGroundY = lastGroundY;
+                    if (gameEngine.entities[i].name === "platform" || 
+                        gameEngine.entities[i].name === "box" || 
+                        gameEngine.entities[i].name === "tree") {
+                        
+                        var platform = gameEngine.entities[i];
+                        platform.canvasX = platform.initialCanvasX;
+                    
+                    } else if (gameEngine.entities[i].name === "skeleton") {
+                        
+                        var skeleton = gameEngine.entities[i];
+                        skeleton.x = skeleton.initialX;
+                        skeleton.canvasX = skeleton.initialCanvasX;
+                        skeleton.animationAttackRight.elapsedTime = 0;
+                        skeleton.animationAttackLeft.elapsedTime = 0;
+                        skeleton.attacking = false;
+                    
+                    }
+                }
 
-        } else if (gameEngine.keyMap["Digit3"] && this.mageIsAlive) {
+            } else if (gameEngine.keyMap["Digit3"] && this.mageIsAlive) {
 
-                var x = currentCharacter.x;
-                var y = currentCharacter.y;
+                var x = 34 * TILE_SIZE;
+                var y = 27 * TILE_SIZE;
 
-                var oldX = currentCharacter.oldX;
-                var oldY = currentCharacter.oldY;
+                var oldX = 34 * TILE_SIZE;
+                var oldY = 27 * TILE_SIZE;
 
-                var canvasX = currentCharacter.canvasX;
-                var canvasY = currentCharacter.canvasY;
+                var canvasX = 34 * TILE_SIZE;
+                var canvasY = 27 * TILE_SIZE;
 
-                var collidedTop = currentCharacter.collidedTop;
-                var collidedBottom = currentCharacter.collidedBottom;
-                var collidedLeft = currentCharacter.collidedLeft;
-                var collidedRight = currentCharacter.collidedRight;
 
-                var collidedTopEntity = currentCharacter.collidedTopEntity;
-                var collidedBottomEntity = currentCharacter.collidedBottomEntity;
-                var collidedLeftEntity = currentCharacter.collidedLeftEntity;
-                var collidedRightEntity = currentCharacter.collidedRightEntity;
-
-                var lastGroundY = currentCharacter.lastGroundY;
-
-                this.changeCharacter(this.playableCharacters[2]); //change to mage
+                this.changeCharacter(this.playableCharacters[2]); //change to gunwoman
 
                 this.currentCharacter.x = x;
                 this.currentCharacter.y = y;
@@ -199,160 +331,33 @@ GameState.prototype.update = function() {
                 this.currentCharacter.canvasX = canvasX;
                 this.currentCharacter.canvasY = canvasY;
 
-                this.currentCharacter.collidedTop = collidedTop;
-                this.currentCharacter.collidedBottom = collidedBottom;
-                this.currentCharacter.collidedLeft = collidedLeft;
-                this.currentCharacter.collidedRight = collidedRight;
+                this.currentForeground.canvasX = 0;
 
-                this.currentCharacter.collidedTopEntity = collidedTopEntity;
-                this.currentCharacter.collidedBottomEntity = collidedBottomEntity;
-                this.currentCharacter.collidedLeftEntity = collidedLeftEntity;
-                this.currentCharacter.collidedRightEntity = collidedRightEntity;
+                for (var i = 0; i < gameEngine.entities.length; i++) {
 
-                this.currentCharacter.lastGroundY = lastGroundY;
+                    if (gameEngine.entities[i].name === "platform" || 
+                        gameEngine.entities[i].name === "box" || 
+                        gameEngine.entities[i].name === "tree") {
+                        
+                        var platform = gameEngine.entities[i];
+                        platform.canvasX = platform.initialCanvasX;
+                    
+                    } else if (gameEngine.entities[i].name === "skeleton") {
+                        
+                        var skeleton = gameEngine.entities[i];
+                        skeleton.x = skeleton.initialX;
+                        skeleton.canvasX = skeleton.initialCanvasX;
+                        skeleton.animationAttackRight.elapsedTime = 0;
+                        skeleton.animationAttackLeft.elapsedTime = 0;
+                        skeleton.attacking = false;
+                    
+                    }
+                }
+
+            }
         }
     }
 
-    if (!currentCharacter) {
-        
-        if (gameEngine.keyMap["Digit1"] && this.knightIsAlive) {
-
-            var x = 34 * TILE_SIZE;
-            var y = 27 * TILE_SIZE;
-
-            var oldX = 34 * TILE_SIZE;
-            var oldY = 27 * TILE_SIZE;
-
-            var canvasX = 34 * TILE_SIZE;
-            var canvasY = 27 * TILE_SIZE;
-
-
-            this.changeCharacter(this.playableCharacters[0]); //change to gunwoman
-
-            this.currentCharacter.x = x;
-            this.currentCharacter.y = y;
-
-            this.currentCharacter.oldX = oldX;
-            this.currentCharacter.oldY = oldY;
-
-            this.currentCharacter.canvasX = canvasX;
-            this.currentCharacter.canvasY = canvasY;
-
-            this.currentForeground.canvasX = 0;
-
-            for (var i = 0; i < gameEngine.entities.length; i++) {
-
-                if (gameEngine.entities[i].name === "platform" || gameEngine.entities[i].name === "box" || gameEngine.entities[i].name === "tree") {
-                    
-                    var platform = gameEngine.entities[i];
-                    platform.canvasX = platform.initialCanvasX;
-                
-                } else if (gameEngine.entities[i].name === "skeleton") {
-                    
-                    var skeleton = gameEngine.entities[i];
-                    skeleton.x = skeleton.initialX;
-                    skeleton.canvasX = skeleton.initialCanvasX;
-                    skeleton.animationAttackRight.elapsedTime = 0;
-                    skeleton.animationAttackLeft.elapsedTime = 0;
-                    skeleton.attacking = false;
-                
-                }
-            }
-
-        } else if (gameEngine.keyMap["Digit2"] && this.gunwomanIsAlive) {
-
-            var x = 34 * TILE_SIZE;
-            var y = 27 * TILE_SIZE;
-
-            var oldX = 34 * TILE_SIZE;
-            var oldY = 27 * TILE_SIZE;
-
-            var canvasX = 34 * TILE_SIZE;
-            var canvasY = 27 * TILE_SIZE;
-
-
-            this.changeCharacter(this.playableCharacters[1]); //change to gunwoman
-
-            this.currentCharacter.x = x;
-            this.currentCharacter.y = y;
-
-            this.currentCharacter.oldX = oldX;
-            this.currentCharacter.oldY = oldY;
-
-            this.currentCharacter.canvasX = canvasX;
-            this.currentCharacter.canvasY = canvasY;
-
-            this.currentForeground.canvasX = 0;
-
-            for (var i = 0; i < gameEngine.entities.length; i++) {
-
-                if (gameEngine.entities[i].name === "platform" || 
-                    gameEngine.entities[i].name === "box" || 
-                    gameEngine.entities[i].name === "tree") {
-                    
-                    var platform = gameEngine.entities[i];
-                    platform.canvasX = platform.initialCanvasX;
-                
-                } else if (gameEngine.entities[i].name === "skeleton") {
-                    
-                    var skeleton = gameEngine.entities[i];
-                    skeleton.x = skeleton.initialX;
-                    skeleton.canvasX = skeleton.initialCanvasX;
-                    skeleton.animationAttackRight.elapsedTime = 0;
-                    skeleton.animationAttackLeft.elapsedTime = 0;
-                    skeleton.attacking = false;
-                
-                }
-            }
-
-        } else if (gameEngine.keyMap["Digit3"] && this.mageIsAlive) {
-
-            var x = 34 * TILE_SIZE;
-            var y = 27 * TILE_SIZE;
-
-            var oldX = 34 * TILE_SIZE;
-            var oldY = 27 * TILE_SIZE;
-
-            var canvasX = 34 * TILE_SIZE;
-            var canvasY = 27 * TILE_SIZE;
-
-
-            this.changeCharacter(this.playableCharacters[2]); //change to gunwoman
-
-            this.currentCharacter.x = x;
-            this.currentCharacter.y = y;
-
-            this.currentCharacter.oldX = oldX;
-            this.currentCharacter.oldY = oldY;
-
-            this.currentCharacter.canvasX = canvasX;
-            this.currentCharacter.canvasY = canvasY;
-
-            this.currentForeground.canvasX = 0;
-
-            for (var i = 0; i < gameEngine.entities.length; i++) {
-
-                if (gameEngine.entities[i].name === "platform" || 
-                    gameEngine.entities[i].name === "box" || 
-                    gameEngine.entities[i].name === "tree") {
-                    
-                    var platform = gameEngine.entities[i];
-                    platform.canvasX = platform.initialCanvasX;
-                
-                } else if (gameEngine.entities[i].name === "skeleton") {
-                    
-                    var skeleton = gameEngine.entities[i];
-                    skeleton.x = skeleton.initialX;
-                    skeleton.canvasX = skeleton.initialCanvasX;
-                    skeleton.animationAttackRight.elapsedTime = 0;
-                    skeleton.animationAttackLeft.elapsedTime = 0;
-                    skeleton.attacking = false;
-                
-                }
-            }
-
-        }
-    }
 };
 
 GameState.prototype.updateHealth = function(entity) {
@@ -377,15 +382,6 @@ GameState.prototype.updateHealth = function(entity) {
             gameEngine.removeEntity(this.currentCharacter);
             this.currentCharacter = null;
             this.charactersAlive--;
-
-            // if (this.charactersAlive > 1) {
-
-            //     this.charactersAlive--;
-
-            // } else if (this.charactersAlive === 0) {
-            //     window.alert('gameover');
-            // }
-            
         }
     
     } else if (entity.name === "skeleton") {
