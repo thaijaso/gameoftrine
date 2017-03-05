@@ -20,6 +20,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
     var gameState = this.entity.gameState;
     var currentCharacter = gameState.getCurrentCharacter();
 
+
     this.elapsedTime += tick;
 
     if (currentCharacter) {
@@ -29,6 +30,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
             this.entity.name === "gunwoman" ||
             this.entity.name === "mage")) {
 
+            
             currentCharacter.jumpElapsedTime += tick;
         }
     }
@@ -57,7 +59,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
                     gameEngine.keyMap["1"] = false;
                     currentCharacter.jumping = false;
                     currentCharacter.attacking = false;                    
-                    }
+                }
 
             }
 

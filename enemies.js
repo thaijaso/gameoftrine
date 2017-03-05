@@ -1,4 +1,4 @@
-var HEALTH = 2;
+var HEALTH = 3
 
 
 

@@ -391,6 +391,10 @@ GameState.prototype.updateHealth = function(entity) {
             
             if (entity === this.gameEngine.entities[i]) {
                 entity.health = entity.health - 1;
+
+                if (entity.id === 0) {
+                    console.log(entity.health);
+                }
             }
             
             if (entity.health <= 0 && entity === this.gameEngine.entities[i]) {

@@ -297,6 +297,9 @@ AM.queueDownload("./img/arrow.png");
 // box
 AM.queueDownload("./img/crate.png");
 
+//poof
+AM.queueDownload("./img/poofspritesheet.png");
+
 AM.downloadAll(function() {
     var canvas = document.getElementById("gameWorld");
 
@@ -336,7 +339,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     //var wolf = new Wolf(gameEngine);
 
                                                     //   x   y
-    var skeleton0 = new Skeleton(gameEngine, gameState, 68, 24);
+    var skeleton0 = new Skeleton(gameEngine, gameState, 25, 27);
     var skeleton1 = new Skeleton(gameEngine, gameState, 72, 24);
     var skeleton2 = new Skeleton(gameEngine, gameState, 75, 24);
     var skeleton3 = new Skeleton(gameEngine, gameState, 85, 24);
@@ -383,7 +386,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(knight);
     
     //gameEngine.addEntity(skeleton0);
-    //gameEngine.addEntity(skeleton1);
+    gameEngine.addEntity(skeleton1);
     gameEngine.addEntity(skeleton2);
     gameEngine.addEntity(skeleton3);
     gameEngine.addEntity(skeleton4);
@@ -491,7 +494,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(tutorialPlatform0);
     gameEngine.addEntity(tutorialPlatform1);
 
-    // //Major Platform 1
+    //Major Platform 1
     gameEngine.addEntity(platform1);
     gameEngine.addEntity(platform2);
     gameEngine.addEntity(platform3);
