@@ -208,9 +208,9 @@ AM.downloadAll(function() {
     var mage = new Mage(gameEngine, gameState, progressMage);
 	//var wolf = new Wolf(gameEngine);
 
-                                        //   x   y
-    var skeleton0 = new Skeleton(gameEngine, gameState, 68, 24);
-    var skeleton1 = new Skeleton(gameEngine, gameState, 72, 24);
+                                                       //x   y
+    var skeleton0 = new Skeleton(gameEngine, gameState, 0, 27);
+    var skeleton1 = new Skeleton(gameEngine, gameState, 10, 27);
     var skeleton2 = new Skeleton(gameEngine, gameState, 75, 24);
     var skeleton3 = new Skeleton(gameEngine, gameState, 80, 24);
     var skeleton4 = new Skeleton(gameEngine, gameState, 144, 32);//BOTTOM TWO
@@ -233,6 +233,16 @@ AM.downloadAll(function() {
     var skeleton21 = new Skeleton(gameEngine, gameState, 650, 22);//
     var skeleton22 = new Skeleton(gameEngine, gameState, 685, 22);
 
+                                             //   x   y
+    var archer1 = new SkeletonArcher(gameEngine, 96, 3);
+    var archer2 = new SkeletonArcher(gameEngine, 166, 12);
+    var archer3 = new SkeletonArcher(gameEngine, 172, 5);
+    var archer4 = new SkeletonArcher(gameEngine, 243, 11);
+    var archer5 = new SkeletonArcher(gameEngine, 274, 7);
+    var archer6 = new SkeletonArcher(gameEngine, 400, 21);
+    var archer7 = new SkeletonArcher(gameEngine, 530, 13);
+    var archer8 = new SkeletonArcher(gameEngine, 547, 13);
+    var archer9 = new SkeletonArcher(gameEngine, 663, 8);
 
     var tree = new Tree(gameEngine, gameState);
 
@@ -242,14 +252,13 @@ AM.downloadAll(function() {
     var gunwomanPortraitRight = new Portrait(ctx, AM.getAsset("./img/gunwomanPORTRAITright.png"), 155, 20);
     var magePortraitRight = new Portrait(ctx, AM.getAsset("./img/magePORTRAITright.png"), 265, 20);
 
-
     //an entity is any element drawn on the map
     gameEngine.addEntity(knight);
     
-    gameEngine.addEntity(skeleton0);
+    //gameEngine.addEntity(skeleton0);
     //gameEngine.addEntity(skeleton1);
-    //gameEngine.addEntity(skeleton2);
-    //gameEngine.addEntity(skeleton3);
+    gameEngine.addEntity(skeleton2);
+    gameEngine.addEntity(skeleton3);
                       
     gameEngine.addEntity(skeleton4); 
     gameEngine.addEntity(skeleton5); 
@@ -270,17 +279,6 @@ AM.downloadAll(function() {
     gameEngine.addEntity(skeleton20);
     gameEngine.addEntity(skeleton21);
     gameEngine.addEntity(skeleton22);
-
-                                            //   x   y
-    var archer1 = new SkeletonArcher(gameEngine, 96, 3);
-    var archer2 = new SkeletonArcher(gameEngine, 166, 12);
-    var archer3 = new SkeletonArcher(gameEngine, 172, 5);
-    var archer4 = new SkeletonArcher(gameEngine, 243, 11);
-    var archer5 = new SkeletonArcher(gameEngine, 274, 7);
-    var archer6 = new SkeletonArcher(gameEngine, 400, 21);
-    var archer7 = new SkeletonArcher(gameEngine, 530, 13);
-    var archer8 = new SkeletonArcher(gameEngine, 547, 13);
-    var archer9 = new SkeletonArcher(gameEngine, 663, 8);
 
     // gameEngine.addEntity(archer1);
     // gameEngine.addEntity(archer2); 
@@ -377,7 +375,7 @@ AM.downloadAll(function() {
     gameEngine.addEntity(tutorialPlatform0);
     gameEngine.addEntity(tutorialPlatform1);
 
-    //Major Platform 1
+    // //Major Platform 1
     gameEngine.addEntity(platform1);
     gameEngine.addEntity(platform2);
     gameEngine.addEntity(platform3);
@@ -480,15 +478,14 @@ AM.downloadAll(function() {
     gameEngine.addEntity(progressGunwoman);
     gameEngine.addEntity(progressMage);
 
-    gameEngine.addPlayableCharacter(knight);
-    gameEngine.addPlayableCharacter(gunwoman);
-    gameEngine.addPlayableCharacter(mage);
+    gameState.addPlayableCharacter(knight);
+    gameState.addPlayableCharacter(gunwoman);
+    gameState.addPlayableCharacter(mage);
 
-    //gameEngine.setCurrentCharacter(knight);
     gameState.setCurrentCharacter(knight);
 
     gameEngine.setCurrentBackground(background);
-    gameEngine.setCurrentForeground(foreground);
+    gameState.setCurrentForeground(foreground);
 
     gameEngine.addEntity(midground);
     gameEngine.addEntity(background);

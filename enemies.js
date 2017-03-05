@@ -41,6 +41,9 @@ function Skeleton(gameEngine, gameState, x, y) {
     this.x = x * TILE_SIZE;
     this.y = y * TILE_SIZE;
 
+    this.initialX = x * TILE_SIZE;
+    this.initialY = y * TILE_SIZE;
+
     this.oldX = x * TILE_SIZE;
     this.oldY = y * TILE_SIZE;
 
@@ -49,6 +52,9 @@ function Skeleton(gameEngine, gameState, x, y) {
 
     this.canvasX = x * TILE_SIZE;
     this.canvasY = y * TILE_SIZE;
+
+    this.initialCanvasX = x * TILE_SIZE;
+    this.initialCanvasXY = y * TILE_SIZE;
 
     this.lastGroundY = null; //y coord of platform last collided with
 
@@ -194,7 +200,7 @@ Skeleton.prototype.update = function() {
     var gameState = this.gameState;
     var currentCharacter = gameState.getCurrentCharacter();
     var background = gameEngine.getCurrentBackground();
-    var foreground = gameEngine.getCurrentForeground();
+    var foreground = gameState.getCurrentForeground();
 
     if (this.attacking) {
         for (var i = 0; i < gameEngine.entities.length; i++) {
@@ -210,8 +216,6 @@ Skeleton.prototype.update = function() {
 
                     if (this.animationAttackRight.currentFrame() === 10) {
                         this.gameState.updateHealth(entity);
-
-                        //this.attacking = false;
 
                         var knockBackCollidedWith = null;
 
@@ -263,12 +267,13 @@ Skeleton.prototype.update = function() {
 
                         if (knockBackCollidedWith) {
 
-                            var distanceFromCollision = Math.abs((entity.x + entity.width) - knockBackCollidedWith.x);
+                            //bug where touching wall but distanceFromCollision is not 0 ?? - 1 fixes it thooo 
+                            var distanceFromCollision = Math.abs((entity.x + entity.width - 1) - knockBackCollidedWith.x);
                             //console.log(distanceFromCollision);
 
                             entity.x += distanceFromCollision;
                             entity.oldX = entity.x;
-                            foreground.x -= distanceFromCollision;
+                            foreground.canvasX -= distanceFromCollision;
                             this.canvasX -= distanceFromCollision;
 
                         } else {
@@ -277,7 +282,7 @@ Skeleton.prototype.update = function() {
                             entity.x = entity.x + 15;
                             entity.oldX = entity.x;
                         
-                            foreground.x -= 15;
+                            foreground.canvasX -= 15;
                             this.canvasX -= 15;
                         }
 
@@ -377,7 +382,7 @@ Skeleton.prototype.update = function() {
 
                             entity.x = entity.x - 15;
                             entity.oldX = entity.x;
-                            foreground.x += 15;
+                            foreground.canvasX += 15;
                             this.canvasX += 15;    
                         }
 
@@ -544,16 +549,22 @@ Skeleton.prototype.update = function() {
         this.y += 5;
     }
 
-    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+    if (currentCharacter) {
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-        this.canvasX -= 3;
+            this.canvasX -= 3;
 
-    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
-        this.canvasX += 3;
+            this.canvasX += 3;
+        }
     }
 
-    var distanceFromHero = Math.abs(currentCharacter.x - this.x);
+    var distanceFromHero = Math.min()
+
+    if (currentCharacter) {
+        var distanceFromHero = Math.abs(currentCharacter.x - this.x);
+    }
 
     //Skeleton AI
     if (distanceFromHero <= 400) {
@@ -730,8 +741,8 @@ Skeleton.prototype.update = function() {
 
 
 Skeleton.prototype.draw = function() {
-    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
-    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
     if (this.animationState === "idleRight") {
 

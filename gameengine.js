@@ -16,8 +16,6 @@ function GameEngine() {
     this.currentMidground = null;
     this.currentCharacter = null;
     this.entities = [];
-    this.playableCharacters = [];
-    this.playableCharacterIndex = 0;
     this.ctx = null;
     this.keyMap = {};
     this.assetManager = null;
@@ -64,11 +62,7 @@ GameEngine.prototype.startInput = function() {
     }
 
     var that = this;
-
-    // event listeners are  here
-
-    //attack
-    var rightClickCount = 0;
+    
     this.ctx.canvas.addEventListener("mousedown", function(e) {
         var currentCharacter = that.gameState.getCurrentCharacter();
 
@@ -80,11 +74,6 @@ GameEngine.prototype.startInput = function() {
         that.clickX = e.clientX - rect.left;
         that.clickY = e.clientY - rect.top;
 
-		// if (e.which === 3 && currentCharacter.name === "gunwoman" ) { //Right Mouse button pressed, add wolf
-		// 	 var wolf = new Wolf(that, currentCharacter.gameState);
-		// 	 that.addEntity(wolf);
-  //       } 
-
     }, false);
 
     this.ctx.canvas.addEventListener("mouseup", function(e) {
@@ -92,87 +81,12 @@ GameEngine.prototype.startInput = function() {
     }, false);
 
     this.ctx.canvas.addEventListener("click", function (e) {
-		 
-        // var charac = that.gameState.getCurrentCharacter();
-        
-        // if (charac.name === "mage"){
-        //     var box = new Box(that, e.clientX, e.clientY);
-        //     that.addEntity(box);
-        // }
-
-        // var theX = (charac.x - charac.canvasX) + e.clientX;
-        //console.log("the x = " + theX/16);
-        //console.log("the y = " + e.clientY/16);
-
 
     }, false);
 
     this.ctx.canvas.addEventListener("keydown", function(e) {
 
-        var gameState = that.gameState;
-        var currentCharacter = that.gameState.getCurrentCharacter();
-
         that.keyMap[e.code] = true;
-
-        for (var i = 0; i < that.playableCharacters.length; i++) {
-            var newX = currentCharacter.x;
-            var newY = currentCharacter.y;
-
-            var oldX = currentCharacter.oldX;
-            var oldY = currentCharacter.oldY;
-
-            var newCanvasX = currentCharacter.canvasX;
-            var newCanvasY = currentCharacter.canvasY;
-
-            var collidedTop = currentCharacter.collidedTop;
-            var collidedBottom = currentCharacter.collidedBottom;
-            var collidedLeft = currentCharacter.collidedLeft;
-            var collidedRight = currentCharacter.collidedRight;
-
-            var collidedTopEntity = currentCharacter.collidedTopEntity;
-            var collidedBottomEntity = currentCharacter.collidedBottomEntity;
-            var collidedLeftEntity = currentCharacter.collidedLeftEntity;
-            var collidedRightEntity = currentCharacter.collidedRightEntity;
-
-            var lastGroundY = currentCharacter.lastGroundY;
-
-
-            if (e.code === "Digit1" && that.playableCharacters[i].name === "knight") {
-
-                that.gameState.changeCharacter(that.playableCharacters[i]);
-
-            } else if (e.code === "Digit2" && that.playableCharacters[i].name === "gunwoman") {
-
-                that.gameState.changeCharacter(that.playableCharacters[i]); 
-
-
-            } else if (e.code === "Digit3" && that.playableCharacters[i].name === "mage") {
-
-                that.gameState.changeCharacter(that.playableCharacters[i]); 
-            }
-
-            that.gameState.currentCharacter.x = newX;
-            that.gameState.currentCharacter.y = newY;
-
-            that.gameState.currentCharacter.oldX = oldX;
-            that.gameState.currentCharacter.oldY = oldY;
-
-            that.gameState.currentCharacter.canvasX = newCanvasX;
-            that.gameState.currentCharacter.canvasY = newCanvasY;
-
-            that.gameState.currentCharacter.collidedTop = collidedTop;
-            that.gameState.currentCharacter.collidedBottom = collidedBottom;
-            that.gameState.currentCharacter.collidedLeft = collidedLeft;
-            that.gameState.currentCharacter.collidedRight = collidedRight;
-
-            that.gameState.currentCharacter.collidedTopEntity = collidedTopEntity;
-            that.gameState.currentCharacter.collidedBottomEntity = collidedBottomEntity;
-            that.gameState.currentCharacter.collidedLeftEntity = collidedLeftEntity;
-            that.gameState.currentCharacter.collidedRightEntity = collidedRightEntity;
-
-            that.gameState.currentCharacter.lastGroundY = lastGroundY;
-
-        }
 
     }, false);
 
@@ -217,12 +131,12 @@ GameEngine.prototype.loop = function() {
 
 GameEngine.prototype.removeEntity = function(entity) {
     var entitiesCount = this.entities.length;
-    var temp = null;
 
     for (var i = 0; i < this.entities.length; i++) {
-        var e = this.entities[i];
-        if (e === entity) {
-            temp = this.entities.splice(i, 1);
+  
+        if (this.entities[i] === entity) {
+            this.entities.splice(i, 1);
+            break;
         }
     }
 };
@@ -250,11 +164,6 @@ GameEngine.prototype.update = function() {
         var entity = this.entities[i];
 
         entity.update();
-
-        if (entitiesCount != this.entities.length) {
-            //console.log('bullet added');
-            i++;
-        }
     }
 
     this.gameState.update();
@@ -310,81 +219,28 @@ GameEngine.prototype.setCurrentPortrait = function(ctx, image) {
 //get the current character playing
 GameEngine.prototype.getCurrentCharacter = function() {
         return this.currentCharacter;
-    }
-
-GameEngine.prototype.changeCharacter = function(newCharacter) {
-    var oldCharacter = this.getCurrentCharacter()
-
-    //removes the old character from the entities array
-    for (var i = 0; i < this.entities.length; i++) { //perhaps make entities a map to find the old character faster??
-        if (oldCharacter === this.entities[i]) {
-            this.entities.splice(i, 1);
-            //console.log(this.entities);
-        }
-    }
-
-    // if (this.playableCharacterIndex >= this.playableCharacters.length - 1) { //if on last character, change to first index
-    //     this.playableCharacterIndex = 0;
-    // } else {
-    //     this.playableCharacterIndex++;
-    // }
-
-    // var newCharacter = this.playableCharacters[this.playableCharacterIndex];
-    this.entities.unshift(newCharacter);
-    this.setCurrentCharacter(newCharacter);
-    //console.log(this);
 }
-
-GameEngine.prototype.replaceCharacter = function() {
-    var oldCharacter = this.getCurrentCharacter();
-
-    if (oldCharacter.health === 0) {
-        for (var i = 0; i < this.playableCharacters.length; i++) {
-            if (this.playableCharacters[i] === oldCharacter) {
-                this.playableCharacters.splice(i, 1);
-            }
-        }
-
-        var newCharacter = this.playableCharacters[0];
-
-
-        // if (oldCharacter.hasFallen) {
-        //     var x = oldCharacter.x;
-        //     if (x >= 0 || x <= 110) {
-        //         newCharacter.canvasX = 109;
-        //         newCharacter.canvasY = 31;
-        //         newCharacter.x = 100;
-        //         newCharacter.y = 31;
-        //     }
-
-        // } else {
-            newCharacter.canvasX = oldCharacter.canvasX;
-            newCharacter.canvasY = oldCharacter.canvasY;
-
-            newCharacter.x = oldCharacter.x;
-            newCharacter.y = oldCharacter.y;
-
-        // }
-
-
-
-        this.entities.unshift(newCharacter);
-        this.setCurrentCharacter(newCharacter);
-        this.removeEntity(oldCharacter.id);
-    }
-};
-
 
 
 //entities are drawn on the map
 GameEngine.prototype.addEntity = function(entity) {
+    
+    if (entity.name === "knight" ||
+        entity.name === "gunwoman" ||
+        entity.name === "mage") {
 
-    if (entity.name === "box" || entity.name === "bullet" || entity.name === "arrow" || entity.name === "wolf") {
+        this.entities.unshift(entity); //add to begging of list
+    
+    } else if (entity.name === "box" || 
+        entity.name === "bullet" || 
+        entity.name === "arrow" || 
+        entity.name === "wolf") {
 
-        this.entities.splice(1, 0, entity); //add entity after knight index, ie index 1
+        this.entities.splice(1, 0, entity); //add entity after hero index, ie index 1
 
     } else {
-        this.entities.push(entity);
+
+        this.entities.push(entity); //add to end of list
     }
 
 

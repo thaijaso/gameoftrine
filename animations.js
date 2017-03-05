@@ -22,12 +22,15 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
 
     this.elapsedTime += tick;
 
-    if (currentCharacter.jumping &&
-        (this.entity.name === "knight" ||
+    if (currentCharacter) {
+        
+        if (currentCharacter.jumping &&
+            (this.entity.name === "knight" ||
             this.entity.name === "gunwoman" ||
             this.entity.name === "mage")) {
 
-        currentCharacter.jumpElapsedTime += tick;
+            currentCharacter.jumpElapsedTime += tick;
+        }
     }
 
     if (this.isDone()) {
@@ -43,16 +46,19 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
                 this.entity.name === "gunwoman" || 
                 this.entity.name === "mage") {
 
-                //go back to idle state from attack or jump animation
-                if (currentCharacter.direction === "right") {
-                    currentCharacter.animationState = "idleRight";
-                } else {
-                    currentCharacter.animationState = "idleLeft";
-                }
+                if (currentCharacter) {
+                    //go back to idle state from attack or jump animation
+                    if (currentCharacter.direction === "right") {
+                        currentCharacter.animationState = "idleRight";
+                    } else {
+                        currentCharacter.animationState = "idleLeft";
+                    }
 
-                gameEngine.keyMap["1"] = false;
-                currentCharacter.jumping = false;
-                currentCharacter.attacking = false;
+                    gameEngine.keyMap["1"] = false;
+                    currentCharacter.jumping = false;
+                    currentCharacter.attacking = false;                    
+                    }
+
             }
 
 
@@ -70,6 +76,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
             }
         }
     }
+    
     
     var frame = this.currentFrame();
 
@@ -118,10 +125,16 @@ Background.prototype.update = function() {
     var gameEngine = this.gameEngine;
     var currentCharacter = this.gameState.getCurrentCharacter();
 
-    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
-        this.x = this.x - 1;
-    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
-        this.x = this.x + 1;
+    if (currentCharacter) {
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+            this.x = this.x - 1;
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+            if (this.x !== 0) {
+                this.x = this.x + 1;
+            }
+            
+        }        
     }
 };
 
@@ -129,26 +142,28 @@ function Foreground(gameEngine, gameState, spritesheet) {
     this.gameEngine = gameEngine;
     this.ctx = gameEngine.ctx;
     this.gameState = gameState;
-    this.x = 0;
-    this.y = 0;
+    this.canvasX = 0;
+    this.canvasY = 0;
     this.spritesheet = spritesheet;
 }
 
 Foreground.prototype.draw = function() {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y);
+    this.ctx.drawImage(this.spritesheet, this.canvasX, this.canvasY);
 };
 
 Foreground.prototype.update = function() {
     var gameEngine = this.gameEngine;
     var currentCharacter = this.gameState.getCurrentCharacter();
 
-    //console.log(currentCharacter.collidedLeft);
-
-    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
-        this.x -= 3;
-        //console.log('here');
-    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
-        this.x += 3;
+    if (currentCharacter) {
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+            
+            this.canvasX -= 3;
+            
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+            
+            this.canvasX += 3;
+        }        
     }
 }
 
@@ -167,18 +182,25 @@ Midground.prototype.draw = function() {
 }
 
 Midground.prototype.update = function() {
-    //console.log(this.x);
     var gameEngine = this.gameEngine;
     var currentCharacter = this.gameState.getCurrentCharacter();
 
-    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
-        this.x -= 0.8;
-    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
-        this.x += 0.8;
+    if (currentCharacter) {
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+            this.x -= 0.8;
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+            this.x += 0.8;
+        }
     }
 }
 
+var PLATFORM_ID = 0;
+
 function Platform(gameEngine, gameState, x, y, width, height) {
+    this.id = PLATFORM_ID;
+
+    PLATFORM_ID++;
+    
     this.name = "platform";
     this.gameEngine = gameEngine;
     this.gameState = gameState;
@@ -192,29 +214,34 @@ function Platform(gameEngine, gameState, x, y, width, height) {
 
     this.canvasX = x * TILE_SIZE;
     this.canvasY = y * TILE_SIZE;
+
+    this.initialCanvasX = x * TILE_SIZE;
+    this.initialCanvasY = y * TILE_SIZE;
+    
     this.width = width * TILE_SIZE;
     this.height = height * TILE_SIZE;
 }
 
 Platform.prototype.draw = function() {
     this.ctx.fillStyle = "#ff0000";
-    //console.log(this.canvasX);
-    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
-    //console.log(this.canvasX);
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     //this.ctx.fillRect(this.x, this.y, this.width, this.height);
 }
 
 Platform.prototype.update = function() {
     var gameEngine = this.gameEngine;
-    var currentCharacter = this.gameState.getCurrentCharacter();
+    var gameState = this.gameState;
+    var currentCharacter = gameState.getCurrentCharacter();
 
-    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+    if (currentCharacter) {
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-        this.canvasX -= 3;
+            this.canvasX -= 3;
 
-    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
-        this.canvasX += 3;
+            this.canvasX += 3;
+        }
     }
 }
 
@@ -238,19 +265,24 @@ function Tree(gameEngine, gameState) {
 
     this.canvasX = 12 * TILE_SIZE;
     this.canvasY = 33 * TILE_SIZE;
+
+    this.initialCanvasX = 12 * TILE_SIZE;
+    this.initialCanvasY = 33 * TILE_SIZE;
 }
 
 Tree.prototype.update = function() {
     var gameEngine = this.gameEngine;
     var currentCharacter = this.gameState.getCurrentCharacter();
 
-    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+    if (currentCharacter) {
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-        this.canvasX -= 3;
+            this.canvasX -= 3;
 
-    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
-        this.canvasX += 3;
+            this.canvasX += 3;
+        }        
     }
 }
 
@@ -261,10 +293,10 @@ Tree.prototype.draw = function() {
 
 
 function Tooltip(gameEngine, gameState) {
-    this.game = gameEngine;
+    this.gameEngine = gameEngine;
     this.gameState = gameState;
     
-    this.ctx = this.game.ctx;
+    this.ctx = gameEngine.ctx;
     
     this.currentMessage = "Press A and D for movement";
     
@@ -278,14 +310,14 @@ function Tooltip(gameEngine, gameState) {
     this.showedJumpTip = false;
     this.showedBoxTip = false;
     
-    this.canvasX = 30 * TILE_SIZE;
+    this.canvasX = 31 * TILE_SIZE;
     this.canvasY = 15 * TILE_SIZE;
-    this.width = 10 * TILE_SIZE;
+    this.width = 7 * TILE_SIZE;
     this.height = 3 * TILE_SIZE;
 }
 
 Tooltip.prototype.update = function() {
-    var gameEngine = this.game;
+    var gameEngine = this.gameEngine;
 
     if ((gameEngine.keyMap["KeyA"] || gameEngine.keyMap["KeyD"]) && !this.showedMovementTip) {
         
@@ -310,15 +342,25 @@ Tooltip.prototype.update = function() {
 }
 
 Tooltip.prototype.draw = function() {
-    var gameEngine = this.game;
+    var gameEngine = this.gameEngine;
     var gameState = this.gameState;
     var currentCharacter = gameState.getCurrentCharacter();
 
+    this.ctx.fillStyle = "black";
+    this.ctx.font = "bold 16px Arial";
 
-    if (currentCharacter.x < 655) {
-        this.ctx.fillStyle = "black";
-        this.ctx.font = "bold 16px Arial";
-        this.ctx.fillText(this.currentMessage, this.canvasX, this.canvasY);
+    if (currentCharacter) {
+        
+        if (currentCharacter.x < 655) {
+            this.ctx.fillStyle = "black";
+            this.ctx.font = "bold 16px Arial";
+            this.ctx.fillText(this.currentMessage, this.canvasX, this.canvasY);
+        }
+    }
+
+    if (gameState.gameIsOver) {
+        this.ctx.fillText("Play Again?", this.canvasX, this.canvasY);
+        //this.ctx.fillRect(this.canvasX, this.canvasY - 30, this.width, this.height);
     }
 }
 

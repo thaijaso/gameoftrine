@@ -279,6 +279,27 @@ Knight.prototype.update = function() {
     this.progressBar.updateHealth(this.health);
 
     var gameEngine = this.gameEngine;
+    var gameState = this.gameState;
+
+    if (gameEngine.keyMap["KeyT"]) {
+        console.log('current character x : ' + (this.x / 16) + ' currentCharacter y : ' + (this.y / 16));
+        console.log('foreground canvasX : ' + this.gameState.currentForeground.canvasX);
+
+        for (var i = 0; i < gameEngine.entities.length; i++) {
+
+            if (gameEngine.entities[i].name === "platform") {
+
+                var platform = gameEngine.entities[i];
+                console.log('Platform ID : ' + platform.id + ' canvasX ' + platform.canvasX);
+            }
+        }
+
+        for (var i = 0; i < gameState.spawnLocations.length; i++) {
+
+            console.log('skeleton canvasX: ' + gameState.spawnLocations[i].skeleton0CanvasX);
+
+        }
+    }
 
     if (this.jumping) {
 
@@ -591,19 +612,6 @@ Knight.prototype.update = function() {
         //console.log(this.y);
     }
 
-    // if (this.y >= 1000) {
-    //     this.health = 0;
-    //     this.hasFallen = true;
-    //     this.progressBar.updateHealth(this.health);
-    //     this.game.removeEntity(this);
-    //     this.game.replaceCharacter();
-
-    // } 
-
-    if (gameEngine.keyMap["KeyT"]) {
-        console.log(this.x);
-    }
-
     //check for movement/change character
     if (gameEngine.keyMap["KeyD"] && !this.collidedRight) {
 
@@ -714,8 +722,8 @@ Knight.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
 
 Knight.prototype.draw = function() {
     this.ctx.fillStyle = "black";
-    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
-    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
     if (this.animationState === "idleRight") {
 
@@ -1257,16 +1265,13 @@ Mage.prototype.draw = function() {
 }
 
 function Box(gameEngine, gameState, x, y) {
+    var currentCharacter = gameState.getCurrentCharacter();
+    
     this.name = "box";
     this.gameEngine = gameEngine;
     this.ctx = gameEngine.ctx;
     this.gameState = gameState;
-
-    //this property is used for jumping.
-    //Each animation shares this property 
-    //to do jump + attack, etc.
-
-    var currentCharacter = gameState.getCurrentCharacter();
+   
     this.x = (currentCharacter.x - currentCharacter.canvasX) + x;
     this.y = y;
 
@@ -1276,6 +1281,8 @@ function Box(gameEngine, gameState, x, y) {
 
     this.canvasX = x;
     this.canvasY = y;
+
+    this.initialCanvasX = (currentCharacter.x - currentCharacter.canvasX) + x;
 
     this.width = 2 * TILE_SIZE;
     this.height = 2 * TILE_SIZE;
@@ -1457,13 +1464,16 @@ Box.prototype.update = function() {
         this.canvasY += 5;
         this.y += 5;
     }
-    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-        this.canvasX -= 3;
+    if (currentCharacter) {
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+            this.canvasX -= 3;
 
-        this.canvasX += 3;
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+            this.canvasX += 3;
+        }
     }
 }
 
@@ -1993,7 +2003,9 @@ Gunwoman.prototype.update = function() {
 
 
 Gunwoman.prototype.draw = function() {
-    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
     if (this.animationState === "idleRight") {
 
@@ -2097,7 +2109,7 @@ Bullet.prototype.update = function() {
 
     if (this.distance >= 200) {
         distance = 0;
-        this.gameEngine.removeEntity(this);
+        //this.gameEngine.removeEntity(this); //causing us bugs with moving platforms MOVEMENT + shooting
     }
 
 };
