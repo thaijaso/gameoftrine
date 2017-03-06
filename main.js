@@ -287,6 +287,16 @@ AM.queueDownload("./img/skeletonarcheridleleft.png");
 AM.queueDownload("./img/skeletonarcherattackleft.png");
 AM.queueDownload("./img/skeletonarcherattackright.png");
 
+//robot
+AM.queueDownload("./img/robotidleright.png");
+AM.queueDownload("./img/robotwalkright.png");
+AM.queueDownload("./img/robotattackright.png");
+AM.queueDownload("./img/robotidleleft.png");
+AM.queueDownload("./img/robotwalkleft.png");
+AM.queueDownload("./img/robotattackleft.png");
+AM.queueDownload("./img/robotjumpright.png");
+AM.queueDownload("./img/robotjumpleft.png");
+
 
 //tree
 AM.queueDownload("./img/treeleaffall.png");
@@ -506,7 +516,6 @@ function createGame(gameEngine, gameMenu, gameState) {
     var spike13 = new Spike(gameEngine, gameState, 890, 14, 6, 2);
     var spike14 = new Spike(gameEngine, gameState, 903, 16, 2, 29);
     var spike15 = new Spike(gameEngine, gameState, 909, 43, 35, 2);
-    var spike16 = new Spike(gameEngine, gameState, 20, 38, 5, 2);
 
 
 
@@ -606,7 +615,6 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(platform90); // mini platform
 
        // Lead up to big boss 
-       gameEngine.addEntity(spike16);
     gameEngine.addEntity(spike1); // spikes between rocks
     gameEngine.addEntity(spike2);
     gameEngine.addEntity(spike3);
@@ -622,6 +630,10 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(spike13); // top spikes
     gameEngine.addEntity(spike14); // side spikes
     gameEngine.addEntity(spike15); // bottom spikes 
+
+
+    // var robot = new Robot(gameEngine, 20, 38);
+    // gameEngine.addEntity(robot);
 
     gameEngine.addEntity(tooltip);
     gameEngine.addEntity(foreground);
