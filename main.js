@@ -222,7 +222,7 @@ AM.queueDownload("./img/controlsmenu.png");
 
 AM.queueDownload("./img/background1.png");
 AM.queueDownload("./img/midground.png");
-AM.queueDownload("./img/foreground.png");
+AM.queueDownload("./img/foreground2.png");
 
 //knight
 AM.queueDownload("./img/knightidleright.png");
@@ -326,7 +326,7 @@ AM.downloadAll(function() {
 function createGame(gameEngine, gameMenu, gameState) {
     var ctx = gameEngine.ctx;
     this.audio = new Sound();
-    var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground.png"));
+    var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground2.png"));
     var background = new Background(gameEngine, gameState, AM.getAsset("./img/background1.png"));
     var midground = new Midground(gameEngine, gameState, AM.getAsset("./img/midground.png"));
 
@@ -339,7 +339,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     var mage = new Mage(gameEngine, gameState, progressMage);
     //var wolf = new Wolf(gameEngine);
 
-                                                    //   x   y
+    //   x   y
     var skeleton0 = new Skeleton(gameEngine, gameState, 25, 27);
     var skeleton1 = new Skeleton(gameEngine, gameState, 72, 24);
     var skeleton2 = new Skeleton(gameEngine, gameState, 75, 24);
@@ -364,7 +364,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     var skeleton21 = new Skeleton(gameEngine, gameState, 650, 22); //
     var skeleton22 = new Skeleton(gameEngine, gameState, 685, 22);
 
-                                             //   x   y
+    //   x   y
     var archer1 = new SkeletonArcher(gameEngine, 96, 3);
     var archer2 = new SkeletonArcher(gameEngine, 166, 12);
     var archer3 = new SkeletonArcher(gameEngine, 172, 5);
@@ -385,7 +385,7 @@ function createGame(gameEngine, gameMenu, gameState) {
 
     //an entity is any element drawn on the map
     gameEngine.addEntity(knight);
-    
+
     //gameEngine.addEntity(skeleton0);
     gameEngine.addEntity(skeleton1);
     gameEngine.addEntity(skeleton2);
@@ -491,6 +491,25 @@ function createGame(gameEngine, gameMenu, gameState) {
     var platform89 = new Platform(gameEngine, gameState, 667, 26, 31.5, 1.5);
     var platform90 = new Platform(gameEngine, gameState, 662, 8, 3, 2);
 
+    var spike1 = new Spike(gameEngine, gameState, 715, 43, 6, 2);
+    var spike2 = new Spike(gameEngine, gameState, 726, 43, 6, 2);
+    var spike3 = new Spike(gameEngine, gameState, 736, 43, 5, 2);
+    var spike4 = new Spike(gameEngine, gameState, 745, 43, 5, 2);
+    var spike5 = new Spike(gameEngine, gameState, 754, 43, 4, 2);
+    var spike6 = new Spike(gameEngine, gameState, 711, 2, 44, 2);
+    var spike7 = new Spike(gameEngine, gameState, 774, 0, 2, 27);
+    var spike8 = new Spike(gameEngine, gameState, 773, 38, 1, 7);
+    var spike9 = new Spike(gameEngine, gameState, 818, 39, 29, 2);
+    var spike10 = new Spike(gameEngine, gameState, 818, 30, 29, 2);
+    var spike11 = new Spike(gameEngine, gameState, 871, 34, 2, 11);
+    var spike12 = new Spike(gameEngine, gameState, 881, 16, 2, 12);
+    var spike13 = new Spike(gameEngine, gameState, 890, 14, 6, 2);
+    var spike14 = new Spike(gameEngine, gameState, 903, 16, 2, 29);
+    var spike15 = new Spike(gameEngine, gameState, 909, 43, 35, 2);
+    var spike16 = new Spike(gameEngine, gameState, 20, 38, 5, 2);
+
+
+
     //Tutorial Platform
     gameEngine.addEntity(tutorialPlatform0);
     gameEngine.addEntity(tutorialPlatform1);
@@ -585,6 +604,24 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(platform88); // ladder
     gameEngine.addEntity(platform89); // ladder
     gameEngine.addEntity(platform90); // mini platform
+
+       // Lead up to big boss 
+       gameEngine.addEntity(spike16);
+    gameEngine.addEntity(spike1); // spikes between rocks
+    gameEngine.addEntity(spike2);
+    gameEngine.addEntity(spike3);
+    gameEngine.addEntity(spike4);
+    gameEngine.addEntity(spike5);
+    gameEngine.addEntity(spike6); // ceiling
+    gameEngine.addEntity(spike7); // side
+    gameEngine.addEntity(spike8);
+    gameEngine.addEntity(spike9); // by ladder
+    gameEngine.addEntity(spike10); // by ladder ceiling
+    gameEngine.addEntity(spike11); // side spikes
+    gameEngine.addEntity(spike12); // side spikes
+    gameEngine.addEntity(spike13); // top spikes
+    gameEngine.addEntity(spike14); // side spikes
+    gameEngine.addEntity(spike15); // bottom spikes 
 
     gameEngine.addEntity(tooltip);
     gameEngine.addEntity(foreground);
