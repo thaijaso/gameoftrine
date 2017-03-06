@@ -24,13 +24,13 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
     this.elapsedTime += tick;
 
     if (currentCharacter) {
-        
+
         if (currentCharacter.jumping &&
             (this.entity.name === "knight" ||
-            this.entity.name === "gunwoman" ||
-            this.entity.name === "mage")) {
+                this.entity.name === "gunwoman" ||
+                this.entity.name === "mage")) {
 
-            
+
             currentCharacter.jumpElapsedTime += tick;
         }
     }
@@ -44,8 +44,8 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
         } else {
 
 
-            if (this.entity.name === "knight" || 
-                this.entity.name === "gunwoman" || 
+            if (this.entity.name === "knight" ||
+                this.entity.name === "gunwoman" ||
                 this.entity.name === "mage") {
 
                 if (currentCharacter) {
@@ -58,21 +58,21 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
 
                     gameEngine.keyMap["1"] = false;
                     currentCharacter.jumping = false;
-                    currentCharacter.attacking = false;                    
+                    currentCharacter.attacking = false;
                 }
 
             }
 
-
             if (this.entity.name === "skeleton" 
                 || this.entity.name === "skeletonArcher") {
                 
+
                 if (this.entity.direction === "right") {
                     this.entity.animationState = "idleRight";
                 } else {
                     this.entity.animationState = "idleLeft";
                 }
-                
+
                 this.entity.attacking = false;
                 this.entity.attacked = false;
                 this.entity.arrowFired = false;
@@ -80,8 +80,8 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
             }
         }
     }
-    
-    
+
+
     var frame = this.currentFrame();
 
     var xindex = 0;
@@ -139,8 +139,8 @@ Background.prototype.update = function() {
             if (this.x !== 0) {
                 this.x = this.x + 1;
             }
-            
-        }        
+
+        }
     }
 };
 
@@ -163,13 +163,13 @@ Foreground.prototype.update = function() {
 
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
-            
+
             this.canvasX -= 3;
-            
+
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
-            
+
             this.canvasX += 3;
-        }        
+        }
     }
 }
 
@@ -184,7 +184,7 @@ function Midground(gameEngine, gameState, spritesheet) {
 
 Midground.prototype.draw = function() {
     this.ctx.drawImage(this.spritesheet, this.x, this.y);
-    
+
 }
 
 Midground.prototype.update = function() {
@@ -204,9 +204,8 @@ var PLATFORM_ID = 0;
 
 function Platform(gameEngine, gameState, x, y, width, height) {
     this.id = PLATFORM_ID;
-
     PLATFORM_ID++;
-    
+
     this.name = "platform";
     this.gameEngine = gameEngine;
     this.gameState = gameState;
@@ -223,7 +222,7 @@ function Platform(gameEngine, gameState, x, y, width, height) {
 
     this.initialCanvasX = x * TILE_SIZE;
     this.initialCanvasY = y * TILE_SIZE;
-    
+
     this.width = width * TILE_SIZE;
     this.height = height * TILE_SIZE;
 }
@@ -250,6 +249,52 @@ Platform.prototype.update = function() {
         }
     }
 }
+
+function Spike(gameEngine, gameState, x, y, width, height) {
+    this.name = "spike";
+    this.gameEngine = gameEngine;
+    this.gameState = gameState;
+    this.ctx = gameEngine.ctx;
+
+    this.x = x * TILE_SIZE; //game world x and y coordinates
+    this.y = y * TILE_SIZE;
+
+    this.oldX = x * TILE_SIZE;
+    this.oldY = y * TILE_SIZE;
+
+    this.canvasX = x * TILE_SIZE;
+    this.canvasY = y * TILE_SIZE;
+    this.width = width * TILE_SIZE;
+    this.height = height * TILE_SIZE;
+}
+
+Spike.prototype.draw = function() {
+    this.ctx.globalAlpha = 0.2;
+
+    this.ctx.fillStyle = "#0000ff ";
+    //console.log(this.canvasX);
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    this.ctx.globalAlpha = 1.0;
+
+    //console.log(this.canvasX);
+    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
+}
+
+Spike.prototype.update = function() {
+    var gameEngine = this.gameEngine;
+    var currentCharacter = this.gameState.currentCharacter;
+     if (currentCharacter) {
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+
+            this.canvasX -= 3;
+
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+            this.canvasX += 3;
+        }
+    }
+}
+
 
 function Tree(gameEngine, gameState) {
     this.gameEngine = gameEngine;
@@ -288,7 +333,7 @@ Tree.prototype.update = function() {
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
             this.canvasX += 3;
-        }        
+        }
     }
 }
 
@@ -301,21 +346,22 @@ Tree.prototype.draw = function() {
 function Tooltip(gameEngine, gameState) {
     this.gameEngine = gameEngine;
     this.gameState = gameState;
-    
+
     this.ctx = gameEngine.ctx;
-    
+
     this.currentMessage = "Press A and D for movement";
-    
+
     this.messages = ["Press A and D for movement",
-                     "Left click to attack", 
-                     "Press spacebar to jump",
-                     "Press 3 to switch to Mage Mariott",
-                     "Left click to summon boxes"];
+        "Left click to attack",
+        "Press spacebar to jump",
+        "Press 3 to switch to Mage Mariott",
+        "Left click to summon boxes"
+    ];
 
     this.showedMovementTip = false;
     this.showedJumpTip = false;
     this.showedBoxTip = false;
-    
+
     this.canvasX = 31 * TILE_SIZE;
     this.canvasY = 15 * TILE_SIZE;
     this.width = 7 * TILE_SIZE;
@@ -326,7 +372,7 @@ Tooltip.prototype.update = function() {
     var gameEngine = this.gameEngine;
 
     if ((gameEngine.keyMap["KeyA"] || gameEngine.keyMap["KeyD"]) && !this.showedMovementTip) {
-        
+
         this.showedMovementTip = true;
         this.currentMessage = this.messages[1];
 
@@ -356,7 +402,7 @@ Tooltip.prototype.draw = function() {
     this.ctx.font = "bold 16px Arial";
 
     if (currentCharacter) {
-        
+
         if (currentCharacter.x < 655) {
             this.ctx.fillStyle = "black";
             this.ctx.font = "bold 16px Arial";
@@ -369,4 +415,3 @@ Tooltip.prototype.draw = function() {
         //this.ctx.fillRect(this.canvasX, this.canvasY - 30, this.width, this.height);
     }
 }
-
