@@ -245,7 +245,9 @@ GameEngine.prototype.addEntity = function(entity) {
     } else if (entity.name === "box" || 
         entity.name === "bullet" || 
         entity.name === "arrow" || 
-        entity.name === "wolf") {
+        entity.name === "wolf" || 
+        entity.name === "skeletonArcher" ||
+        entity.name === "skeleton") {
 
         this.entities.splice(1, 0, entity); //add entity after hero index, ie index 1
 

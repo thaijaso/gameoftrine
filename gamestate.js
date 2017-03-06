@@ -250,7 +250,8 @@ GameState.prototype.update = function() {
                         var platform = gameEngine.entities[i];
                         platform.canvasX = platform.initialCanvasX;
                     
-                    } else if (gameEngine.entities[i].name === "skeleton") {
+                    } else if (gameEngine.entities[i].name === "skeleton" || 
+                        gameEngine.entities[i].name === "skeletonArcher") {
                         
                         var skeleton = gameEngine.entities[i];
                         skeleton.x = skeleton.initialX;
@@ -296,7 +297,8 @@ GameState.prototype.update = function() {
                         var platform = gameEngine.entities[i];
                         platform.canvasX = platform.initialCanvasX;
                     
-                    } else if (gameEngine.entities[i].name === "skeleton") {
+                    } else if (gameEngine.entities[i].name === "skeleton" || 
+                        gameEngine.entities[i].name === "skeletonArcher") {
                         
                         var skeleton = gameEngine.entities[i];
                         skeleton.x = skeleton.initialX;
@@ -342,7 +344,7 @@ GameState.prototype.update = function() {
                         var platform = gameEngine.entities[i];
                         platform.canvasX = platform.initialCanvasX;
                     
-                    } else if (gameEngine.entities[i].name === "skeleton") {
+                    } else if (gameEngine.entities[i].name === "skeleton" || gameEngine.entities[i].name === "skeletonArcher") {
                         
                         var skeleton = gameEngine.entities[i];
                         skeleton.x = skeleton.initialX;
@@ -368,7 +370,7 @@ GameState.prototype.updateHealth = function(entity) {
         entity.name === "mage" || 
         entity.name === "wolf") {
         
-        entity.health = entity.health - 1;
+        entity.health = entity.health - 5;
         entity.progressBar.updateHealth(entity.health);
         entity.progressBar.hasBeenHit(true);
 
@@ -384,7 +386,7 @@ GameState.prototype.updateHealth = function(entity) {
             this.charactersAlive--;
         }
     
-    } else if (entity.name === "skeleton") {
+    } else if (entity.name === "skeleton" || entity.name === "skeletonArcher") {
 
         for (var i = 0; i < this.gameEngine.entities.length; i++) {
             
@@ -495,10 +497,10 @@ GameState.prototype.reset = function() {
             var platform = gameEngine.entities[i];
             platform.canvasX = platform.initialCanvasX;
         
-        } else if (gameEngine.entities[i].name === "skeleton") {
+        } else if (gameEngine.entities[i].name === "skeleton" || gameEngine.entities[i].name === "skeletonArcher") {
             
             var skeleton = gameEngine.entities[i];
-            skeleton.health = 2;
+            skeleton.health = 3;
             skeleton.x = skeleton.initialX;
             skeleton.canvasX = skeleton.initialCanvasX;
             skeleton.animationAttackRight.elapsedTime = 0;

@@ -64,7 +64,8 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
             }
 
 
-            if (this.entity.name === "skeleton") {
+            if (this.entity.name === "skeleton" 
+                || this.entity.name === "skeletonArcher") {
                 
                 if (this.entity.direction === "right") {
                     this.entity.animationState = "idleRight";
@@ -74,6 +75,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
                 
                 this.entity.attacking = false;
                 this.entity.attacked = false;
+                this.entity.arrowFired = false;
                 this.elapsedTime = 0;
             }
         }
@@ -129,7 +131,9 @@ Background.prototype.update = function() {
 
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+           
             this.x = this.x - 1;
+        
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
             if (this.x !== 0) {

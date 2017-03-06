@@ -430,7 +430,8 @@ Skeleton.prototype.update = function() {
             entity.name === "gunwoman" ||
             entity.name === "mage" || 
             entity.name === "skeleton" ||
-            entity.name === "box")) {
+            entity.name === "box" ||
+            entity.name === "skeletonArcher")) {
 
             if (this != entity && this.collide(entity)) {
 
@@ -487,7 +488,8 @@ Skeleton.prototype.update = function() {
                 entity.name === "gunwoman" ||
                 entity.name === "mage" ||
                 entity.name === "skeleton" ||
-                entity.name === "box") {
+                entity.name === "box" ||
+                entity.name === "skeletonArcher") {
                 
                 if (this != entity && this.collide(entity)) {
                     stillColliding = true;
@@ -514,7 +516,8 @@ Skeleton.prototype.update = function() {
                     entity.name === "gunwoman" ||
                     entity.name === "mage" ||
                     entity.name === "skeleton" ||
-                    entity.name === "box")) {
+                    entity.name === "box" ||
+                    entity.name === "skeletonArcher")) {
 
                     //check if still colliding right with a platform we collided right with
                     if (this.collidedRightEntity === entity &&  
@@ -732,9 +735,7 @@ Skeleton.prototype.update = function() {
             this.oldX = this.x;
             this.x += 2;
             this.canvasX += 2;
-
         }   
-
     }
 };
 
@@ -775,42 +776,41 @@ Skeleton.prototype.draw = function() {
     }
 };
 
+var ARCHER_ID = 0;
 
-function SkeletonArcher(game, x, y) {
-    // var idleRightAnimationSpriteSheet = 
-    // var walkRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanwalkright.png");
-    var attackRightAnimationSpriteSheet = AM.getAsset("./img/skeletonarcherattackright.png");
+function SkeletonArcher(gameEngine, gameState, x, y) { 
+    var currentCharacter = gameState.getCurrentCharacter();
 
     var idleLeftAnimationSpriteSheet = AM.getAsset("./img/skeletonarcheridleleft.png");
-    // var walkLeftAnimationSpriteSheet = AM.getAsset("./img/gunwomanwalkleft.png");
+    var idleRightAnimationSpriteSheet = AM.getAsset("./img/skeleton-archer-idle-right.png"); 
+    var attackRightAnimationSpriteSheet = AM.getAsset("./img/skeletonarcherattackright.png"); 
     var attackLeftAnimationSpriteSheet = AM.getAsset("./img/skeletonarcherattackleft.png");
 
+    this.id = ARCHER_ID;
+    ARCHER_ID++;
 
-    // var jumpRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanjumpright.png");
-    // var jumpLeftAnimationSpriteSheet = AM.getAsset("./img/gunwomanjumpleft.png");
-
-
-    this.game = game;
-    this.ctx = game.ctx;
+    this.gameEngine = gameEngine;
+    this.ctx = gameEngine.ctx;
+    this.gameState = gameState;
+    
     this.name = "skeletonArcher";
 
-    //this.animationCurrent = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.1, 14, true, 0.5);
+    this.health = HEALTH;
 
-    // this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 3, 0.05, 8, true, 0.5);
-    // this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.035, 12, true, 0.5);
-    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 288, 192, 4, 0.015, 16, true, 0.5);
     this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 3, 0.1, 8, true, 0.5);
-    // this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 2, 0.07, 12, true, 0.5);
-    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 288, 192, 4, 0.05, 16, true, 0.5);
-    // this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
-    // this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 11, false, 0.5);
+    this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 3, 0.1, 8, true, 0.5);
+    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 288, 192, 4, 0.05, 16, false, 0.5);
+    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 288, 192, 4, 0.05, 16, false, 0.5);
+
     this.animationState = "idleLeft";
 
     this.direction = "left";
-    var currentCharacter = game.getCurrentCharacter();
-
+    
     this.x = x * TILE_SIZE;
     this.y = y * TILE_SIZE;
+
+    this.initialX = x * TILE_SIZE;
+    this.initialY = y * TILE_SIZE;
 
     this.width = 2 * TILE_SIZE;
     this.height = 4 * TILE_SIZE;
@@ -818,147 +818,482 @@ function SkeletonArcher(game, x, y) {
     this.canvasX = x * TILE_SIZE;
     this.canvasY = y * TILE_SIZE;
 
+    this.initialCanvasX = x * TILE_SIZE;
+    this.initialCanvasY = x * TILE_SIZE;
 
     this.attacking = false;
+    this.arrowFired = false;
 
     this.collidedWith = null;
 
     this.oldX = x * TILE_SIZE;
     this.oldY = y * TILE_SIZE;
+}
 
+SkeletonArcher.prototype.collide = function(other) {
+    return this.x <= other.x + other.width &&
+        this.x + this.width >= other.x &&
+        this.y <= other.y + other.height &&
+        this.height + this.y >= other.y;    
+}
 
+SkeletonArcher.prototype.collideLeft = function(other) {
+    var oldSkeletonBoxLeft = this.oldX;
+    var skeletonBoxLeft = this.x;
+
+    var oldOtherBoxRight = other.oldX + other.width;
+    var otherBoxRight = other.x + other.width;
+
+    if (oldSkeletonBoxLeft + 3 > oldOtherBoxRight && //was not colliding
+        skeletonBoxLeft <= otherBoxRight) {
+
+        //console.log('skeleton collide left');
+    }
+
+    return oldSkeletonBoxLeft + 3 > oldOtherBoxRight && //was not colliding
+        skeletonBoxLeft <= otherBoxRight;    
+}
+
+SkeletonArcher.prototype.collideRight = function(other) {
+    var skeletonOldBoxRight = this.oldX + this.width;
+    var skeletonBoxRight = this.x + this.width;
+
+    var otherOldBoxLeft = other.oldX;
+    var otherBoxLeft = other.x;
+
+    if (skeletonOldBoxRight - 3 < otherOldBoxLeft &&
+        skeletonBoxRight >= otherBoxLeft) {
+
+        //console.log('skeleton colided right');
+    }
+
+    return skeletonOldBoxRight - 3 < otherOldBoxLeft &&
+        skeletonBoxRight >= otherBoxLeft;
+}
+
+SkeletonArcher.prototype.collideTop = function(other) {
+    if (this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height) {
+
+        //console.log('skeleton colided top');
+    }
+
+    return this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height;
+}
+
+SkeletonArcher.prototype.collideBottom = function(other) {
+    if (this.oldY + this.height < other.y && 
+        this.y + this.height >= other.y) {
+        
+        //console.log('skeleton collided bottom');
+    }
+
+    return this.oldY + this.height < other.y && 
+        this.y + this.height >= other.y;
+}
+
+SkeletonArcher.prototype.knockBackLeftCollide = function(other) {
+    var attackBoxLeft = this.x - 30;
+    var attackBoxRight = this.x;
+    var attackBoxTop = this.y;
+    var attackBoxBottom = this.y + this.height;
+
+    return attackBoxRight >= other.x &&
+        attackBoxLeft <= other.x + other.width &&
+        attackBoxTop <= other.y + other.height &&
+        attackBoxBottom >= other.y;
+}
+
+SkeletonArcher.prototype.knockBackRightCollide = function(other) {
+    var attackBoxLeft = this.x + this.width;
+    var attackBoxRight = attackBoxLeft + 30;
+    var attackBoxTop = this.y;
+    var attackBoxBottom = this.y + this.height;
+
+    return attackBoxLeft <= other.x + other.width &&
+        attackBoxRight >= other.x &&
+        attackBoxTop <= other.y + other.height &&
+        attackBoxBottom >= other.y;    
 }
 
 SkeletonArcher.prototype.update = function() {
-    var gameEngine = this.game;
-    var currentCharacter = gameEngine.getCurrentCharacter();
+    var gameEngine = this.gameEngine;
+    var gameState = this.gameState;
 
-    if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight ) {
-        // this.oldX = this.canvasX;
-        this.canvasX -= 3;
+    var currentCharacter = gameState.getCurrentCharacter();
 
-    } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft ) {
-        // this.oldX = this.canvasX;
-        this.canvasX += 3;
+    if (this.attacking) {
+
+        if (this.direction === "left") {
+
+            var frame = this.animationAttackLeft.currentFrame();
+
+            if (frame === 10 && !this.arrowFired && currentCharacter) {
+                
+                var arrow = new Arrow(gameEngine, gameState, this);
+                gameEngine.addEntity(arrow);
+                this.arrowFired = true;
+                
+            }
+
+        } else if (this.direction === "right") {
+
+            var frame = this.animationAttackRight.currentFrame();
+
+            if (frame === 10 && !this.arrowFired && currentCharacter) {
+
+                var arrow = new Arrow(gameEngine, gameState, this);
+                gameEngine.addEntity(arrow);
+                this.arrowFired = true;
+            }
+        }
     }
 
-    if (currentCharacter.canvasX >= this.canvasX - 800 && !this.attacking) {
-        this.animationState = "attackLeft";
-        this.attacking = true;
-        //  this.oldX = this.canvasX;
-        // this.oldY = this.canvasY;
+        //check if enemy collided with any platforms
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        var entity = this.gameEngine.entities[i];
 
-    } 
-    // else if (currentCharacter.canvasX <= this.canvasX + 500 && !this.attacking) {
-    //     this.animationState = "attackRight";
-    //     this.attacking = true;
-    // } 
+        if (this !== entity && 
+            (entity.name === "platform" || 
+            entity.name === "knight" ||
+            entity.name === "gunwoman" ||
+            entity.name === "mage" || 
+            entity.name === "skeleton" ||
+            entity.name === "box" ||
+            entity.name === "skeletonArcher")) {
 
-    else if (this.attacking && this.animationAttackLeft.currentFrame() === 11) {
-       
-        var startTime = this.game.timer.gameTime;
-        var newArrow = new Arrow(this.game, this.canvasX, this.canvasY, startTime);
-        this.game.addEntity(newArrow);
+            if (this != entity && this.collide(entity)) {
+
+                this.collidedWith = entity;
+
+                if (this.collideLeft(entity)) {
+                    
+                    this.collidedLeft = true;
+                    this.collidedLeftEntity = entity;
+                    
+                    //fall after colliding left
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.canvasY += 3;
+                        this.y += 3;
+                    } 
+
+                } else if (this.collideRight(entity)) {
+
+                    this.collidedRight = true;
+                    this.collidedRightEntity = entity;
+
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.y += 3;
+                        this.canvasY += 3;
+                    } 
+
+                } else if (this.collideBottom(entity)) {
+                    this.collidedBottom = true;
+                    this.lastGroundY = this.collidedWith.y;
+                    this.collidedBottomEntity = entity;
+
+                } else if (this.collideTop(entity)) {
+
+                    this.collidedTop = true;
+                    this.collidedTopEntity = entity;
+                    this.canvasY += 3;
+                    this.y += 3;
+                } 
+            }
+        }
     }
 
-    if (currentCharacter.canvasX <= this.canvasX - 800) {
+    //check if skeleton is no longer colliding with any platforms
+    if (this.collidedWith) {
+        var stillColliding = false;
+
+        for (var i = 0; i < gameEngine.entities.length; i++) {
+            var entity = this.gameEngine.entities[i];
+
+            if (entity.name === "platform" || 
+                entity.name === "knight" || 
+                entity.name === "gunwoman" ||
+                entity.name === "mage" ||
+                entity.name === "skeleton" ||
+                entity.name === "box" ||
+                entity.name === "skeletonArcher") {
+                
+                if (this != entity && this.collide(entity)) {
+                    stillColliding = true;
+
+                }
+            }
+        }
+
+        if (!stillColliding) {
+            this.collidedWith = null;
+            this.collidedLeft = false;
+            this.collidedRight = false;
+            this.collidedBottom = false;
+            this.collidedTop = false;
+
+        } else { //still colliding
+
+            for (var i = 0; i < gameEngine.entities.length; i++) {
+                var entity = this.gameEngine.entities[i];
+
+                if (this !== entity && 
+                    (entity.name === "platform" || 
+                    entity.name === "knight" ||
+                    entity.name === "gunwoman" ||
+                    entity.name === "mage" ||
+                    entity.name === "skeleton" ||
+                    entity.name === "box" ||
+                    entity.name === "skeletonArcher")) {
+
+                    //check if still colliding right with a platform we collided right with
+                    if (this.collidedRightEntity === entity &&  
+                        !this.collide(entity)) {
+                        
+                        this.collidedRight = false;
+                        this.collidedRightEntity = null;
+
+                    } else if (this.collidedLeftEntity === entity &&
+                        !this.collide(entity)) {
+
+                        //console.log('here');
+
+                        this.collidedLeft = false;
+                        this.collidedLeftEntity = null;
+
+                    } else if (this.collidedTopEntity === entity && 
+                        !this.collideTop(entity)) {
+
+                        //this.collidedTop = false;
+
+                    }
+                }
+            }
+
+        }
+
+    } else if (!this.jumping) { //player has not collided therefore fall
+
+        this.oldY = this.y;
+        this.canvasY += 5;
+        this.y += 5;
+    }
+
+    if (currentCharacter) {
+        
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+
+            this.canvasX -= 3;
+
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+            this.canvasX += 3;
+        }    
+    }
+
+    var distanceFromHero = Math.min();
+
+    if (currentCharacter) {
+        distanceFromHero = Math.abs(currentCharacter.x - this.x);
+    }
+
+    //Archer AI
+    if (distanceFromHero <= 800 && currentCharacter) {
+
+        if (this.x > currentCharacter.x) {
+
+            this.attacking = true;
+            this.animationState = "attackLeft";
+            this.direction = "left";
+          
+        } else if (this.x < currentCharacter.x) {
+
+            this.attacking = true;
+            this.animationState = "attackRight"
+            this.direction = "right";
+        }
+    
+    }
+
+    if (!currentCharacter) {
+
         this.attacking = false;
-        this.animationState = "idleLeft";
-    } else if(currentCharacter.canvasX >= this.canvasX + 300) {
-        this.attacking = false;
-        this.animationState = "idleLeft";
+
+        if (this.direction === "left") {
+
+            this.animationState = "idleLeft";
+
+        } else {
+
+            this.animationState = "idleRight";
+        }
     }
+
+    // if (this.id === 0) {
+
+    //     if (gameEngine.keyMap["KeyV"]) {
+
+    //         if (!this.attacking && this.direction === "left") {
+
+    //             this.animationState = "attackLeft";
+
+    //                 this.attacking = true;
+                                       
+                     
+    //         }
+
+    //     } else if (gameEngine.keyMap["KeyZ"] && !this.collidedLeft && !this.attacking) {
+
+    //         this.direction = "left";
+    //         this.animationState = "walkLeft";
+    //         this.oldX = this.x;
+    //         this.x -= 2;
+    //         this.canvasX -= 2;
+            
+    //     } else if (gameEngine.keyMap["KeyC"] && !this.collidedRight && !this.attacking) {
+
+    //         this.direction = "right";
+    //         this.animationState = "walkRight";
+    //         this.oldX = this.x;
+    //         this.x += 2;
+    //         this.canvasX += 2;
+
+    //     }
+    // }
 
 };
 
 SkeletonArcher.prototype.draw = function() {
-    var currentCharacter = this.game.getCurrentCharacter();
+    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+
+    var currentCharacter = this.gameState.getCurrentCharacter();
 
     if (this.animationState === "idleLeft") {
-        this.animationIdleLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 20, this.canvasY);
+        
+        this.animationIdleLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 20, this.canvasY);
+
+    } else if (this.animationState === "idleRight") {
+
+        this.animationIdleRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 10, this.canvasY);
 
     } else if (this.animationState === "attackLeft") {
-        this.animationAttackLeft.drawFrame(this.game.clockTick, this.ctx, this.canvasX - 66, this.canvasY);
+        
+        this.animationAttackLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 66, this.canvasY);
 
-
-        // this.ctx.beginPath();
-        // this.ctx.moveTo(this.canvasX, this.canvasY);
-        // this.ctx.lineTo(currentCharacter.canvasX, currentCharacter.canvasY);
-        // this.ctx.stroke();
     } else if (this.animationState === "attackRight") {
-        this.animationAttackRight.drawFrame(this.game.clockTick, this.ctx, this.canvasX, this.canvasY);
+        
+        this.animationAttackRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 15, this.canvasY);
     }
 };
 
-var id = 0;
+function Arrow(gameEngine, gameState, archer) {
+    this.gameEngine = gameEngine;
+    this.ctx = gameEngine.ctx;
+    this.gameState = gameState;
 
-function Arrow(game, archerX, archerY, startTime) {
-    this.id = id;
-    id++;
+    var currentCharacter = gameState.getCurrentCharacter();
 
-    var arrowImg = AM.getAsset("./img/arrow.png");
-
-    this.arrow = new Animation(this, arrowImg, 76, 67, 1, 0.1, 1, true, 1);
-
-    // this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 3, 0.05, 8, true, 0.5);
-    this.startTime = startTime;
-    this.game = game;
-    this.ctx = game.ctx;
     this.name = "arrow";
 
-    this.direction = "left";
-    var currentCharacter = game.getCurrentCharacter();
+    this.arrowImage = AM.getAsset("./img/arrow.png");
 
-    this.x = archerX;
-    this.y = archerY;
+    this.x = archer.x;
+    this.y = archer.y;
 
-    this.width = 2 * 16;
-    this.height = 4 * 16;
-    this.canvasX = archerX;
-    this.canvasY = archerY;
-    this.y1 = this.canvasY;
-    this.y2 = currentCharacter.canvasY;
-    this.x1 = this.canvasX;
-    this.x2 = currentCharacter.canvasX;
-    this.lastGroundY = null; //y coord of platform last collided with
-    // this.slope = (this.y1 - this.y2) / (this.x1 - this.x2);
-    // this.b = this.y1 / (this.slope * this.x1);
-    // var dist = Math.sqrt(Math.pow((this.x1 - this.x2), 2) + Math.pow((this.y1 - this.y2), 2));
+    this.startX = archer.x;
+    this.startY = archer.y;
 
-    this.temp = 0;
+    this.endX = currentCharacter.x + 20;
+    this.endY = currentCharacter.y + 20;
+
+    this.canvasX = archer.canvasX;
+    this.canvasY = archer.canvasY;
+
+    this.startCanvasX = archer.canvasX;
+    this.startCanvasY = archer.canvasY;
+
+    this.endCanvasX = currentCharacter.canvasX + 20; //offset to hit center of character
+    this.endCanvasY = currentCharacter.canvasY + 20;
+
+    this.dx = this.endCanvasX - this.startCanvasX;
+    this.dy = this.endCanvasY - this.startCanvasY;
+
+    this.distance = Math.sqrt(this.dy * this.dy + this.dx * this.dx);
+    this.angle = Math.atan2(this.dy, this.dx);
+
+    this.speed = 5;
+
+    this.b_dx = Math.cos(this.angle) * this.speed;
+    this.b_dy = Math.sin(this.angle) * this.speed;
+
+    this.width = 5;
+    this.height = 3;
+
     this.collidedWith = null;
 }
 
+Arrow.prototype.collide = function(other) {
+    return this.x <= other.x + other.width &&
+        this.x + this.width >= other.x &&
+        this.y <= other.y + other.height &&
+        this.height + this.y >= other.y;
+}
 
 Arrow.prototype.update = function() {
+    var gameEngine = this.gameEngine;
+    var gameState = this.gameState;
 
-    var currentCharacter = this.game.getCurrentCharacter();
+    var currentCharacter = gameState.getCurrentCharacter();
 
-    var gameEngine = this.game;
+    this.x += this.b_dx;
+    this.y += this.b_dy;
 
-    // if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight && !this.attacking) {
-    //     this.canvasX = this.canvasX;
-    // } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft && !this.attacking) {
-    //     // this.oldX = this.canvasX;
-    //     this.canvasX = this.canvasX;
-    // }
+    this.canvasX += this.b_dx;
+    this.canvasY += this.b_dy;
 
-    var timeSince = this.game.timer.gameTime - this.startTime;
-    this.canvasY = (1 - timeSince) * this.y1 + (timeSince * this.y2);
-    this.canvasX = (1 - timeSince) * this.x1 + (timeSince * this.x2);
+    //check for collisions
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        var entity = gameEngine.entities[i];
 
-};
+        if (this !== entity && this.collide(entity) && !this.collidedWith) {
 
+            if (entity.name === "knight" || entity.name === "gunwoman" || entity.name === "mage") {
 
-Arrow.prototype.draw = function(first_argument) {
-    this.ctx.fillStyle = "#000000";
-    this.ctx.fillRect(this.canvasX, this.canvasY, 5, 3);
+                this.collidedWith = entity;
+                gameState.updateHealth(entity);
+                //console.log('archer hit player');
 
-    // this.arrow.drawFrame(this.game.clockTick, this.ctx, this.canvasX , this.canvasY);
-    // var img = new Image();
-    // img.src = "/img/arrow.png";
+            } else if (entity.name === "platform" || entity.name === "box") {
 
-    // img.onload = function(argument) {
-    //     this.ctx.drawImage(img, canvasX, canvasY);
-    // }
+                this.collidedWith = entity;
+                //console.log('hit object');
+            }
+        }
+    }    
+
+    //offset bullet when walking
+    if (currentCharacter) {
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+
+            this.canvasX -= 3;
+
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+            this.canvasX += 3;
+        }    
+    }
+}
+
+Arrow.prototype.draw = function() {
+    //this.ctx.fillRect(this.x, this.y, 5, 3);
+    
+    if (!this.collidedWith) {
+        this.ctx.fillStyle = "#000000";
+        this.ctx.fillRect(this.canvasX, this.canvasY, 20, 3);
+        //this.ctx.drawImage(this.arrowImage, this.canvasX - 30, this.canvasY, 100, 16);
+    }
 };
