@@ -76,6 +76,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
                 this.entity.attacking = false;
                 this.entity.attacked = false;
                 this.entity.arrowFired = false;
+                this.entity.doDamage = false;
                 this.elapsedTime = 0;
             }
         }
@@ -104,8 +105,6 @@ Animation.prototype.currentFrame = function() {
 Animation.prototype.isDone = function() {
     return (this.elapsedTime >= this.totalTime);
 }
-
-
 
 // END ENEMIES
 

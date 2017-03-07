@@ -206,15 +206,22 @@ Skeleton.prototype.update = function() {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = this.gameEngine.entities[i];
 
-            if (entity.name === "knight" || entity.name === "gunwoman" || entity.name === "mage" || entity.name === "wolf") {
-                //console.log(entity.name);
+            if (entity.name === "knight" || 
+                entity.name === "gunwoman" || 
+                entity.name === "mage" || 
+                entity.name === "wolf") {
+                
                 if (this.direction === "right" && this.collideAttackRight(entity)) {
-                    //console.log('skeleton landed attack right');
 
                     var frame = this.animationAttackRight.currentFrame();
-                    //console.log(frame);
+                    
 
-                    if (this.animationAttackRight.currentFrame() === 10) {
+                    if (this.animationAttackRight.currentFrame() === 10 && !this.doDamage) {
+
+                        this.doDamage = true;
+
+                        console.log('here');
+
                         this.gameState.updateHealth(entity);
 
                         var knockBackCollidedWith = null;
@@ -321,7 +328,9 @@ Skeleton.prototype.update = function() {
 
                     var skeletonAttackFrame = this.animationAttackLeft.currentFrame();
 
-                    if (skeletonAttackFrame === 10) {
+                    if (skeletonAttackFrame === 10 && !this.doDamage) {
+
+                        this.doDamage = true;
 
                         this.gameState.updateHealth(entity);
 
@@ -951,7 +960,7 @@ SkeletonArcher.prototype.update = function() {
         }
     }
 
-        //check if enemy collided with any platforms
+    //check if enemy collided with any platforms
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.gameEngine.entities[i];
 

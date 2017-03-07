@@ -401,39 +401,39 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(knight);
 
 
-    gameEngine.addEntity(archer1);
+    //gameEngine.addEntity(archer1);
     //gameEngine.addEntity(archer2);
-    gameEngine.addEntity(archer3);
-    gameEngine.addEntity(archer4);
-    gameEngine.addEntity(archer5);
-    gameEngine.addEntity(archer6);
-    gameEngine.addEntity(archer7);
-    gameEngine.addEntity(archer8);
-    gameEngine.addEntity(archer9);
+    // gameEngine.addEntity(archer3);
+    // gameEngine.addEntity(archer4);
+    // gameEngine.addEntity(archer5);
+    // gameEngine.addEntity(archer6);
+    // gameEngine.addEntity(archer7);
+    // gameEngine.addEntity(archer8);
+    // gameEngine.addEntity(archer9);
 
-    //gameEngine.addEntity(skeleton0);
+    gameEngine.addEntity(skeleton0);
     //gameEngine.addEntity(skeleton1);
-    gameEngine.addEntity(skeleton2);
-    gameEngine.addEntity(skeleton3);
-    gameEngine.addEntity(skeleton4);
-    gameEngine.addEntity(skeleton5);
-    gameEngine.addEntity(skeleton6);
-    gameEngine.addEntity(skeleton7);
-    gameEngine.addEntity(skeleton8);
-    gameEngine.addEntity(skeleton9);
-    gameEngine.addEntity(skeleton10);
-    gameEngine.addEntity(skeleton11);
-    gameEngine.addEntity(skeleton12);
-    gameEngine.addEntity(skeleton13);
-    gameEngine.addEntity(skeleton14);
-    gameEngine.addEntity(skeleton15);
-    gameEngine.addEntity(skeleton16);
-    gameEngine.addEntity(skeleton17);
-    gameEngine.addEntity(skeleton18);
-    gameEngine.addEntity(skeleton19);
-    gameEngine.addEntity(skeleton20);
-    gameEngine.addEntity(skeleton21);
-    gameEngine.addEntity(skeleton22);
+    // gameEngine.addEntity(skeleton2);
+    // gameEngine.addEntity(skeleton3);
+    // gameEngine.addEntity(skeleton4);
+    // gameEngine.addEntity(skeleton5);
+    // gameEngine.addEntity(skeleton6);
+    // gameEngine.addEntity(skeleton7);
+    // gameEngine.addEntity(skeleton8);
+    // gameEngine.addEntity(skeleton9);
+    // gameEngine.addEntity(skeleton10);
+    // gameEngine.addEntity(skeleton11);
+    // gameEngine.addEntity(skeleton12);
+    // gameEngine.addEntity(skeleton13);
+    // gameEngine.addEntity(skeleton14);
+    // gameEngine.addEntity(skeleton15);
+    // gameEngine.addEntity(skeleton16);
+    // gameEngine.addEntity(skeleton17);
+    // gameEngine.addEntity(skeleton18);
+    // gameEngine.addEntity(skeleton19);
+    // gameEngine.addEntity(skeleton20);
+    // gameEngine.addEntity(skeleton21);
+    // gameEngine.addEntity(skeleton22);
 
     //x,  y, width, height
     var tutorialPlatform0 = new Platform(gameEngine, gameState, 0, 39, 42, 1)
