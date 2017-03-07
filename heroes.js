@@ -56,7 +56,8 @@ function Knight(gameEngine, gameState, progressBar) {
     this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 2, 0.015, 14, false, 0.5);
     this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
     this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
-    this.animationPoof = new Animation(this, poofImg, 512, 512, 3, 0.06, 8, false, 0.3);
+    
+    this.animationPoof = new EffectAnimation(this, poofImg, 512, 512, 3, 0.06, 8, false, 0.3);
 
     this.animationState = "idleRight";
 
@@ -95,7 +96,7 @@ function Knight(gameEngine, gameState, progressBar) {
 
     this.attacking = false;
     this.attacked = false;
-    this.poofNow = false;
+    this.showPoof = false;
 
     this.collidedWith = null; //checks to see which entity the knight collided with LAST
 
@@ -636,11 +637,11 @@ Knight.prototype.update = function() {
     }
 
     if (gameEngine.keyMap["Digit1"] || gameEngine.keyMap["Digit2"] || gameEngine.keyMap["Digit3"]) {
-        this.poofNow = true;
+        this.showPoof = true;
     }
 
     if (this.animationPoof.isDone()) {
-        this.poofNow = false;
+        this.showPoof = false;
         this.animationPoof.elapsedTime = 0;
     }
 
@@ -775,8 +776,8 @@ Knight.prototype.draw = function() {
         this.animationAttackLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 68, this.canvasY - 2);
     }
 
-    if (this.poofNow) {
-        //this.animationPoof.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 35, this.canvasY - 60);
+    if (this.showPoof) {
+        this.animationPoof.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 50, this.canvasY - 60);
     }
 }
 
@@ -793,7 +794,9 @@ function Mage(gameEngine, gameState, progressBar) {
 
     var jumpRightAnimationSpriteSheet = AM.getAsset("./img/mageJumpRight.png");
     var jumpLeftAnimationSpriteSheet = AM.getAsset("./img/magejumpleft.png");
-    var boxImpactImg = AM.getAsset("./img/mageimpact.png");
+    
+    var boxImpactSpriteSheet = AM.getAsset("./img/mageimpact.png");
+    var poofSpriteSheet = AM.getAsset("./img/poofspritesheet.png");
 
 
     this.gameEngine = gameEngine;
@@ -801,7 +804,7 @@ function Mage(gameEngine, gameState, progressBar) {
     this.gameState = gameState;
     this.name = "mage";
     this.progressBar = progressBar;
-    this.impactAnimation = new Animation(this, boxImpactImg, 192, 192, 4, 0.02, 11, false, 0.6);
+    
     this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.05, 10, true, 0.5);
     this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 3, 0.035, 8, true, 0.5);
     this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 3, 0.015, 17, false, 0.5);
@@ -810,12 +813,18 @@ function Mage(gameEngine, gameState, progressBar) {
     this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 2, 0.015, 17, false, 0.5);
     this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 10, false, 0.5);
     this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 10, false, 0.5);
+
+    this.animationBoxEffect = new EffectAnimation(this, boxImpactSpriteSheet, 192, 192, 4, 0.02, 11, false, 0.6);
+    this.animationPoof = new EffectAnimation(this, poofSpriteSheet, 512, 512, 3, 0.06, 8, false, 0.3);
+    
     this.animationState = "idleRight";
 
     this.direction = "right";
     this.health = 50;
     this.progressBar.updateHealth(this.health);
-    this.impact = false;
+    
+    this.showBoxEffect = false;
+    this.showPoof = false;
 
 
     //for direction of collision
@@ -1001,7 +1010,7 @@ Mage.prototype.update = function() {
     var gameEngine = this.gameEngine;
     var gameState = this.gameState;
 
-    console.log(this.impact);
+    //console.log(this.impact);
 
     //handle jumping
     if (this.jumping) {
@@ -1181,9 +1190,20 @@ Mage.prototype.update = function() {
 
     }
 
-    if(this.impactAnimation.isDone()) {
-        this.impact = false;
-        this.impactAnimation.elapsedTime = 0;
+    //box effect
+    if (this.animationBoxEffect.isDone()) {
+        this.showBoxEffect = false;
+        this.animationBoxEffect.elapsedTime = 0;
+    }
+
+    //poof effect
+    if (gameEngine.keyMap["Digit1"] || gameEngine.keyMap["Digit2"] || gameEngine.keyMap["Digit3"]) {
+        this.showPoof = true;
+    }
+
+    if (this.animationPoof.isDone()) {
+        this.showPoof = false;
+        this.animationPoof.elapsedTime = 0;
     }
 
     //handle animation changes and summon box if click pressed
@@ -1196,7 +1216,7 @@ Mage.prototype.update = function() {
             this.animationAttackRight.elapsedTime = 0;
 
             var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
-            this.impact = true;
+            this.showBoxEffect = true;
             gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["1"] && !this.attacking && this.jumping) {
@@ -1206,7 +1226,7 @@ Mage.prototype.update = function() {
             this.animationAttackRight.elapsedTime = 0;
 
             var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
-            this.impact = true;
+            this.showBoxEffect = true;
             gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["Space"] && !this.jumping && this.collidedBottom) { //jump only if not already jumping
@@ -1222,7 +1242,7 @@ Mage.prototype.update = function() {
             this.animationAttackRight.elapsedTime = 0;
 
             var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
-            this.impact = true;
+            this.showBoxEffect = true;
             gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["KeyD"] && !this.jumping && !this.attacking) { //only walk if not jumping
@@ -1243,7 +1263,7 @@ Mage.prototype.update = function() {
             this.animationAttackLeft.elapsedTime = 0;
 
             var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
-            this.impact = true;
+            this.showBoxEffect = true;
             gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["1"] && !this.attacking && this.jumping) {
@@ -1269,7 +1289,7 @@ Mage.prototype.update = function() {
             this.animationAttackLeft.elapsedTime = 0;
 
             var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
-            this.impact = true;
+            this.showBoxEffect = true;
             gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["KeyA"] && !this.jumping && !this.attacking) { //only walk if not jumping
@@ -1316,10 +1336,15 @@ Mage.prototype.draw = function() {
 
         this.animationAttackLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 68, this.canvasY);
     }
-    if (this.impact) {
-        this.impactAnimation.drawFrame(this.gameEngine.clockTick, this.ctx, this.gameEngine.clickX - 20, this.gameEngine.clickY);
-        // this.impact = false;
+    
+    if (this.showBoxEffect) {
+        
+        this.animationBoxEffect.drawFrame(this.gameEngine.clockTick, this.ctx, this.gameEngine.clickX - 20, this.gameEngine.clickY);
+    }
 
+    if (this.showPoof) {
+
+        this.animationPoof.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 50, this.canvasY - 60);
     }
 
 
@@ -1336,14 +1361,12 @@ function Box(gameEngine, gameState, x, y) {
     this.boxImpactImg = AM.getAsset("./img/mageimpact.png");
     this.impactAnimation = new Animation(this, this.boxImpactImg, 192, 192, 4, 0.02, 11, false, 0.6);
 
-
     this.x = (currentCharacter.x - currentCharacter.canvasX) + x;
     this.y = y;
 
     this.oldX = (currentCharacter.x - currentCharacter.canvasX) + x;
 
     this.oldY = y;
-    // this.
     this.canvasX = x;
     this.canvasY = y;
 
@@ -1353,7 +1376,7 @@ function Box(gameEngine, gameState, x, y) {
     this.height = 2 * TILE_SIZE;
 
     this.jumping = false;
-    this.impact = false;
+
     this.collidedWith = null; //checks to see which entity the knight collided with
     this.collidedLeft = false; //checks to see if knight collided on its left side
     this.collidedRight = false;
@@ -1428,8 +1451,6 @@ Box.prototype.update = function() {
         if (entity.name === "platform" || entity.name === "box") {
 
             if (this != entity && this.collide(entity)) {
-                //console.log('colliding');
-                this.impact = true;
 
                 this.collidedWith = entity;
 
@@ -1531,6 +1552,7 @@ Box.prototype.update = function() {
     }
 
     if (currentCharacter) {
+        
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
             this.canvasX -= 3;
@@ -1544,14 +1566,6 @@ Box.prototype.update = function() {
 
 Box.prototype.draw = function() {
     this.ctx.drawImage(this.boxImg, this.canvasX, this.canvasY, this.width, this.height);
-    // if (this.impact) {
-    //     this.impactAnimation.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 20, this.canvasY - 20);
-
-    // }
-    //this.ctx.fillStyle = "#ff0000";
-    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
-    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
-
 };
 
 //Constructor for gunwoman
@@ -1565,10 +1579,10 @@ function Gunwoman(gameEngine, gameState, progressBar) {
     var walkLeftAnimationSpriteSheet = AM.getAsset("./img/gunwomanwalkleft.png");
     var attackLeftAnimationSpriteSheet = AM.getAsset("./img/gunwomanattackleft.png");
 
-
     var jumpRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanjumpright.png");
     var jumpLeftAnimationSpriteSheet = AM.getAsset("./img/gunwomanjumpleft.png");
 
+    var poofAnimationSpriteSheet = AM.getAsset("./img/poofspritesheet.png");
 
     this.gameEngine = gameEngine;
     this.gameState = gameState
@@ -1586,6 +1600,10 @@ function Gunwoman(gameEngine, gameState, progressBar) {
     this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 4, 0.015, 19, false, 0.5);
     this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
     this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 11, false, 0.5);
+    this.animationPoof = new EffectAnimation(this, poofAnimationSpriteSheet, 512, 512, 3, 0.06, 8, false, 0.3);
+    
+    this.showPoof = false;
+
     this.animationState = "idleRight";
 
     this.direction = "right";
@@ -1970,12 +1988,22 @@ Gunwoman.prototype.update = function() {
 
     }
 
-    if (gameEngine.keyMap["3"] && !gameState.wolfSummoned) { //Right Mouse button pressed, add wolf
+    //Right Mouse button pressed, add wolf
+    if (gameEngine.keyMap["3"] && !gameState.wolfSummoned) { 
         gameState.wolfSummoned = true;
         var wolf = new Wolf(gameEngine, gameState);
         gameEngine.addEntity(wolf);
     }
 
+    //poof effect
+    if (gameEngine.keyMap["Digit1"] || gameEngine.keyMap["Digit2"] || gameEngine.keyMap["Digit3"]) {
+        this.showPoof = true;
+    }
+
+    if (this.animationPoof.isDone()) {
+        this.showPoof = false;
+        this.animationPoof.elapsedTime = 0;
+    }
 
     //handle animation changes
     if (this.direction === "right") {
@@ -2154,6 +2182,11 @@ Gunwoman.prototype.draw = function() {
             this.direction = "left";
             this.animationState = "attackLeft";
         }
+    }
+
+    if (this.showPoof) {
+
+        this.animationPoof.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 50, this.canvasY - 60);
     }
 }
 

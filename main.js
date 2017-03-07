@@ -221,7 +221,6 @@ AM.queueDownload("./img/controlsmenu.png");
 
 
 AM.queueDownload("./img/background.png");
-AM.queueDownload("./img/midground.png");
 AM.queueDownload("./img/foreground.png");
 
 //knight
@@ -271,8 +270,6 @@ AM.queueDownload("./img/mageJumpRight.png");
 AM.queueDownload("./img/magejumpleft.png");
 AM.queueDownload("./img/magePORTRAITright.png");
 AM.queueDownload("./img/mageimpact.png");
-
-
 
 //skeleton
 AM.queueDownload("./img/skeletonidleright.png");
@@ -405,7 +402,6 @@ function createGame(gameEngine, gameMenu, gameState) {
     //an entity is any element drawn on the map
     gameEngine.addEntity(knight);
 
-
     gameEngine.addEntity(archer1);
     gameEngine.addEntity(archer2);
     gameEngine.addEntity(archer3);
@@ -416,7 +412,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(archer8);
     gameEngine.addEntity(archer9);
 
-    //gameEngine.addEntity(skeleton0);
+    gameEngine.addEntity(skeleton0);
     gameEngine.addEntity(skeleton1);
     gameEngine.addEntity(skeleton2);
     gameEngine.addEntity(skeleton3);
@@ -652,8 +648,9 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(spike13); // top spikes
     gameEngine.addEntity(spike14); // side spikes
     gameEngine.addEntity(spike15); // bottom spikes 
+    
     gameEngine.addEntity(potion);
-    // gameEngine.addEntity(potion1);
+    gameEngine.addEntity(potion1);
 
 
     var robot = new Robot(gameEngine, gameState, 5, 20);
@@ -680,7 +677,6 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.setCurrentBackground(background);
     gameState.setCurrentForeground(foreground);
 
-    //gameEngine.addEntity(midground);
     gameEngine.addEntity(background);
     gameEngine.removeEntity(gameMenu);
 }

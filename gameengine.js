@@ -76,7 +76,7 @@ GameEngine.prototype.startInput = function() {
         var rect = that.ctx.canvas.getBoundingClientRect();
         that.clickX = e.clientX - rect.left;
         that.clickY = e.clientY - rect.top;
-        console.log(that.clickX + " " + that.clickY);
+        //console.log(that.clickX + " " + that.clickY);
 
     }, false);
 
