@@ -247,6 +247,7 @@ AM.queueDownload("./img/gunwomanjumpright.png");
 AM.queueDownload("./img/gunwomanjumpleft.png");
 AM.queueDownload("./img/gunwomanattackrightup.png");
 AM.queueDownload("./img/gunwomanPORTRAITright.png");
+AM.queueDownload("./img/gunimpact.png");
 
 
 
@@ -269,6 +270,7 @@ AM.queueDownload("./img/mageAttackLeft.png");
 AM.queueDownload("./img/mageJumpRight.png");
 AM.queueDownload("./img/magejumpleft.png");
 AM.queueDownload("./img/magePORTRAITright.png");
+AM.queueDownload("./img/mageimpact.png");
 
 
 
@@ -293,8 +295,8 @@ AM.queueDownload("./img/robotattackright.png");
 AM.queueDownload("./img/robotidleleft.png");
 AM.queueDownload("./img/robotwalkleft.png");
 AM.queueDownload("./img/robotattackleft.png");
-AM.queueDownload("./img/robotjumpright.png");
-AM.queueDownload("./img/robotjumpleft.png");
+// AM.queueDownload("./img/robotjumpright.png");
+// AM.queueDownload("./img/robotjumpleft.png");
 
 
 //tree
@@ -308,6 +310,9 @@ AM.queueDownload("./img/crate.png");
 
 //poof
 AM.queueDownload("./img/poofspritesheet.png");
+
+//health potion
+AM.queueDownload("./img/healthpotion.png");
 
 AM.downloadAll(function() {
     var canvas = document.getElementById("gameWorld");
@@ -401,39 +406,39 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(knight);
 
 
-    // gameEngine.addEntity(archer1);
-    // gameEngine.addEntity(archer2);
-    // gameEngine.addEntity(archer3);
-    // gameEngine.addEntity(archer4);
-    // gameEngine.addEntity(archer5);
-    // gameEngine.addEntity(archer6);
-    // gameEngine.addEntity(archer7);
-    // gameEngine.addEntity(archer8);
-    // gameEngine.addEntity(archer9);
+    gameEngine.addEntity(archer1);
+    gameEngine.addEntity(archer2);
+    gameEngine.addEntity(archer3);
+    gameEngine.addEntity(archer4);
+    gameEngine.addEntity(archer5);
+    gameEngine.addEntity(archer6);
+    gameEngine.addEntity(archer7);
+    gameEngine.addEntity(archer8);
+    gameEngine.addEntity(archer9);
 
     //gameEngine.addEntity(skeleton0);
-    //gameEngine.addEntity(skeleton1);
-    // gameEngine.addEntity(skeleton2);
-    // gameEngine.addEntity(skeleton3);
-    // gameEngine.addEntity(skeleton4);
-    // gameEngine.addEntity(skeleton5);
-    // gameEngine.addEntity(skeleton6);
-    // gameEngine.addEntity(skeleton7);
-    // gameEngine.addEntity(skeleton8);
-    // gameEngine.addEntity(skeleton9);
-    // gameEngine.addEntity(skeleton10);
-    // gameEngine.addEntity(skeleton11);
-    // gameEngine.addEntity(skeleton12);
-    // gameEngine.addEntity(skeleton13);
-    // gameEngine.addEntity(skeleton14);
-    // gameEngine.addEntity(skeleton15);
-    // gameEngine.addEntity(skeleton16);
-    // gameEngine.addEntity(skeleton17);
-    // gameEngine.addEntity(skeleton18);
-    // gameEngine.addEntity(skeleton19);
-    // gameEngine.addEntity(skeleton20);
-    // gameEngine.addEntity(skeleton21);
-    // gameEngine.addEntity(skeleton22);
+    gameEngine.addEntity(skeleton1);
+    gameEngine.addEntity(skeleton2);
+    gameEngine.addEntity(skeleton3);
+    gameEngine.addEntity(skeleton4);
+    gameEngine.addEntity(skeleton5);
+    gameEngine.addEntity(skeleton6);
+    gameEngine.addEntity(skeleton7);
+    gameEngine.addEntity(skeleton8);
+    gameEngine.addEntity(skeleton9);
+    gameEngine.addEntity(skeleton10);
+    gameEngine.addEntity(skeleton11);
+    gameEngine.addEntity(skeleton12);
+    gameEngine.addEntity(skeleton13);
+    gameEngine.addEntity(skeleton14);
+    gameEngine.addEntity(skeleton15);
+    gameEngine.addEntity(skeleton16);
+    gameEngine.addEntity(skeleton17);
+    gameEngine.addEntity(skeleton18);
+    gameEngine.addEntity(skeleton19);
+    gameEngine.addEntity(skeleton20);
+    gameEngine.addEntity(skeleton21);
+    gameEngine.addEntity(skeleton22);
 
     //x,  y, width, height
     var tutorialPlatform0 = new Platform(gameEngine, gameState, -50, 39, 92, 1)
@@ -531,6 +536,8 @@ function createGame(gameEngine, gameMenu, gameState) {
     var spike13 = new Spike(gameEngine, gameState, 890, 14, 6, 2);
     var spike14 = new Spike(gameEngine, gameState, 903, 16, 2, 29);
     var spike15 = new Spike(gameEngine, gameState, 909, 43, 35, 2);
+    var potion = new Potion(gameEngine, gameState, 107, 14.5);
+    var potion1 = new Potion(gameEngine, gameState, 400, 2);
 
 
 
@@ -645,10 +652,12 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(spike13); // top spikes
     gameEngine.addEntity(spike14); // side spikes
     gameEngine.addEntity(spike15); // bottom spikes 
+    gameEngine.addEntity(potion);
+    // gameEngine.addEntity(potion1);
 
 
     var robot = new Robot(gameEngine, gameState, 5, 20);
-    gameEngine.addEntity(robot);
+    //gameEngine.addEntity(robot);
 
     gameEngine.addEntity(tooltip);
     gameEngine.addEntity(foreground);

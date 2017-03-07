@@ -291,7 +291,7 @@ Spike.prototype.draw = function() {
 Spike.prototype.update = function() {
     var gameEngine = this.gameEngine;
     var currentCharacter = this.gameState.currentCharacter;
-     if (currentCharacter) {
+    if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
             this.canvasX -= 3;
@@ -423,3 +423,46 @@ Tooltip.prototype.draw = function() {
         //this.ctx.fillRect(this.canvasX, this.canvasY - 30, this.width, this.height);
     }
 }
+
+
+function Potion(game, gameState, x, y) {
+    this.gameEngine = game;
+    this.img = AM.getAsset("./img/healthpotion.png");
+    this.ctx = game.ctx;
+    this.gameState = gameState;
+    this.canvasX = x * TILE_SIZE;
+    this.canvasY = y * TILE_SIZE;
+    this.x = x * TILE_SIZE;
+    this.y = y * TILE_SIZE;
+    this.initialCanvasX = x * TILE_SIZE;
+    this.width = 30;
+    this.height = 30;
+
+    this.name = "potion";
+
+
+}
+
+Potion.prototype.update = function() {
+    var gameEngine = this.gameEngine;
+    var currentCharacter = this.gameState.getCurrentCharacter();
+    if (currentCharacter) {
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+
+            this.canvasX -= 3;
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+            this.canvasX += 3;
+        }
+    }
+};
+
+Potion.prototype.draw = function() {
+    // this.ctx.globalAlpha = 0.2;
+
+    this.ctx.drawImage(this.img, this.canvasX, this.canvasY, this.width, this.height);
+
+    // this.ctx.fillStyle = "#00ff00";
+    // this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    // this.ctx.globalAlpha = 1.0;
+};

@@ -473,16 +473,23 @@ Knight.prototype.update = function() {
     //check if player collided with any platforms, skeletons, or boxes
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.gameEngine.entities[i];
+        if (this.collide(entity) && entity.name === "potion") {
+
+            this.gameState.restoreHealth(this);
+            gameEngine.removeEntity(entity);
+
+        }
 
 
-        if (entity.name === "platform" || 
-            entity.name === "skeleton" || 
-            entity.name === "box" || 
-            entity.name === "skeletonArcher"|| 
+        if (entity.name === "platform" ||
+            entity.name === "skeleton" ||
+            entity.name === "box" ||
+            entity.name === "skeletonArcher" ||
             entity.name === "spike") {
 
 
             if (this !== entity && this.collide(entity)) {
+
 
                 this.collidedWith = entity;
                 if (entity.name === "spike") {
@@ -544,11 +551,11 @@ Knight.prototype.update = function() {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = this.gameEngine.entities[i];
 
-            if (entity.name === "platform" || 
-                entity.name === "skeleton" || 
+            if (entity.name === "platform" ||
+                entity.name === "skeleton" ||
                 entity.name === "box" ||
                 entity.name === "skeletonArcher") {
-                
+
 
                 if (this != entity && this.collide(entity)) {
                     stillColliding = true;
@@ -570,8 +577,8 @@ Knight.prototype.update = function() {
             for (var i = 0; i < gameEngine.entities.length; i++) {
                 var entity = this.gameEngine.entities[i];
 
-                if (entity.name === "platform" || 
-                    entity.name === "skeleton" || 
+                if (entity.name === "platform" ||
+                    entity.name === "skeleton" ||
                     entity.name === "box" ||
                     entity.name === "skeletonArcher") {
 
@@ -786,6 +793,7 @@ function Mage(gameEngine, gameState, progressBar) {
 
     var jumpRightAnimationSpriteSheet = AM.getAsset("./img/mageJumpRight.png");
     var jumpLeftAnimationSpriteSheet = AM.getAsset("./img/magejumpleft.png");
+    var boxImpactImg = AM.getAsset("./img/mageimpact.png");
 
 
     this.gameEngine = gameEngine;
@@ -793,7 +801,7 @@ function Mage(gameEngine, gameState, progressBar) {
     this.gameState = gameState;
     this.name = "mage";
     this.progressBar = progressBar;
-
+    this.impactAnimation = new Animation(this, boxImpactImg, 192, 192, 4, 0.02, 11, false, 0.6);
     this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 4, 0.05, 10, true, 0.5);
     this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 3, 0.035, 8, true, 0.5);
     this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 3, 0.015, 17, false, 0.5);
@@ -807,6 +815,8 @@ function Mage(gameEngine, gameState, progressBar) {
     this.direction = "right";
     this.health = 50;
     this.progressBar.updateHealth(this.health);
+    this.impact = false;
+
 
     //for direction of collision
     this.oldX = 34 * TILE_SIZE;
@@ -1027,24 +1037,31 @@ Mage.prototype.update = function() {
     //check if player collided with any platforms
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.gameEngine.entities[i];
+        if (this.collide(entity) && entity.name === "potion") {
+            // console.log("collided with potion");
+            // this.
+            this.gameState.restoreHealth(this);
+            gameEngine.removeEntity(entity);
 
-        if (entity.name === "platform" || 
-            entity.name === "skeleton" || 
-            entity.name === "box" || 
+        }
+
+        if (entity.name === "platform" ||
+            entity.name === "skeleton" ||
+            entity.name === "box" ||
             entity.name === "skeletonArcher" ||
             entity.name === "spike") {
 
-       
+
 
             if (this != entity && this.collide(entity)) {
                 //console.log('colliding');
 
                 this.collidedWith = entity;
-                
+
                 if (entity.name === "spike") {
                     this.gameState.updateHealth(this);
                 }
-                
+
                 if (this.collideBottom(entity)) {
                     this.collidedBottom = true;
                     this.lastGroundY = this.collidedWith.y;
@@ -1162,6 +1179,11 @@ Mage.prototype.update = function() {
 
     }
 
+    if(this.impactAnimation.isDone()) {
+        this.impact = false;
+        this.impactAnimation.elapsedTime = 0;
+    }
+
     //handle animation changes and summon box if click pressed
     if (this.direction === "right") {
 
@@ -1172,6 +1194,7 @@ Mage.prototype.update = function() {
             this.animationAttackRight.elapsedTime = 0;
 
             var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
+            this.impact = true;
             gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["1"] && !this.attacking && this.jumping) {
@@ -1181,6 +1204,7 @@ Mage.prototype.update = function() {
             this.animationAttackRight.elapsedTime = 0;
 
             var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
+            this.impact = true;
             gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["Space"] && !this.jumping && this.collidedBottom) { //jump only if not already jumping
@@ -1196,6 +1220,7 @@ Mage.prototype.update = function() {
             this.animationAttackRight.elapsedTime = 0;
 
             var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
+            this.impact = true;
             gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["KeyD"] && !this.jumping && !this.attacking) { //only walk if not jumping
@@ -1216,6 +1241,7 @@ Mage.prototype.update = function() {
             this.animationAttackLeft.elapsedTime = 0;
 
             var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
+            this.impact = true;
             gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["1"] && !this.attacking && this.jumping) {
@@ -1225,6 +1251,7 @@ Mage.prototype.update = function() {
             this.animationAttackLeft.elapsedTime = 0;
 
             var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
+            this.impact = true;
             gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["Space"] && !this.jumping && this.collidedBottom) { //jump only if not already jumping
@@ -1240,6 +1267,7 @@ Mage.prototype.update = function() {
             this.animationAttackLeft.elapsedTime = 0;
 
             var box = new Box(gameEngine, gameState, gameEngine.clickX, gameEngine.clickY);
+            this.impact = true;
             gameEngine.addEntity(box);
 
         } else if (gameEngine.keyMap["KeyA"] && !this.jumping && !this.attacking) { //only walk if not jumping
@@ -1286,6 +1314,13 @@ Mage.prototype.draw = function() {
 
         this.animationAttackLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 68, this.canvasY);
     }
+    if (this.impact) {
+        this.impactAnimation.drawFrame(this.gameEngine.clockTick, this.ctx, this.gameEngine.clickX - 20, this.gameEngine.clickY);
+        // this.impact = false;
+
+    }
+
+
 }
 
 function Box(gameEngine, gameState, x, y) {
@@ -1296,6 +1331,9 @@ function Box(gameEngine, gameState, x, y) {
     this.ctx = gameEngine.ctx;
     this.gameState = gameState;
     this.boxImg = AM.getAsset("./img/crate.png");
+    this.boxImpactImg = AM.getAsset("./img/mageimpact.png");
+    this.impactAnimation = new Animation(this, this.boxImpactImg, 192, 192, 4, 0.02, 11, false, 0.6);
+
 
     this.x = (currentCharacter.x - currentCharacter.canvasX) + x;
     this.y = y;
@@ -1303,7 +1341,7 @@ function Box(gameEngine, gameState, x, y) {
     this.oldX = (currentCharacter.x - currentCharacter.canvasX) + x;
 
     this.oldY = y;
-
+    // this.
     this.canvasX = x;
     this.canvasY = y;
 
@@ -1313,7 +1351,7 @@ function Box(gameEngine, gameState, x, y) {
     this.height = 2 * TILE_SIZE;
 
     this.jumping = false;
-
+    this.impact = false;
     this.collidedWith = null; //checks to see which entity the knight collided with
     this.collidedLeft = false; //checks to see if knight collided on its left side
     this.collidedRight = false;
@@ -1389,7 +1427,7 @@ Box.prototype.update = function() {
 
             if (this != entity && this.collide(entity)) {
                 //console.log('colliding');
-
+                this.impact = true;
 
                 this.collidedWith = entity;
 
@@ -1504,6 +1542,10 @@ Box.prototype.update = function() {
 
 Box.prototype.draw = function() {
     this.ctx.drawImage(this.boxImg, this.canvasX, this.canvasY, this.width, this.height);
+    // if (this.impact) {
+    //     this.impactAnimation.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 20, this.canvasY - 20);
+
+    // }
     //this.ctx.fillStyle = "#ff0000";
     //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     //this.ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -1784,11 +1826,19 @@ Gunwoman.prototype.update = function() {
     //check if player collided with any platforms
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.gameEngine.entities[i];
+        if (this.collide(entity) && entity.name === "potion") {
+            // console.log("collided with potion");
+            // this.
+            this.gameState.restoreHealth(this);
+            gameEngine.removeEntity(entity);
+
+        }
 
 
-        if (entity.name === "platform" || 
-            entity.name === "skeleton" || 
-            entity.name === "box" || 
+
+        if (entity.name === "platform" ||
+            entity.name === "skeleton" ||
+            entity.name === "box" ||
             entity.name === "skeletonArcher" ||
             entity.name === "spike") {
 
@@ -1796,7 +1846,7 @@ Gunwoman.prototype.update = function() {
                 //console.log('colliding');
 
                 this.collidedWith = entity;
-                if(entity.name === "spike") {
+                if (entity.name === "spike") {
                     this.gameState.updateHealth(this);
                 }
                 if (this.collideBottom(entity) && !this.collideRight(entity)) {
@@ -2123,13 +2173,17 @@ function Bullet(gameEngine, gameState) {
     this.canvasY = this.currentCharacter.canvasY + 14;
     this.targetX = this.gameEngine.clickX;
     this.targetY = this.gameEngine.clickY;
+    var impactImg = AM.getAsset("./img/gunimpact.png");
+    this.impact = new Animation(this, impactImg, 192, 192, 5, 0.02, 16, false, .7);
+
 
     this.dx = this.targetX - this.canvasX;
     this.dy = this.targetY - this.canvasY;
     this.distance = Math.sqrt(this.dy * this.dy + this.dx * this.dx);
     this.angle = Math.atan2(this.dy, this.dx);
 
-    this.speed = 10;
+    this.speed = 15;
+    this.hitSkeleton = false;
 
     this.b_dy = Math.sin(this.angle) * this.speed;
     this.b_dx = Math.cos(this.angle) * this.speed;
@@ -2139,7 +2193,7 @@ function Bullet(gameEngine, gameState) {
     this.height = 3;
 
     this.collidedWith = null;
-
+    this.skeleton = null;
     this.removeFromWorld = false;
 }
 
@@ -2166,7 +2220,8 @@ Bullet.prototype.update = function() {
         if (this !== entity && this.collide(entity) && !this.collidedWith) {
 
             if (entity.name === "skeleton" || entity.name === "skeletonArcher") {
-
+                this.skeleton = entity;
+                this.hitSkeleton = true;
                 this.collidedWith = entity;
                 gameState.updateHealth(entity);
                 console.log('hit skeleton');
@@ -2188,6 +2243,14 @@ Bullet.prototype.draw = function() {
         //this.ctx.fillStyle = "red";
         //this.ctx.fillRect(this.x, this.y, this.width, this.height);
     }
+
+    if (this.hitSkeleton) {
+        this.impact.drawFrame(this.gameEngine.clockTick, this.ctx, this.skeleton.canvasX - 20, this.skeleton.canvasY - 10);
+
+        // this.ctx.drawFrame(this.impact, this.canvasX, this.canvasY);
+
+    }
+
 };
 
 //Constructor for wolf

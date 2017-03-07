@@ -245,10 +245,12 @@ GameState.prototype.update = function() {
 
                 for (var i = 0; i < gameEngine.entities.length; i++) {
 
-                    if (gameEngine.entities[i].name === "platform" || 
-                        gameEngine.entities[i].name === "box" || 
-                        gameEngine.entities[i].name === "tree"|| 
-                        gameEngine.entities[i].name === "spike") {
+                    if (gameEngine.entities[i].name === "platform" ||
+                        gameEngine.entities[i].name === "box" ||
+                        gameEngine.entities[i].name === "tree" ||
+                        gameEngine.entities[i].name === "spike" ||
+                        gameEngine.entities[i].name === "potion") {
+
 
                         var platform = gameEngine.entities[i];
                         platform.canvasX = platform.initialCanvasX;
@@ -296,8 +298,9 @@ GameState.prototype.update = function() {
 
                     if (gameEngine.entities[i].name === "platform" ||
                         gameEngine.entities[i].name === "box" ||
-                        gameEngine.entities[i].name === "tree" || 
-                        gameEngine.entities[i].name === "spike") {
+                        gameEngine.entities[i].name === "tree" ||
+                        gameEngine.entities[i].name === "spike" ||
+                        gameEngine.entities[i].name === "potion") {
 
                         var platform = gameEngine.entities[i];
                         platform.canvasX = platform.initialCanvasX;
@@ -344,8 +347,9 @@ GameState.prototype.update = function() {
 
                     if (gameEngine.entities[i].name === "platform" ||
                         gameEngine.entities[i].name === "box" ||
-                        gameEngine.entities[i].name === "tree" || 
-                        gameEngine.entities[i].name === "spike") {
+                        gameEngine.entities[i].name === "tree" ||
+                        gameEngine.entities[i].name === "spike" ||
+                        gameEngine.entities[i].name === "potion") {
 
                         var platform = gameEngine.entities[i];
                         platform.canvasX = platform.initialCanvasX;
@@ -450,6 +454,19 @@ GameState.prototype.getCurrentForeground = function() {
     return this.currentForeground;
 }
 
+GameState.prototype.restoreHealth = function(entity) {
+
+    this.playableCharacters[0].health = 50;
+    this.playableCharacters[0].progressBar.updateHealth(this.playableCharacters[0].health);
+    this.playableCharacters[1].health = 50;
+    this.playableCharacters[1].progressBar.updateHealth(this.playableCharacters[1].health);
+    this.playableCharacters[2].health = 50;
+    this.playableCharacters[2].progressBar.updateHealth(this.playableCharacters[2].health);
+    this.mageIsAlive = true;
+    this.gunwomanIsAlive = true;
+    this.knightIsAlive = true;
+};
+
 //resets the game state
 GameState.prototype.reset = function() {
     var gameEngine = this.gameEngine;
@@ -500,7 +517,9 @@ GameState.prototype.reset = function() {
     for (var i = 0; i < gameEngine.entities.length; i++) {
 
         if (gameEngine.entities[i].name === "platform" ||
-            gameEngine.entities[i].name === "tree" || gameEngine.entities[i].name === "spike") {
+            gameEngine.entities[i].name === "tree" ||
+            gameEngine.entities[i].name === "spike" ||
+            gameEngine.entities[i].name === "potion") {
 
             var platform = gameEngine.entities[i];
             platform.canvasX = platform.initialCanvasX;
@@ -520,6 +539,6 @@ GameState.prototype.reset = function() {
 
             gameEngine.removeEntity(gameEngine.entities[i]);
             i--;
-        } 
+        }
     }
 }

@@ -305,7 +305,9 @@ Skeleton.prototype.update = function() {
                                 if (gameEngine.entities[j].name === "platform" ||
                                     gameEngine.entities[j].name === "tree" ||
                                     gameEngine.entities[j].name === "skeleton" ||
-                                    gameEngine.entities[j].name === "box") {
+                                    gameEngine.entities[j].name === "box" || 
+                                    gameEngine.entities[j].name === "spike" ||
+                                    gameEngine.entities[j].name === "potion"  ) {
 
                                     var other = gameEngine.entities[j];
 
@@ -407,7 +409,9 @@ Skeleton.prototype.update = function() {
                                 if (gameEngine.entities[j].name === "platform" ||
                                     gameEngine.entities[j].name === "tree" ||
                                     gameEngine.entities[j].name === "skeleton" ||
-                                    gameEngine.entities[j].name === "box") {
+                                    gameEngine.entities[j].name === "box" || 
+                                    gameEngine.entities[j].name === "spike" ||
+                                    gameEngine.entities[j].name === "potion"  ) {
 
                                     //other entities in the game
                                     var other = gameEngine.entities[j];
@@ -433,6 +437,7 @@ Skeleton.prototype.update = function() {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.gameEngine.entities[i];
 
+
         if (this !== entity && 
             (entity.name === "platform" || 
             entity.name === "knight" ||
@@ -440,7 +445,8 @@ Skeleton.prototype.update = function() {
             entity.name === "mage" || 
             entity.name === "skeleton" ||
             entity.name === "box" ||
-            entity.name === "skeletonArcher")) {
+            entity.name === "skeletonArcher" ||
+                entity.name === "spike")) {
 
             if (this != entity && this.collide(entity)) {
 
@@ -498,6 +504,7 @@ Skeleton.prototype.update = function() {
                 entity.name === "mage" ||
                 entity.name === "skeleton" ||
                 entity.name === "box" ||
+                entity.name === "spike" ||
                 entity.name === "skeletonArcher") {
                 
                 if (this != entity && this.collide(entity)) {
@@ -518,6 +525,7 @@ Skeleton.prototype.update = function() {
 
             for (var i = 0; i < gameEngine.entities.length; i++) {
                 var entity = this.gameEngine.entities[i];
+
 
                 if (this !== entity && 
                     (entity.name === "platform" || 
