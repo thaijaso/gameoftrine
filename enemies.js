@@ -298,7 +298,9 @@ Skeleton.prototype.update = function() {
                                 if (gameEngine.entities[j].name === "platform" ||
                                     gameEngine.entities[j].name === "tree" ||
                                     gameEngine.entities[j].name === "skeleton" ||
-                                    gameEngine.entities[j].name === "box") {
+                                    gameEngine.entities[j].name === "box" || 
+                                    gameEngine.entities[j].name === "spike" ||
+                                    gameEngine.entities[j].name === "potion"  ) {
 
                                     var other = gameEngine.entities[j];
 
@@ -398,7 +400,9 @@ Skeleton.prototype.update = function() {
                                 if (gameEngine.entities[j].name === "platform" ||
                                     gameEngine.entities[j].name === "tree" ||
                                     gameEngine.entities[j].name === "skeleton" ||
-                                    gameEngine.entities[j].name === "box") {
+                                    gameEngine.entities[j].name === "box" || 
+                                    gameEngine.entities[j].name === "spike" ||
+                                    gameEngine.entities[j].name === "potion"  ) {
 
                                     //other entities in the game
                                     var other = gameEngine.entities[j];
@@ -430,7 +434,8 @@ Skeleton.prototype.update = function() {
                 entity.name === "gunwoman" ||
                 entity.name === "mage" ||
                 entity.name === "skeleton" ||
-                entity.name === "box")) {
+                entity.name === "box" ||
+                entity.name === "spike")) {
 
             if (this != entity && this.collide(entity)) {
 
@@ -487,7 +492,8 @@ Skeleton.prototype.update = function() {
                 entity.name === "gunwoman" ||
                 entity.name === "mage" ||
                 entity.name === "skeleton" ||
-                entity.name === "box") {
+                entity.name === "box" ||
+                entity.name === "spike") {
 
                 if (this != entity && this.collide(entity)) {
                     stillColliding = true;
@@ -514,7 +520,8 @@ Skeleton.prototype.update = function() {
                         entity.name === "gunwoman" ||
                         entity.name === "mage" ||
                         entity.name === "skeleton" ||
-                        entity.name === "box")) {
+                        entity.name === "box" || 
+                        entity.name === "spike")) {
 
                     //check if still colliding right with a platform we collided right with
                     if (this.collidedRightEntity === entity &&

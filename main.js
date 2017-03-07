@@ -247,6 +247,7 @@ AM.queueDownload("./img/gunwomanjumpright.png");
 AM.queueDownload("./img/gunwomanjumpleft.png");
 AM.queueDownload("./img/gunwomanattackrightup.png");
 AM.queueDownload("./img/gunwomanPORTRAITright.png");
+AM.queueDownload("./img/gunimpact.png");
 
 
 
@@ -271,6 +272,7 @@ AM.queueDownload("./img/mageAttackLeft.png");
 AM.queueDownload("./img/mageJumpRight.png");
 AM.queueDownload("./img/magejumpleft.png");
 AM.queueDownload("./img/magePORTRAITright.png");
+AM.queueDownload("./img/mageimpact.png");
 
 
 
@@ -309,6 +311,9 @@ AM.queueDownload("./img/crate.png");
 
 //poof
 AM.queueDownload("./img/poofspritesheet.png");
+
+//health potion
+AM.queueDownload("./img/healthpotion.png");
 
 AM.downloadAll(function() {
     var canvas = document.getElementById("gameWorld");
@@ -516,6 +521,8 @@ function createGame(gameEngine, gameMenu, gameState) {
     var spike13 = new Spike(gameEngine, gameState, 890, 14, 6, 2);
     var spike14 = new Spike(gameEngine, gameState, 903, 16, 2, 29);
     var spike15 = new Spike(gameEngine, gameState, 909, 43, 35, 2);
+    // var potion = new Potion(gameEngine, gameState, 95.5, 16.5);
+    // var potion1 = new Potion(gameEngine)
 
 
 
@@ -630,6 +637,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(spike13); // top spikes
     gameEngine.addEntity(spike14); // side spikes
     gameEngine.addEntity(spike15); // bottom spikes 
+    // gameEngine.addEntity(potion);
 
 
     // var robot = new Robot(gameEngine, 20, 38);
