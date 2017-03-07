@@ -220,9 +220,9 @@ AM.queueDownload("./img/skeletonforstart.png");
 AM.queueDownload("./img/controlsmenu.png");
 
 
-AM.queueDownload("./img/background1.png");
+AM.queueDownload("./img/background.png");
 AM.queueDownload("./img/midground.png");
-AM.queueDownload("./img/foreground2.png");
+AM.queueDownload("./img/foreground.png");
 
 //knight
 AM.queueDownload("./img/knightidleright.png");
@@ -339,8 +339,8 @@ function createGame(gameEngine, gameMenu, gameState) {
 
     this.audio = new Sound();
 
-    var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground2.png"));
-    var background = new Background(gameEngine, gameState, AM.getAsset("./img/background1.png"));
+    var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground.png"));
+    var background = new Background(gameEngine, gameState, AM.getAsset("./img/background.png"));
     var midground = new Midground(gameEngine, gameState, AM.getAsset("./img/midground.png"));
 
     var progressKnight = new ProgressBar(ctx, 74, 72);
@@ -401,42 +401,42 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(knight);
 
 
-    gameEngine.addEntity(archer1);
-    gameEngine.addEntity(archer2);
-    gameEngine.addEntity(archer3);
-    gameEngine.addEntity(archer4);
-    gameEngine.addEntity(archer5);
-    gameEngine.addEntity(archer6);
-    gameEngine.addEntity(archer7);
-    gameEngine.addEntity(archer8);
-    gameEngine.addEntity(archer9);
+    // gameEngine.addEntity(archer1);
+    // gameEngine.addEntity(archer2);
+    // gameEngine.addEntity(archer3);
+    // gameEngine.addEntity(archer4);
+    // gameEngine.addEntity(archer5);
+    // gameEngine.addEntity(archer6);
+    // gameEngine.addEntity(archer7);
+    // gameEngine.addEntity(archer8);
+    // gameEngine.addEntity(archer9);
 
     //gameEngine.addEntity(skeleton0);
     //gameEngine.addEntity(skeleton1);
-    gameEngine.addEntity(skeleton2);
-    gameEngine.addEntity(skeleton3);
-    gameEngine.addEntity(skeleton4);
-    gameEngine.addEntity(skeleton5);
-    gameEngine.addEntity(skeleton6);
-    gameEngine.addEntity(skeleton7);
-    gameEngine.addEntity(skeleton8);
-    gameEngine.addEntity(skeleton9);
-    gameEngine.addEntity(skeleton10);
-    gameEngine.addEntity(skeleton11);
-    gameEngine.addEntity(skeleton12);
-    gameEngine.addEntity(skeleton13);
-    gameEngine.addEntity(skeleton14);
-    gameEngine.addEntity(skeleton15);
-    gameEngine.addEntity(skeleton16);
-    gameEngine.addEntity(skeleton17);
-    gameEngine.addEntity(skeleton18);
-    gameEngine.addEntity(skeleton19);
-    gameEngine.addEntity(skeleton20);
-    gameEngine.addEntity(skeleton21);
-    gameEngine.addEntity(skeleton22);
+    // gameEngine.addEntity(skeleton2);
+    // gameEngine.addEntity(skeleton3);
+    // gameEngine.addEntity(skeleton4);
+    // gameEngine.addEntity(skeleton5);
+    // gameEngine.addEntity(skeleton6);
+    // gameEngine.addEntity(skeleton7);
+    // gameEngine.addEntity(skeleton8);
+    // gameEngine.addEntity(skeleton9);
+    // gameEngine.addEntity(skeleton10);
+    // gameEngine.addEntity(skeleton11);
+    // gameEngine.addEntity(skeleton12);
+    // gameEngine.addEntity(skeleton13);
+    // gameEngine.addEntity(skeleton14);
+    // gameEngine.addEntity(skeleton15);
+    // gameEngine.addEntity(skeleton16);
+    // gameEngine.addEntity(skeleton17);
+    // gameEngine.addEntity(skeleton18);
+    // gameEngine.addEntity(skeleton19);
+    // gameEngine.addEntity(skeleton20);
+    // gameEngine.addEntity(skeleton21);
+    // gameEngine.addEntity(skeleton22);
 
     //x,  y, width, height
-    var tutorialPlatform0 = new Platform(gameEngine, gameState, 0, 39, 42, 1)
+    var tutorialPlatform0 = new Platform(gameEngine, gameState, -50, 39, 92, 1)
     var tutorialPlatform1 = new Platform(gameEngine, gameState, 41, 28, 1, 11);
 
     var platform1 = new Platform(gameEngine, gameState, 42, 28, 68.5, 1);
@@ -647,8 +647,8 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(spike15); // bottom spikes 
 
 
-    // var robot = new Robot(gameEngine, 20, 38);
-    // gameEngine.addEntity(robot);
+    var robot = new Robot(gameEngine, gameState, 5, 20);
+    gameEngine.addEntity(robot);
 
     gameEngine.addEntity(tooltip);
     gameEngine.addEntity(foreground);

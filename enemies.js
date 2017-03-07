@@ -822,6 +822,9 @@ function SkeletonArcher(gameEngine, gameState, x, y) {
     this.initialX = x * TILE_SIZE;
     this.initialY = y * TILE_SIZE;
 
+    this.oldX = x * TILE_SIZE;
+    this.oldY = y * TILE_SIZE;
+
     this.width = 2 * TILE_SIZE;
     this.height = 4 * TILE_SIZE;
 
@@ -836,8 +839,15 @@ function SkeletonArcher(gameEngine, gameState, x, y) {
 
     this.collidedWith = null;
 
-    this.oldX = x * TILE_SIZE;
-    this.oldY = y * TILE_SIZE;
+    this.collidedLeft = false; //checks to see if knight collided on its left side
+    this.collidedRight = false;
+    this.collidedBottom = false;
+    this.collidedTop = false;
+
+    this.collidedLeftEntity = null;
+    this.collidedRightEntity = null;
+    this.collidedTopEntity = null;
+    this.collidedBottomEntity = null;
 }
 
 SkeletonArcher.prototype.collide = function(other) {
@@ -1314,7 +1324,7 @@ Arrow.prototype.draw = function() {
 // BIG BOSS
 
 
-function Robot(game, x, y) {
+function Robot(gameEngine, gameState, x, y) {
     var idleRightAnimationSpriteSheet =  AM.getAsset("./img/robotidleright.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/robotwalkright.png");
     var attackRightAnimationSpriteSheet = AM.getAsset("./img/robotattackright.png");
@@ -1323,19 +1333,19 @@ function Robot(game, x, y) {
     var walkLeftAnimationSpriteSheet = AM.getAsset("./img/robotwalkleft.png");
     var attackLeftAnimationSpriteSheet = AM.getAsset("./img/robotattackleft.png");
 
-    this.gameEngine = game;
-    this.ctx = game.ctx;
+    this.gameEngine = gameEngine;
+    this.ctx = gameEngine.ctx;
+    this.gameState = gameState;
+    
     this.name = "robot";
-    this.gameState = game.gameState;
+   
+    this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 3, 0.05, 8, true, 1);
+    this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.035, 12, true, 1);
+    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 288, 192, 4, 0.015, 16, true, 1);
+    this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 3, 0.1, 8, true, 1);
+    this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 2, 0.07, 12, true, 1);
+    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 288, 192, 4, 0.05, 16, true, 1);
 
-    this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 3, 0.05, 8, true, 0.5);
-    this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.035, 12, true, 0.5);
-    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 288, 192, 4, 0.015, 16, true, 0.5);
-    this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 3, 0.1, 8, true, 0.5);
-    this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 2, 0.07, 12, true, 0.5);
-    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 288, 192, 4, 0.05, 16, true, 0.5);
-    // this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
-    // this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 11, false, 0.5);
     this.animationState = "idleLeft";
 
     this.direction = "left";
@@ -1344,31 +1354,368 @@ function Robot(game, x, y) {
     this.x = x * TILE_SIZE;
     this.y = y * TILE_SIZE;
 
-    this.width = 2 * TILE_SIZE;
-    this.height = 4 * TILE_SIZE;
+    this.initialX = x * TILE_SIZE;
+    this.initialY = y * TILE_SIZE;
+
+    this.oldX = x * TILE_SIZE;
+    this.oldY = y * TILE_SIZE;
+
+    this.width = 10 * TILE_SIZE;
+    this.height = 10.5 * TILE_SIZE;
 
     this.canvasX = x * TILE_SIZE;
     this.canvasY = y * TILE_SIZE;
 
+    this.initialCanvasX = x * TILE_SIZE;
+    this.initialCanvasY = y * TILE_SIZE;
 
     this.attacking = false;
 
     this.collidedWith = null;
 
-    this.oldX = x * TILE_SIZE;
-    this.oldY = y * TILE_SIZE;
+    this.collidedLeft = false; //checks to see if knight collided on its left side
+    this.collidedRight = false;
+    this.collidedBottom = false;
+    this.collidedTop = false;
 
+    this.collidedLeftEntity = null;
+    this.collidedRightEntity = null;
+    this.collidedTopEntity = null;
+    this.collidedBottomEntity = null;
+}
 
+Robot.prototype.collide = function(other) {
+    return this.x <= other.x + other.width &&
+        this.x + this.width >= other.x &&
+        this.y <= other.y + other.height &&
+        this.height + this.y >= other.y;
+}
+
+Robot.prototype.collideLeft = function(other) {
+    var oldSkeletonBoxLeft = this.oldX;
+    var skeletonBoxLeft = this.x;
+
+    var oldOtherBoxRight = other.oldX + other.width;
+    var otherBoxRight = other.x + other.width;
+
+    if (oldSkeletonBoxLeft + 3 > oldOtherBoxRight && //was not colliding
+        skeletonBoxLeft <= otherBoxRight) {
+
+        //console.log('skeleton collide left');
+    }
+
+    return oldSkeletonBoxLeft + 3 > oldOtherBoxRight && //was not colliding
+        skeletonBoxLeft <= otherBoxRight;    
+}
+
+Robot.prototype.collideRight = function(other) {
+    var skeletonOldBoxRight = this.oldX + this.width;
+    var skeletonBoxRight = this.x + this.width;
+
+    var otherOldBoxLeft = other.oldX;
+    var otherBoxLeft = other.x;
+
+    if (skeletonOldBoxRight - 3 < otherOldBoxLeft &&
+        skeletonBoxRight >= otherBoxLeft) {
+
+        //console.log('skeleton colided right');
+    }
+
+    return skeletonOldBoxRight - 3 < otherOldBoxLeft &&
+        skeletonBoxRight >= otherBoxLeft;
+}
+
+Robot.prototype.collideTop = function(other) {
+    if (this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height) {
+
+        //console.log('skeleton colided top');
+    }
+
+    return this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height;
+}
+
+Robot.prototype.collideBottom = function(other) {
+    if (this.oldY + this.height < other.y && 
+        this.y + this.height >= other.y) {
+        
+        //console.log('skeleton collided bottom');
+    }
+
+    return this.oldY + this.height < other.y && 
+        this.y + this.height >= other.y;
+}
+
+Robot.prototype.knockBackLeftCollide = function(other) {
+    var attackBoxLeft = this.x - 30;
+    var attackBoxRight = this.x;
+    var attackBoxTop = this.y;
+    var attackBoxBottom = this.y + this.height;
+
+    return attackBoxRight >= other.x &&
+        attackBoxLeft <= other.x + other.width &&
+        attackBoxTop <= other.y + other.height &&
+        attackBoxBottom >= other.y;
+}
+
+Robot.prototype.knockBackRightCollide = function(other) {
+    var attackBoxLeft = this.x + this.width;
+    var attackBoxRight = attackBoxLeft + 30;
+    var attackBoxTop = this.y;
+    var attackBoxBottom = this.y + this.height;
+
+    return attackBoxLeft <= other.x + other.width &&
+        attackBoxRight >= other.x &&
+        attackBoxTop <= other.y + other.height &&
+        attackBoxBottom >= other.y;    
 }
 
 Robot.prototype.update = function() {
     var gameEngine = this.gameEngine;
-    // var currentCharacter = gameEngine.getCurrentCharacter();
+    var currentCharacter = this.gameState.getCurrentCharacter();
+
+     //check if enemy collided with any platforms
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        var entity = this.gameEngine.entities[i];
+
+        if (this !== entity && 
+            (entity.name === "platform" || 
+            entity.name === "knight" ||
+            entity.name === "gunwoman" ||
+            entity.name === "mage" || 
+            entity.name === "skeleton" ||
+            entity.name === "box" ||
+            entity.name === "skeletonArcher")) {
+
+            if (this != entity && this.collide(entity)) {
+
+                this.collidedWith = entity;
+
+                if (this.collideLeft(entity)) {
+                    
+                    this.collidedLeft = true;
+                    this.collidedLeftEntity = entity;
+                    
+                    //fall after colliding left
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.canvasY += 3;
+                        this.y += 3;
+                    } 
+
+                } else if (this.collideRight(entity)) {
+
+                    this.collidedRight = true;
+                    this.collidedRightEntity = entity;
+
+                    if (!this.collidedBottom && !this.jumping) {
+                        this.oldY = this.y;
+                        this.y += 3;
+                        this.canvasY += 3;
+                    } 
+
+                } else if (this.collideBottom(entity)) {
+                    this.collidedBottom = true;
+                    this.lastGroundY = this.collidedWith.y;
+                    this.collidedBottomEntity = entity;
+
+                } else if (this.collideTop(entity)) {
+
+                    this.collidedTop = true;
+                    this.collidedTopEntity = entity;
+                    this.canvasY += 3;
+                    this.y += 3;
+                } 
+            }
+        }
+    }
+
+    //check if skeleton is no longer colliding with any platforms
+    if (this.collidedWith) {
+        var stillColliding = false;
+
+        for (var i = 0; i < gameEngine.entities.length; i++) {
+            var entity = this.gameEngine.entities[i];
+
+            if (entity.name === "platform" || 
+                entity.name === "knight" || 
+                entity.name === "gunwoman" ||
+                entity.name === "mage" ||
+                entity.name === "skeleton" ||
+                entity.name === "box" ||
+                entity.name === "skeletonArcher") {
+                
+                if (this != entity && this.collide(entity)) {
+                    stillColliding = true;
+
+                }
+            }
+        }
+
+        if (!stillColliding) {
+            this.collidedWith = null;
+            this.collidedLeft = false;
+            this.collidedRight = false;
+            this.collidedBottom = false;
+            this.collidedTop = false;
+
+        } else { //still colliding
+
+            for (var i = 0; i < gameEngine.entities.length; i++) {
+                var entity = this.gameEngine.entities[i];
+
+                if (this !== entity && 
+                    (entity.name === "platform" || 
+                    entity.name === "knight" ||
+                    entity.name === "gunwoman" ||
+                    entity.name === "mage" ||
+                    entity.name === "skeleton" ||
+                    entity.name === "box" ||
+                    entity.name === "skeletonArcher")) {
+
+                    //check if still colliding right with a platform we collided right with
+                    if (this.collidedRightEntity === entity &&  
+                        !this.collide(entity)) {
+                        
+                        this.collidedRight = false;
+                        this.collidedRightEntity = null;
+
+                    } else if (this.collidedLeftEntity === entity &&
+                        !this.collide(entity)) {
+
+                        //console.log('here');
+
+                        this.collidedLeft = false;
+                        this.collidedLeftEntity = null;
+
+                    } else if (this.collidedTopEntity === entity && 
+                        !this.collideTop(entity)) {
+
+                        //this.collidedTop = false;
+
+                    }
+                }
+            }
+
+        }
+
+    } else if (!this.jumping) { //player has not collided therefore fall
+
+        this.oldY = this.y;
+        this.canvasY += 5;
+        this.y += 5;
+    }
+
+    if (currentCharacter) {
+        
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+
+            this.canvasX -= 3;
+
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+            this.canvasX += 3;
+        }    
+    }
+
+    var distanceFromHero = Math.min();
+
+    if (currentCharacter) {
+
+        distanceFromHero = Math.abs(currentCharacter.x - this.x);
+    }
+
+    if (distanceFromHero <= 600) {
+
+
+        if (distanceFromHero <= 80) {
+
+
+
+            if (!this.attacking) {
+
+                if (this.direction === "right") {
+
+                    this.animationState = "attackRight";
+
+                } else {
+
+                    this.animationState = "attackLeft";
+
+                }
+
+                this.attacking = true;
+
+            }
+
+        } else if (currentCharacter.x < this.x && !this.collidedLeft && !this.attacking) {
+
+            var colidEntity = this.collidedBottomEntity;
+
+
+            this.direction = "left";
+            this.animationState = "walkLeft";
+            if (colidEntity !== null && this.x / 16 > colidEntity.x / 16) {
+                //console.log("come here");
+                this.oldX = this.x;
+                this.x -= 2;
+                this.canvasX -= 2;
+            }
+
+
+        } else if (currentCharacter.x > this.x && !this.collidedRight && !this.attacking) {
+
+
+            var colidEntity = this.collidedBottomEntity;
+
+            if (colidEntity !== null) {
+                var colidX = colidEntity.x / 16 + colidEntity.width / 16;
+            }
+
+
+            this.direction = "right";
+            this.animationState = "walkRight";
+
+            if (this.x / 16 + 2 < colidX) {
+
+                this.oldX = this.x;
+                this.x += 2;
+                this.canvasX += 2;
+            }
+
+        }
+
+    }
 
 };
 
 Robot.prototype.draw = function() {
-    this.animationIdleLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 20, this.canvasY);
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
+    if (this.animationState === "idleLeft") {
+
+        this.animationIdleLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY + 15);
+
+    } else if (this.animationState === "idleRight") {
+
+        this.animationIdleRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
+
+    } else if (this.animationState === "walkLeft") {
+
+        this.animationWalkLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
+
+    } else if (this.animationState === "walkRight") {
+
+        this.animationWalkRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
+
+    } else if (this.animationState === "attackLeft") {
+
+        this.animationAttackLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
+
+    } else if (this.animationState === "attackRight") {
+
+        this.animationAttackRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
+    }
 
 };
