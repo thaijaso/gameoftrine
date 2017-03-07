@@ -386,7 +386,7 @@ Skeleton.prototype.update = function() {
 
                             entity.x -= distanceFromCollision;
                             entity.oldX = entity.x;
-                            foreground.x += distanceFromCollision;
+                            foreground.canvasX += distanceFromCollision;
                             this.canvasX += distanceFromCollision;
 
                         } else { //nothing to knock back collide with so knock back full distance

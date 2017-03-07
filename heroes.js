@@ -1001,6 +1001,8 @@ Mage.prototype.update = function() {
     var gameEngine = this.gameEngine;
     var gameState = this.gameState;
 
+    console.log(this.impact);
+
     //handle jumping
     if (this.jumping) {
 

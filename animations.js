@@ -30,8 +30,9 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
                 this.entity.name === "gunwoman" ||
                 this.entity.name === "mage")) {
 
-
-            currentCharacter.jumpElapsedTime += tick;
+            if (!this.impact) {
+                currentCharacter.jumpElapsedTime += tick;
+            }
         }
     }
 
@@ -126,7 +127,7 @@ function Background(gameEngine, gameState, spritesheet) {
 
 Background.prototype.draw = function() {
     this.ctx.drawImage(this.spritesheet,
-        this.x, this.y, window.innerWidth, window.innerHeight, 0, 0, window.innerWidth, window.innerHeight);
+        this.x, this.y);
 };
 
 
@@ -138,12 +139,12 @@ Background.prototype.update = function() {
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
            
-            this.x = this.x + 1;
+            this.x--;
         
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
             if (this.x !== 0) {
-                this.x = this.x - 1;
+                this.x++;
             }
 
         }
@@ -161,7 +162,7 @@ function Foreground(gameEngine, gameState, spritesheet) {
 }
 
 Foreground.prototype.draw = function() {
-    this.ctx.drawImage(this.spritesheet, this.canvasX, this.canvasY, window.innerWidth, window.innerHeight, 0, 0, window.innerWidth, window.innerHeight);
+    this.ctx.drawImage(this.spritesheet, this.canvasX, this.canvasY);
 };
 
 Foreground.prototype.update = function() {
@@ -171,11 +172,11 @@ Foreground.prototype.update = function() {
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-            this.canvasX += 3;
+            this.canvasX -= 3;
 
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
-            this.canvasX -= 3;
+            this.canvasX += 3;
         }
     }
 }
@@ -237,7 +238,7 @@ function Platform(gameEngine, gameState, x, y, width, height) {
 
 Platform.prototype.draw = function() {
     this.ctx.fillStyle = "#ff0000";
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     //this.ctx.fillRect(this.x, this.y, this.width, this.height);
 }
 
