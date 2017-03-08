@@ -860,6 +860,7 @@ function Mage(gameEngine, gameState, progressBar) {
     this.collidedRight = false;
     this.collidedBottom = false;
     this.collidedTop = false;
+    this.destroyBox = false;
 
     this.collidedLeftEntity = null;
     this.collidedRightEntity = null;
@@ -1009,7 +1010,7 @@ Mage.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
 Mage.prototype.update = function() {
     var gameEngine = this.gameEngine;
     var gameState = this.gameState;
-
+    var currentCharacter = gameState.getCurrentCharacter();
     //console.log(this.impact);
 
     //handle jumping
@@ -1253,7 +1254,7 @@ Mage.prototype.update = function() {
 
             this.animationState = "idleRight";
 
-        }
+        } 
 
     } else { //direction is left
         if (gameEngine.keyMap["1"] && gameEngine.keyMap["KeyA"] && !this.attacking) {
@@ -1301,6 +1302,35 @@ Mage.prototype.update = function() {
             this.animationState = "idleLeft";
         }
     }
+
+    // if(gameEngine.keyMap["3"] && !this.destroyBox) {
+    //         this.destroyBox = true;
+    //         // if (event.which === 3) {
+    //         console.log('Right Mouse button pressed.');
+    //         var mouseX = gameEngine.clickX;
+    //         var mouseY = gameEngine.clickY;
+
+    //         // var currentCharacter = game.getCurrentCharacter();
+    //         mouseX = (currentCharacter.x - currentCharacter.canvasX) + mouseX;
+
+    //         for (var i = gameEngine.entities.length - 1; i >= 0; i--) {
+    //             var entity = gameEngine.entities[i];
+
+    //             console.log("The name is " + entity.name);   
+    //             // var canX = that.entities[i].canvasX;
+    //             if(entity.name === "box") {
+    //                 var entityX = entity.canvasX;
+    //                 var entityY = entity.canvasY;
+    //                 if(mouseX >= entityX && mouseX <= entityX + 32 
+    //                     && mouseY >= entityY && mouseY <= entityY + 32){
+    //                     gameEngine.entities.splice(i, 1);
+
+    //                     console.log("this is the box");
+    //                 }
+    //             // }
+    //         }
+    //     }
+    // }
 }
 
 Mage.prototype.draw = function() {

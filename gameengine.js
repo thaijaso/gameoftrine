@@ -78,6 +78,33 @@ GameEngine.prototype.startInput = function() {
         that.clickY = e.clientY - rect.top;
         //console.log(that.clickX + " " + that.clickY);
 
+        if (event.which === 3) {
+            console.log('Right Mouse button pressed.');
+            var mouseX = e.clientX;
+            var mouseY = e.clientY;
+
+            // var currentCharacter = game.getCurrentCharacter();
+            mouseX = (currentCharacter.x - currentCharacter.canvasX) + mouseX;
+
+            for (var i = that.entities.length - 1; i >= 0; i--) {
+                var entity = that.entities[i];
+
+                console.log("The name is " + entity.name);   
+                // var canX = that.entities[i].canvasX;
+                if(entity.name === "box") {
+                    var entityX = (currentCharacter.x - currentCharacter.canvasX) + entity.canvasX;
+                    var entityY = entity.canvasY;
+                    if(mouseX >= entityX && mouseX <= entityX + 32 
+                        && mouseY >= entityY && mouseY <= entityY + 32){
+                        that.entities.splice(i, 1);
+                        console.log("this is the box");
+                    }
+                }
+            }
+            // console.log("New X is = " + newX + " The new Y is = " + newY);
+
+        }
+
     }, false);
 
     this.ctx.canvas.addEventListener("mouseup", function(e) {

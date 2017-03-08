@@ -59,6 +59,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
                     gameEngine.keyMap["1"] = false;
                     currentCharacter.jumping = false;
                     currentCharacter.attacking = false;
+                    // currentCharacter.destroyBox = false;
                 }
 
             }
