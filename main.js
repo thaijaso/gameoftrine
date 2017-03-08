@@ -316,6 +316,9 @@ AM.queueDownload("./img/healthpotion.png");
 //coin
 AM.queueDownload("./img/coin.png");
 
+//pot of gold
+AM.queueDownload("./img/potofgold.png");
+
 AM.downloadAll(function() {
     var canvas = document.getElementById("gameWorld");
 
