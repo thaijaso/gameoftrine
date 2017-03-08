@@ -30,9 +30,8 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
                 this.entity.name === "gunwoman" ||
                 this.entity.name === "mage")) {
 
-            if (!this.impact) {
+            
                 currentCharacter.jumpElapsedTime += tick;
-            }
         }
     }
 
@@ -104,6 +103,63 @@ Animation.prototype.currentFrame = function() {
 }
 
 Animation.prototype.isDone = function() {
+    return (this.elapsedTime >= this.totalTime);
+}
+
+function EffectAnimation(entity, spriteSheet, frameWidth, frameHeight, sheetWidth, frameDuration, frames, loop, scale) {
+    this.assetManager = AM;
+    this.entity = entity;
+    this.spriteSheet = spriteSheet;
+    this.frameWidth = frameWidth;
+    this.frameDuration = frameDuration;
+    this.frameHeight = frameHeight;
+    this.sheetWidth = sheetWidth;
+    this.frames = frames;
+    this.totalTime = frameDuration * frames;
+    this.elapsedTime = 0; //used for jumping as well as various other animations
+    this.loop = loop;
+    this.scale = scale;
+}
+
+EffectAnimation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
+    var gameEngine = this.entity.gameEngine.getGameEngine();
+    var gameState = this.entity.gameState;
+    var currentCharacter = gameState.getCurrentCharacter();
+    
+    this.elapsedTime += tick;
+
+    if (this.isDone()) {
+
+        if (this.loop) {
+
+            this.elapsedTime = 0;
+
+        } else {
+
+            this.entity.impact = false;
+        }
+    }
+
+    var frame = this.currentFrame();
+
+    var xindex = 0;
+    var yindex = 0;
+    xindex = frame % this.sheetWidth;
+    yindex = Math.floor(frame / this.sheetWidth);
+
+    ctx.drawImage(this.spriteSheet,
+        xindex * this.frameWidth, yindex * this.frameHeight, // source from sheet
+        this.frameWidth, this.frameHeight,
+        canvasX - 16, canvasY - 25, //-16 and -25 to offset the image and draw in correct place
+        this.frameWidth * this.scale,
+        this.frameHeight * this.scale);
+}
+
+EffectAnimation.prototype.currentFrame = function() {
+    return Math.floor(this.elapsedTime / this.frameDuration);
+}
+
+EffectAnimation.prototype.isDone = function() {
     return (this.elapsedTime >= this.totalTime);
 }
 
@@ -238,7 +294,7 @@ function Platform(gameEngine, gameState, x, y, width, height) {
 
 Platform.prototype.draw = function() {
     this.ctx.fillStyle = "#ff0000";
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    // this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     //this.ctx.fillRect(this.x, this.y, this.width, this.height);
 }
 
