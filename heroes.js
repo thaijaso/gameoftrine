@@ -311,12 +311,15 @@ Knight.prototype.update = function() {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = this.gameEngine.entities[i];
 
-            if ((entity.name === "skeleton" || entity.name === "skeletonArcher") && !entity.attacked) {
+            if (!entity.attacked &&
+                (entity.name === "skeleton" || 
+                entity.name === "skeletonArcher" ||
+                entity.name === "robot")) {
 
                 if (this.direction === "right" && this.collideAttackRight(entity)) {
-                    //console.log('landed attack right');
 
                     if (this.animationAttackRight.currentFrame() === 10) {
+                        
                         entity.attacked = true;
 
                         this.gameState.updateHealth(entity);
@@ -331,10 +334,7 @@ Knight.prototype.update = function() {
                                 potentialCollision !== entity.collidedBottomEntity && //cant knock back onto the ground platform
                                 potentialCollision !== this) { //cant knockback into the attacker (knight)
 
-                                //console.log('here');
-
                                 if (entity.knockBackRightCollide(potentialCollision)) {
-
 
                                     if (!knockBackCollidedWith) {
 
@@ -352,34 +352,38 @@ Knight.prototype.update = function() {
                             }
                         }
 
-                        if (knockBackCollidedWith) {
-                            //console.log(knockBackCollidedWith.x + knockBackCollidedWith.width);
+                        //this is the logic for knocking back enemies
+                        if (entity.name !== "robot") {
 
-                            entity.x = knockBackCollidedWith.x - entity.width;
-                            entity.oldX = entity.x;
-                            entity.canvasX = knockBackCollidedWith.canvasX - entity.width;
-                            entity.attacked = true;
+                            if (knockBackCollidedWith) {
+                                //console.log(knockBackCollidedWith.x + knockBackCollidedWith.width);
 
-                        } else { //nothing to knock back into
+                                entity.x = knockBackCollidedWith.x - entity.width;
+                                entity.oldX = entity.x;
+                                entity.canvasX = knockBackCollidedWith.canvasX - entity.width;
+                                entity.attacked = true;
 
-                            entity.x = entity.x + 30;
-                            entity.oldX = entity.x;
-                            entity.canvasX = entity.canvasX + 30;
-                            entity.attacked = true;
+                            } else { //nothing to knock back into
 
+                                entity.x = entity.x + 30;
+                                entity.oldX = entity.x;
+                                entity.canvasX = entity.canvasX + 30;
+                                entity.attacked = true;
+
+                            }
+
+                            if (entity.direction === "left") {
+
+                                entity.animationState = "idleLeft";
+
+                            } else {
+
+                                entity.animationState = "idleRight";
+                            }
+
+                            entity.animationAttackLeft.elapsedTime = 0;
+                            entity.animationAttackRight.elapsedTime = 0;
                         }
-
-                        if (entity.direction === "left") {
-
-                            entity.animationState = "idleLeft";
-
-                        } else {
-
-                            entity.animationState = "idleRight";
-                        }
-
-                        entity.animationAttackLeft.elapsedTime = 0;
-                        entity.animationAttackRight.elapsedTime = 0;
                     }
 
 
@@ -387,6 +391,9 @@ Knight.prototype.update = function() {
                     //console.log('landed attack left');
 
                     if (this.animationAttackLeft.currentFrame() === 10) {
+                        
+                        entity.attacked = true;
+
                         this.gameState.updateHealth(entity);
 
                         //knock back collision
@@ -419,34 +426,36 @@ Knight.prototype.update = function() {
                             }
                         }
 
-                        if (knockBackCollidedWith) {
+                        if (entity.name !== "robot") {
+                            if (knockBackCollidedWith) {
 
-                            entity.x = knockBackCollidedWith.x + knockBackCollidedWith.width;
-                            entity.oldX = entity.x;
-                            entity.canvasX = knockBackCollidedWith.canvasX + knockBackCollidedWith.width;
-                            entity.attacked = true;
+                                entity.x = knockBackCollidedWith.x + knockBackCollidedWith.width;
+                                entity.oldX = entity.x;
+                                entity.canvasX = knockBackCollidedWith.canvasX + knockBackCollidedWith.width;
+                                entity.attacked = true;
 
-                        } else { //nothing to knock back into
+                            } else { //nothing to knock back into
 
-                            entity.x = entity.x - 30;
-                            entity.oldX = entity.x;
-                            entity.canvasX = entity.canvasX - 30;
-                            entity.attacked = true;
+                                entity.x = entity.x - 30;
+                                entity.oldX = entity.x;
+                                entity.canvasX = entity.canvasX - 30;
+                                entity.attacked = true;
 
+                            }
+
+
+
+                            if (entity.direction === "left") {
+
+                                entity.animationState = "idleLeft";
+                            } else {
+
+                                entity.animationState = "idleRight";
+                            }
+
+                            entity.animationAttackLeft.elapsedTime = 0;
+                            entity.animationAttackRight.elapsedTime = 0;
                         }
-
-
-
-                        if (entity.direction === "left") {
-
-                            entity.animationState = "idleLeft";
-                        } else {
-
-                            entity.animationState = "idleRight";
-                        }
-
-                        entity.animationAttackLeft.elapsedTime = 0;
-                        entity.animationAttackRight.elapsedTime = 0;
                     }
                 }
             }
@@ -458,13 +467,23 @@ Knight.prototype.update = function() {
     //this means that we can safely attack an enemy and decrease their health.
     //the resason we have to do this is because update will get to frame 10 twice
     //but we only want to decrease health once per attack
-    if (this.animationAttackRight.isDone()) {
-        this.animationAttackRight.elapsedTime = 0;
+    if (this.animationAttackRight.isDone() || this.animationAttackLeft.isDone()) {
+
+        if (this.animationAttackRight.isDone()) {
+            this.animationAttackRight.elapsedTime = 0;
+        }
+
+        if (this.animationAttackLeft.isDone()) {
+            this.animationAttackLeft.elapsedTime = 0;
+        }
 
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = gameEngine.entities[i];
 
-            if (entity.name === "skeleton" || entity.name === "skeletonArcher") {
+            if (entity.name === "skeleton" || 
+                entity.name === "skeletonArcher" ||
+                entity.name === "robot") {
+
                 entity.attacked = false;
             }
         }
@@ -486,16 +505,19 @@ Knight.prototype.update = function() {
             entity.name === "skeleton" ||
             entity.name === "box" ||
             entity.name === "skeletonArcher" ||
-            entity.name === "spike") {
+            entity.name === "spike" ||
+            entity.name === "robot") {
 
 
             if (this !== entity && this.collide(entity)) {
 
 
                 this.collidedWith = entity;
+                
                 if (entity.name === "spike") {
                     this.gameState.updateHealth(this);
                 }
+                
                 if (this.collideBottom(entity) && !this.collideRight(entity)) {
 
                     this.collidedBottom = true;
@@ -555,7 +577,8 @@ Knight.prototype.update = function() {
             if (entity.name === "platform" ||
                 entity.name === "skeleton" ||
                 entity.name === "box" ||
-                entity.name === "skeletonArcher") {
+                entity.name === "skeletonArcher" ||
+                entity.name === "robot") {
 
 
                 if (this != entity && this.collide(entity)) {
@@ -581,7 +604,8 @@ Knight.prototype.update = function() {
                 if (entity.name === "platform" ||
                     entity.name === "skeleton" ||
                     entity.name === "box" ||
-                    entity.name === "skeletonArcher") {
+                    entity.name === "skeletonArcher" ||
+                    entity.name === "robot") {
 
                     //check if still colliding right with a platform we collided right with
                     if (this.collidedRightEntity === entity &&
@@ -1049,8 +1073,7 @@ Mage.prototype.update = function() {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.gameEngine.entities[i];
         if (this.collide(entity) && entity.name === "potion") {
-            // console.log("collided with potion");
-            // this.
+
             this.gameState.restoreHealth(this);
             gameEngine.removeEntity(entity);
 
@@ -1060,9 +1083,8 @@ Mage.prototype.update = function() {
             entity.name === "skeleton" ||
             entity.name === "box" ||
             entity.name === "skeletonArcher" ||
-            entity.name === "spike") {
-
-
+            entity.name === "spike" ||
+            entity.name === "robot") {
 
             if (this != entity && this.collide(entity)) {
                 //console.log('colliding');
@@ -1124,7 +1146,12 @@ Mage.prototype.update = function() {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = this.gameEngine.entities[i];
 
-            if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box" || entity.name === "skeletonArcher") {
+            if (entity.name === "platform" || 
+                entity.name === "skeleton" || 
+                entity.name === "box" || 
+                entity.name === "skeletonArcher" ||
+                entity.name === "robot") {
+                
                 if (this != entity && this.collide(entity)) {
                     stillColliding = true;
                 }
@@ -1142,7 +1169,12 @@ Mage.prototype.update = function() {
             for (var i = 0; i < gameEngine.entities.length; i++) {
                 var entity = this.gameEngine.entities[i];
 
-                if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box" || entity.name === "skeletonArcher") {
+                if (entity.name === "platform" || 
+                    entity.name === "skeleton" || 
+                    entity.name === "box" || 
+                    entity.name === "skeletonArcher" ||
+                    entity.name === "robot") {
+                    
                     //check if still colliding right with a platform we collided right with
                     if (this.collidedRightEntity === entity &&
                         !this.collide(entity)) {
@@ -1846,21 +1878,19 @@ Gunwoman.prototype.update = function() {
     //check if player collided with any platforms
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.gameEngine.entities[i];
+        
         if (this.collide(entity) && entity.name === "potion") {
-            // console.log("collided with potion");
-            // this.
+        
             this.gameState.restoreHealth(this);
             gameEngine.removeEntity(entity);
-
         }
-
-
 
         if (entity.name === "platform" ||
             entity.name === "skeleton" ||
             entity.name === "box" ||
             entity.name === "skeletonArcher" ||
-            entity.name === "spike") {
+            entity.name === "spike" ||
+            entity.name === "robot") {
 
             if (this != entity && this.collide(entity)) {
                 //console.log('colliding');
@@ -1920,7 +1950,12 @@ Gunwoman.prototype.update = function() {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = this.gameEngine.entities[i];
 
-            if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box" || entity.name === "skeletonArcher") {
+            if (entity.name === "platform" || 
+                entity.name === "skeleton" || 
+                entity.name === "box" || 
+                entity.name === "skeletonArcher" ||
+                entity.name === "robot") {
+                
                 if (this != entity && this.collide(entity)) {
                     stillColliding = true;
 
@@ -1941,7 +1976,12 @@ Gunwoman.prototype.update = function() {
             for (var i = 0; i < gameEngine.entities.length; i++) {
                 var entity = this.gameEngine.entities[i];
 
-                if (entity.name === "platform" || entity.name === "skeleton" || entity.name === "box" || entity.name === "skeletonArcher") {
+                if (entity.name === "platform" || 
+                    entity.name === "skeleton" || 
+                    entity.name === "box" || 
+                    entity.name === "skeletonArcher" ||
+                    entity.name === "robot") {
+                    
                     //check if still colliding right with a platform we collided right with
                     if (this.collidedRightEntity === entity &&
                         !this.collide(entity)) {
@@ -2254,12 +2294,15 @@ Bullet.prototype.update = function() {
 
         if (this !== entity && this.collide(entity) && !this.collidedWith) {
 
-            if (entity.name === "skeleton" || entity.name === "skeletonArcher") {
+            if (entity.name === "skeleton" || 
+                entity.name === "skeletonArcher" ||
+                entity.name === "robot") {
+                
                 this.skeleton = entity;
                 this.hitSkeleton = true;
                 this.collidedWith = entity;
                 gameState.updateHealth(entity);
-                console.log('hit skeleton');
+                console.log('hit enemy');
 
             } else if (entity.name === "platform") {
 

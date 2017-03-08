@@ -93,6 +93,13 @@ GameEngine.prototype.startInput = function() {
 
 
     this.ctx.canvas.addEventListener("click", function (e) {
+        var charac = that.gameState.getCurrentCharacter();
+       
+        if(charac != null) {
+            var theX = (charac.x - charac.canvasX) + e.clientX;
+            //console.log("the x = " + theX/16);
+            //console.log("the y = " + e.clientY/16);
+        }
 
     }, false);
 

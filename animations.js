@@ -30,7 +30,6 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
                 this.entity.name === "gunwoman" ||
                 this.entity.name === "mage")) {
 
-            
                 currentCharacter.jumpElapsedTime += tick;
         }
     }
@@ -63,13 +62,17 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
 
             }
 
-            if (this.entity.name === "skeleton" 
-                || this.entity.name === "skeletonArcher") {
+            if (this.entity.name === "skeleton" || 
+                this.entity.name === "skeletonArcher" ||
+                this.entity.name === "robot") {
                 
 
                 if (this.entity.direction === "right") {
+
                     this.entity.animationState = "idleRight";
+
                 } else {
+
                     this.entity.animationState = "idleLeft";
                 }
 
@@ -294,7 +297,7 @@ function Platform(gameEngine, gameState, x, y, width, height) {
 
 Platform.prototype.draw = function() {
     this.ctx.fillStyle = "#ff0000";
-    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    // this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     //this.ctx.fillRect(this.x, this.y, this.width, this.height);
 }
 
@@ -497,16 +500,17 @@ function Potion(game, gameState, x, y) {
 
     this.name = "potion";
 
-
 }
 
 Potion.prototype.update = function() {
     var gameEngine = this.gameEngine;
     var currentCharacter = this.gameState.getCurrentCharacter();
+    
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
             this.canvasX -= 3;
+
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
             this.canvasX += 3;

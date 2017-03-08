@@ -1344,14 +1344,18 @@ function Robot(gameEngine, gameState, x, y) {
    
     this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 3, 0.1, 8, true, 1);
     this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 3, 0.1, 8, true, 1);
-    this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 3, 0.035, 8, true, 1);
-    this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 3, 0.035, 9, true, 1);
-    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 288, 192, 4, 0.05, 16, true, 1);
-    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 288, 192, 4, 0.015, 16, true, 1);
+    
+    this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 3, 0.05, 8, true, 1);
+    this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 3, 0.05, 9, true, 1);
+    
+    this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 3, 0.045, 17, false, 1);
+    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 192, 3, 0.045, 17, false, 1);
 
     this.animationState = "idleLeft";
 
     this.direction = "left";
+
+    this.health = 50;
 
     this.x = x * TILE_SIZE;
     this.y = y * TILE_SIZE;
@@ -1705,16 +1709,16 @@ Robot.prototype.update = function() {
         this.direction = "left";
         this.animationState = "walkLeft";
         this.oldX = this.x;
-        this.x -= 2;
-        this.canvasX -= 2;
+        this.x -= 3;
+        this.canvasX -= 3;
 
     } else if (gameEngine.keyMap["KeyC"] && !this.collidedRight && !this.attacking) {
 
         this.direction = "right";
         this.animationState = "walkRight";
         this.oldX = this.x;
-        this.x += 2;
-        this.canvasX += 2;
+        this.x += 3;
+        this.canvasX += 3;
 
     }
 
@@ -1730,23 +1734,23 @@ Robot.prototype.draw = function() {
 
     } else if (this.animationState === "idleRight") {
 
-        this.animationIdleRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationIdleRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY + 15);
 
     } else if (this.animationState === "walkLeft") {
 
-        this.animationWalkLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationWalkLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY + 15);
 
     } else if (this.animationState === "walkRight") {
 
-        this.animationWalkRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationWalkRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY + 15);
 
     } else if (this.animationState === "attackLeft") {
 
-        this.animationAttackLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationAttackLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 100, this.canvasY + 15);
 
     } else if (this.animationState === "attackRight") {
 
-        this.animationAttackRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX, this.canvasY);
+        this.animationAttackRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 100, this.canvasY + 15);
     }
 
 };
