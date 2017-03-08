@@ -17,6 +17,7 @@ function GameState(ctx, gameEngine) {
 
     this.gameIsOver = false;
     this.playAgainClicked = false;
+    this.score = 0;
 
     //for all the dead enemies
     //used to restore dead enemy positions
@@ -24,6 +25,10 @@ function GameState(ctx, gameEngine) {
 }
 
 GameState.prototype.draw = function() {}
+
+GameState.prototype.updateScore = function() {
+    this.score++;
+};
 
 GameState.prototype.update = function() {
     var gameEngine = this.gameEngine;
@@ -249,15 +254,16 @@ GameState.prototype.update = function() {
                         gameEngine.entities[i].name === "box" ||
                         gameEngine.entities[i].name === "tree" ||
                         gameEngine.entities[i].name === "spike" ||
-                        gameEngine.entities[i].name === "potion") {
+                        gameEngine.entities[i].name === "potion" || 
+                        gameEngine.entities[i].name === "coin") {
 
 
                         var platform = gameEngine.entities[i];
                         platform.canvasX = platform.initialCanvasX;
-                    
-                    } else if (gameEngine.entities[i].name === "skeleton" || 
+
+                    } else if (gameEngine.entities[i].name === "skeleton" ||
                         gameEngine.entities[i].name === "skeletonArcher") {
-                        
+
 
                         var skeleton = gameEngine.entities[i];
                         skeleton.x = skeleton.initialX;
@@ -300,14 +306,15 @@ GameState.prototype.update = function() {
                         gameEngine.entities[i].name === "box" ||
                         gameEngine.entities[i].name === "tree" ||
                         gameEngine.entities[i].name === "spike" ||
-                        gameEngine.entities[i].name === "potion") {
+                        gameEngine.entities[i].name === "potion" ||
+                        gameEngine.entities[i].name === "coin") {
 
                         var platform = gameEngine.entities[i];
                         platform.canvasX = platform.initialCanvasX;
-                    
-                    } else if (gameEngine.entities[i].name === "skeleton" || 
+
+                    } else if (gameEngine.entities[i].name === "skeleton" ||
                         gameEngine.entities[i].name === "skeletonArcher") {
-                        
+
                         var skeleton = gameEngine.entities[i];
                         skeleton.x = skeleton.initialX;
                         skeleton.canvasX = skeleton.initialCanvasX;
@@ -349,14 +356,15 @@ GameState.prototype.update = function() {
                         gameEngine.entities[i].name === "box" ||
                         gameEngine.entities[i].name === "tree" ||
                         gameEngine.entities[i].name === "spike" ||
-                        gameEngine.entities[i].name === "potion") {
+                        gameEngine.entities[i].name === "potion" ||
+                        gameEngine.entities[i].name === "coin") {
 
                         var platform = gameEngine.entities[i];
                         platform.canvasX = platform.initialCanvasX;
-                    
-                    } else if (gameEngine.entities[i].name === "skeleton" || 
+
+                    } else if (gameEngine.entities[i].name === "skeleton" ||
                         gameEngine.entities[i].name === "skeletonArcher") {
-                        
+
                         var skeleton = gameEngine.entities[i];
                         skeleton.x = skeleton.initialX;
                         skeleton.canvasX = skeleton.initialCanvasX;
@@ -380,7 +388,7 @@ GameState.prototype.updateHealth = function(entity) {
         entity.name === "gunwoman" ||
         entity.name === "mage" ||
         entity.name === "wolf") {
-        
+
         entity.health = entity.health - 5;
 
         entity.progressBar.updateHealth(entity.health);
@@ -397,6 +405,7 @@ GameState.prototype.updateHealth = function(entity) {
             this.currentCharacter = null;
             this.charactersAlive--;
         }
+
     
     } else if (entity.name === "skeleton" || 
         entity.name === "skeletonArcher" ||
@@ -414,8 +423,11 @@ GameState.prototype.updateHealth = function(entity) {
             }
 
             if (entity.health <= 0 && entity === this.gameEngine.entities[i]) {
+
                 this.graveYard.push(entity);
                 this.gameEngine.entities.splice(i, 1);
+                var coin = new Coin(this.gameEngine, this, entity);
+                this.gameEngine.addEntity(coin);
             }
         }
     }
@@ -521,13 +533,14 @@ GameState.prototype.reset = function() {
         if (gameEngine.entities[i].name === "platform" ||
             gameEngine.entities[i].name === "tree" ||
             gameEngine.entities[i].name === "spike" ||
-            gameEngine.entities[i].name === "potion") {
+            gameEngine.entities[i].name === "potion" ||
+            gameEngine.entities[i].name === "coin") {
 
             var platform = gameEngine.entities[i];
             platform.canvasX = platform.initialCanvasX;
-        
+
         } else if (gameEngine.entities[i].name === "skeleton" || gameEngine.entities[i].name === "skeletonArcher") {
-            
+
             var skeleton = gameEngine.entities[i];
             skeleton.health = 3;
             skeleton.x = skeleton.initialX;
@@ -543,4 +556,30 @@ GameState.prototype.reset = function() {
             i--;
         }
     }
+}
+
+function Score(gameEngine, gameState) {
+    this.gameEngine = gameEngine;
+    this.ctx = gameEngine.ctx;
+    this.width = this.ctx.canvas.width;
+    this.height = this.ctx.canvas.height;
+    this.gameState = gameState;
+    this.x = this.width - 150;
+    this.y = this.height - 75;
+    this.score = gameState.score;
+    this.initialCanvasX = this.x;
+    this.name = "score";
+
+}
+
+Score.prototype.update = function() {
+    this.score = this.gameState.score;
+};
+
+Score.prototype.draw = function() {
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(this.x - 5, this.y - 30, 150, 60);
+    this.ctx.fillStyle = "white";
+    this.ctx.font = "30px Georgia";
+    this.ctx.fillText("Coins:" + this.score, this.x + 10 , this.y + 10);
 }

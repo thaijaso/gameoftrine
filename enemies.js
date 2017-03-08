@@ -12,6 +12,7 @@ function Skeleton(gameEngine, gameState, x, y) {
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/skeleton-walk-right.png");
     var attackLeftAnimationSpriteSheet = AM.getAsset("./img/skeleton-attack-left.png");
     var attackRightAnimationSpriteSheet = AM.getAsset("./img/skeleton-attack-right.png");
+    var skeletonImpact = AM.getAsset("./img/skeletonimpact.png");
 
     var knightImpactRightSpriteSheet = AM.getAsset("./img/knight-impact-right.png");
 
@@ -32,6 +33,7 @@ function Skeleton(gameEngine, gameState, x, y) {
     this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.07, 12, true, 0.5);
     this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 288, 3, 0.03, 14, false, 0.5);
     this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 384, 288, 3, 0.03, 14, false, 0.5);
+    this.animationSkeletonImpact = new Animation(this, skeletonImpact, 192, 192, 3, .06, 6, false, .5);
 
     this.animationKnightImpactRight = new Animation(this, knightImpactRightSpriteSheet, 240, 240, 3, 0.05, 6, false, 0.3);
 
@@ -62,6 +64,8 @@ function Skeleton(gameEngine, gameState, x, y) {
 
     this.attacking = false;
     this.attacked = false;
+    this.skeletonImpacted = false;
+
 
     this.collidedWith = null;
     this.collidedLeft = false; //checks to see if knight collided on its left side
@@ -206,21 +210,19 @@ Skeleton.prototype.update = function() {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = this.gameEngine.entities[i];
 
-            if (entity.name === "knight" || 
-                entity.name === "gunwoman" || 
-                entity.name === "mage" || 
+            if (entity.name === "knight" ||
+                entity.name === "gunwoman" ||
+                entity.name === "mage" ||
                 entity.name === "wolf") {
-                
+
                 if (this.direction === "right" && this.collideAttackRight(entity)) {
 
                     var frame = this.animationAttackRight.currentFrame();
-                    
+
 
                     if (this.animationAttackRight.currentFrame() === 10 && !this.doDamage) {
 
                         this.doDamage = true;
-
-                        console.log('here');
 
                         this.gameState.updateHealth(entity);
 
@@ -305,9 +307,10 @@ Skeleton.prototype.update = function() {
                                 if (gameEngine.entities[j].name === "platform" ||
                                     gameEngine.entities[j].name === "tree" ||
                                     gameEngine.entities[j].name === "skeleton" ||
-                                    gameEngine.entities[j].name === "box" || 
+                                    gameEngine.entities[j].name === "box" ||
                                     gameEngine.entities[j].name === "spike" ||
-                                    gameEngine.entities[j].name === "potion"  ) {
+                                    gameEngine.entities[j].name === "potion" || 
+                                    gameEngine.entities[j].name === "coin") {
 
                                     var other = gameEngine.entities[j];
 
@@ -409,9 +412,10 @@ Skeleton.prototype.update = function() {
                                 if (gameEngine.entities[j].name === "platform" ||
                                     gameEngine.entities[j].name === "tree" ||
                                     gameEngine.entities[j].name === "skeleton" ||
-                                    gameEngine.entities[j].name === "box" || 
+                                    gameEngine.entities[j].name === "box" ||
                                     gameEngine.entities[j].name === "spike" ||
-                                    gameEngine.entities[j].name === "potion"  ) {
+                                    gameEngine.entities[j].name === "potion" || 
+                                    gameEngine.entities[j].name === "coin") {
 
                                     //other entities in the game
                                     var other = gameEngine.entities[j];
@@ -438,14 +442,14 @@ Skeleton.prototype.update = function() {
         var entity = this.gameEngine.entities[i];
 
 
-        if (this !== entity && 
-            (entity.name === "platform" || 
-            entity.name === "knight" ||
-            entity.name === "gunwoman" ||
-            entity.name === "mage" || 
-            entity.name === "skeleton" ||
-            entity.name === "box" ||
-            entity.name === "skeletonArcher" ||
+        if (this !== entity &&
+            (entity.name === "platform" ||
+                entity.name === "knight" ||
+                entity.name === "gunwoman" ||
+                entity.name === "mage" ||
+                entity.name === "skeleton" ||
+                entity.name === "box" ||
+                entity.name === "skeletonArcher" ||
                 entity.name === "spike")) {
 
             if (this != entity && this.collide(entity)) {
@@ -506,7 +510,7 @@ Skeleton.prototype.update = function() {
                 entity.name === "box" ||
                 entity.name === "spike" ||
                 entity.name === "skeletonArcher") {
-                
+
                 if (this != entity && this.collide(entity)) {
                     stillColliding = true;
 
@@ -527,14 +531,14 @@ Skeleton.prototype.update = function() {
                 var entity = this.gameEngine.entities[i];
 
 
-                if (this !== entity && 
-                    (entity.name === "platform" || 
-                    entity.name === "knight" ||
-                    entity.name === "gunwoman" ||
-                    entity.name === "mage" ||
-                    entity.name === "skeleton" ||
-                    entity.name === "box" ||
-                    entity.name === "skeletonArcher")) {
+                if (this !== entity &&
+                    (entity.name === "platform" ||
+                        entity.name === "knight" ||
+                        entity.name === "gunwoman" ||
+                        entity.name === "mage" ||
+                        entity.name === "skeleton" ||
+                        entity.name === "box" ||
+                        entity.name === "skeletonArcher")) {
 
                     //check if still colliding right with a platform we collided right with
                     if (this.collidedRightEntity === entity &&
@@ -752,7 +756,7 @@ Skeleton.prototype.update = function() {
             this.oldX = this.x;
             this.x += 2;
             this.canvasX += 2;
-        }   
+        }
 
     }
 };
@@ -792,16 +796,17 @@ Skeleton.prototype.draw = function() {
 
         this.animationKnightImpactRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 10, this.canvasY + 15);
     }
+
 };
 
 var ARCHER_ID = 0;
 
-function SkeletonArcher(gameEngine, gameState, x, y) { 
+function SkeletonArcher(gameEngine, gameState, x, y) {
     var currentCharacter = gameState.getCurrentCharacter();
 
     var idleLeftAnimationSpriteSheet = AM.getAsset("./img/skeletonarcheridleleft.png");
-    var idleRightAnimationSpriteSheet = AM.getAsset("./img/skeleton-archer-idle-right.png"); 
-    var attackRightAnimationSpriteSheet = AM.getAsset("./img/skeletonarcherattackright.png"); 
+    var idleRightAnimationSpriteSheet = AM.getAsset("./img/skeleton-archer-idle-right.png");
+    var attackRightAnimationSpriteSheet = AM.getAsset("./img/skeletonarcherattackright.png");
     var attackLeftAnimationSpriteSheet = AM.getAsset("./img/skeletonarcherattackleft.png");
 
     this.id = ARCHER_ID;
@@ -810,7 +815,7 @@ function SkeletonArcher(gameEngine, gameState, x, y) {
     this.gameEngine = gameEngine;
     this.ctx = gameEngine.ctx;
     this.gameState = gameState;
-    
+
     this.name = "skeletonArcher";
 
     this.health = HEALTH;
@@ -823,7 +828,7 @@ function SkeletonArcher(gameEngine, gameState, x, y) {
     this.animationState = "idleLeft";
 
     this.direction = "left";
-    
+
     this.x = x * TILE_SIZE;
     this.y = y * TILE_SIZE;
 
@@ -862,7 +867,7 @@ SkeletonArcher.prototype.collide = function(other) {
     return this.x <= other.x + other.width &&
         this.x + this.width >= other.x &&
         this.y <= other.y + other.height &&
-        this.height + this.y >= other.y;    
+        this.height + this.y >= other.y;
 }
 
 SkeletonArcher.prototype.collideLeft = function(other) {
@@ -879,7 +884,7 @@ SkeletonArcher.prototype.collideLeft = function(other) {
     }
 
     return oldSkeletonBoxLeft + 3 > oldOtherBoxRight && //was not colliding
-        skeletonBoxLeft <= otherBoxRight;    
+        skeletonBoxLeft <= otherBoxRight;
 }
 
 SkeletonArcher.prototype.collideRight = function(other) {
@@ -911,13 +916,13 @@ SkeletonArcher.prototype.collideTop = function(other) {
 }
 
 SkeletonArcher.prototype.collideBottom = function(other) {
-    if (this.oldY + this.height < other.y && 
+    if (this.oldY + this.height < other.y &&
         this.y + this.height >= other.y) {
-        
+
         //console.log('skeleton collided bottom');
     }
 
-    return this.oldY + this.height < other.y && 
+    return this.oldY + this.height < other.y &&
         this.y + this.height >= other.y;
 }
 
@@ -942,7 +947,7 @@ SkeletonArcher.prototype.knockBackRightCollide = function(other) {
     return attackBoxLeft <= other.x + other.width &&
         attackBoxRight >= other.x &&
         attackBoxTop <= other.y + other.height &&
-        attackBoxBottom >= other.y;    
+        attackBoxBottom >= other.y;
 }
 
 SkeletonArcher.prototype.update = function() {
@@ -958,11 +963,11 @@ SkeletonArcher.prototype.update = function() {
             var frame = this.animationAttackLeft.currentFrame();
 
             if (frame === 10 && !this.arrowFired && currentCharacter) {
-                
+
                 var arrow = new Arrow(gameEngine, gameState, this);
                 gameEngine.addEntity(arrow);
                 this.arrowFired = true;
-                
+
             }
 
         } else if (this.direction === "right") {
@@ -982,30 +987,31 @@ SkeletonArcher.prototype.update = function() {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.gameEngine.entities[i];
 
-        if (this !== entity && 
-            (entity.name === "platform" || 
-            entity.name === "knight" ||
-            entity.name === "gunwoman" ||
-            entity.name === "mage" || 
-            entity.name === "skeleton" ||
-            entity.name === "box" ||
-            entity.name === "skeletonArcher")) {
+        if (this !== entity &&
+            (entity.name === "platform" ||
+                entity.name === "knight" ||
+                entity.name === "gunwoman" ||
+                entity.name === "mage" ||
+                entity.name === "skeleton" ||
+                entity.name === "box" ||
+                entity.name === "skeletonArcher" ||
+                entity.name === "spike")) {
 
             if (this != entity && this.collide(entity)) {
 
                 this.collidedWith = entity;
 
                 if (this.collideLeft(entity)) {
-                    
+
                     this.collidedLeft = true;
                     this.collidedLeftEntity = entity;
-                    
+
                     //fall after colliding left
                     if (!this.collidedBottom && !this.jumping) {
                         this.oldY = this.y;
                         this.canvasY += 3;
                         this.y += 3;
-                    } 
+                    }
 
                 } else if (this.collideRight(entity)) {
 
@@ -1016,7 +1022,7 @@ SkeletonArcher.prototype.update = function() {
                         this.oldY = this.y;
                         this.y += 3;
                         this.canvasY += 3;
-                    } 
+                    }
 
                 } else if (this.collideBottom(entity)) {
                     this.collidedBottom = true;
@@ -1029,7 +1035,7 @@ SkeletonArcher.prototype.update = function() {
                     this.collidedTopEntity = entity;
                     this.canvasY += 3;
                     this.y += 3;
-                } 
+                }
             }
         }
     }
@@ -1041,14 +1047,15 @@ SkeletonArcher.prototype.update = function() {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             var entity = this.gameEngine.entities[i];
 
-            if (entity.name === "platform" || 
-                entity.name === "knight" || 
+            if (entity.name === "platform" ||
+                entity.name === "knight" ||
                 entity.name === "gunwoman" ||
                 entity.name === "mage" ||
                 entity.name === "skeleton" ||
                 entity.name === "box" ||
-                entity.name === "skeletonArcher") {
-                
+                entity.name === "skeletonArcher" ||
+                entity.name === "spike") {
+
                 if (this != entity && this.collide(entity)) {
                     stillColliding = true;
 
@@ -1068,19 +1075,20 @@ SkeletonArcher.prototype.update = function() {
             for (var i = 0; i < gameEngine.entities.length; i++) {
                 var entity = this.gameEngine.entities[i];
 
-                if (this !== entity && 
-                    (entity.name === "platform" || 
-                    entity.name === "knight" ||
-                    entity.name === "gunwoman" ||
-                    entity.name === "mage" ||
-                    entity.name === "skeleton" ||
-                    entity.name === "box" ||
-                    entity.name === "skeletonArcher")) {
+                if (this !== entity &&
+                    (entity.name === "platform" ||
+                        entity.name === "knight" ||
+                        entity.name === "gunwoman" ||
+                        entity.name === "mage" ||
+                        entity.name === "skeleton" ||
+                        entity.name === "box" ||
+                        entity.name === "skeletonArcher" ||
+                        entity.name === "spike")) {
 
                     //check if still colliding right with a platform we collided right with
-                    if (this.collidedRightEntity === entity &&  
+                    if (this.collidedRightEntity === entity &&
                         !this.collide(entity)) {
-                        
+
                         this.collidedRight = false;
                         this.collidedRightEntity = null;
 
@@ -1092,7 +1100,7 @@ SkeletonArcher.prototype.update = function() {
                         this.collidedLeft = false;
                         this.collidedLeftEntity = null;
 
-                    } else if (this.collidedTopEntity === entity && 
+                    } else if (this.collidedTopEntity === entity &&
                         !this.collideTop(entity)) {
 
                         //this.collidedTop = false;
@@ -1111,7 +1119,7 @@ SkeletonArcher.prototype.update = function() {
     }
 
     if (currentCharacter) {
-        
+
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
             this.canvasX -= 3;
@@ -1119,7 +1127,7 @@ SkeletonArcher.prototype.update = function() {
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
             this.canvasX += 3;
-        }    
+        }
     }
 
     var distanceFromHero = Math.min();
@@ -1136,14 +1144,14 @@ SkeletonArcher.prototype.update = function() {
             this.attacking = true;
             this.animationState = "attackLeft";
             this.direction = "left";
-          
+
         } else if (this.x < currentCharacter.x) {
 
             this.attacking = true;
             this.animationState = "attackRight"
             this.direction = "right";
         }
-    
+
     }
 
     if (!currentCharacter) {
@@ -1169,8 +1177,8 @@ SkeletonArcher.prototype.update = function() {
     //             this.animationState = "attackLeft";
 
     //                 this.attacking = true;
-                                       
-                     
+
+
     //         }
 
     //     } else if (gameEngine.keyMap["KeyZ"] && !this.collidedLeft && !this.attacking) {
@@ -1180,7 +1188,7 @@ SkeletonArcher.prototype.update = function() {
     //         this.oldX = this.x;
     //         this.x -= 2;
     //         this.canvasX -= 2;
-            
+
     //     } else if (gameEngine.keyMap["KeyC"] && !this.collidedRight && !this.attacking) {
 
     //         this.direction = "right";
@@ -1201,7 +1209,7 @@ SkeletonArcher.prototype.draw = function() {
     var currentCharacter = this.gameState.getCurrentCharacter();
 
     if (this.animationState === "idleLeft") {
-        
+
         this.animationIdleLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 20, this.canvasY);
 
     } else if (this.animationState === "idleRight") {
@@ -1209,11 +1217,11 @@ SkeletonArcher.prototype.draw = function() {
         this.animationIdleRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 10, this.canvasY);
 
     } else if (this.animationState === "attackLeft") {
-        
+
         this.animationAttackLeft.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 66, this.canvasY);
 
     } else if (this.animationState === "attackRight") {
-        
+
         this.animationAttackRight.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 15, this.canvasY);
     }
 };
@@ -1228,6 +1236,7 @@ function Arrow(gameEngine, gameState, archer) {
     this.name = "arrow";
 
     this.arrowImage = AM.getAsset("./img/arrow.png");
+   
 
     this.x = archer.x;
     this.y = archer.y;
@@ -1254,7 +1263,8 @@ function Arrow(gameEngine, gameState, archer) {
     this.angle = Math.atan2(this.dy, this.dx);
 
     this.speed = 5;
-
+    this.impactedPlayer = false;
+    this.player = null;
     this.b_dx = Math.cos(this.angle) * this.speed;
     this.b_dy = Math.sin(this.angle) * this.speed;
 
@@ -1293,6 +1303,9 @@ Arrow.prototype.update = function() {
 
                 this.collidedWith = entity;
                 gameState.updateHealth(entity);
+                entity.arrowImpact = true;
+                // this.impactedPlayer = true;
+                // this.player = entity;
                 //console.log('archer hit player');
 
             } else if (entity.name === "platform" || entity.name === "box") {
@@ -1301,7 +1314,7 @@ Arrow.prototype.update = function() {
                 //console.log('hit object');
             }
         }
-    }    
+    }
 
     //offset bullet when walking
     if (currentCharacter) {
@@ -1312,18 +1325,22 @@ Arrow.prototype.update = function() {
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
             this.canvasX += 3;
-        }    
+        }
     }
 }
 
 Arrow.prototype.draw = function() {
     //this.ctx.fillRect(this.x, this.y, 5, 3);
-    
+    // if (this.impactedPlayer) {
+    //     this.animationArcherImpact.drawFrame(this.gameEngine.clockTick, this.ctx, this.player.canvasX - 30, this.player.canvasY - 20);
+    // }
     if (!this.collidedWith) {
-        this.ctx.fillStyle = "#000000";
-        this.ctx.fillRect(this.canvasX, this.canvasY, 20, 3);
-        //this.ctx.drawImage(this.arrowImage, this.canvasX - 30, this.canvasY, 100, 16);
+        // this.ctx.fillStyle = "#000000";
+        // this.ctx.fillRect(this.canvasX, this.canvasY, 20, 3);
+        // this.rotateAndCache(this.arrowImage, this.angle);
+        this.ctx.drawImage(this.arrowImage, this.canvasX - 30, this.canvasY, 50, 16);
     }
+
 };
 
 // BIG BOSS
@@ -1371,7 +1388,7 @@ function Robot(gameEngine, gameState, x, y) {
 
     this.canvasX = x * TILE_SIZE;
     this.canvasY = y * TILE_SIZE;
-
+    this.health = 50;
     this.initialCanvasX = x * TILE_SIZE;
     this.initialCanvasY = y * TILE_SIZE;
 

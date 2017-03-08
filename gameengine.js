@@ -76,7 +76,35 @@ GameEngine.prototype.startInput = function() {
         var rect = that.ctx.canvas.getBoundingClientRect();
         that.clickX = e.clientX - rect.left;
         that.clickY = e.clientY - rect.top;
+
         //console.log(that.clickX + " " + that.clickY);
+        var event = e;
+        if (event.which === 3) {
+            console.log('Right Mouse button pressed.');
+            var mouseX = e.clientX;
+            var mouseY = e.clientY;
+
+            // var currentCharacter = game.getCurrentCharacter();
+            mouseX = (currentCharacter.x - currentCharacter.canvasX) + mouseX;
+
+            for (var i = that.entities.length - 1; i >= 0; i--) {
+                var entity = that.entities[i];
+
+                console.log("The name is " + entity.name);   
+                // var canX = that.entities[i].canvasX;
+                if(entity.name === "box") {
+                    var entityX = (currentCharacter.x - currentCharacter.canvasX) + entity.canvasX;
+                    var entityY = entity.canvasY;
+                    if(mouseX >= entityX && mouseX <= entityX + 32 
+                        && mouseY >= entityY && mouseY <= entityY + 32){
+                        that.entities.splice(i, 1);
+                        console.log("this is the box");
+                    }
+                }
+            }
+            // console.log("New X is = " + newX + " The new Y is = " + newY);
+
+        }
 
     }, false);
 
@@ -255,7 +283,8 @@ GameEngine.prototype.addEntity = function(entity) {
         entity.name === "arrow" || 
         entity.name === "wolf" || 
         entity.name === "skeletonArcher" ||
-        entity.name === "skeleton") {
+        entity.name === "skeleton" ||
+        entity.name === "coin") {
 
         this.entities.splice(1, 0, entity); //add entity after hero index, ie index 1
 
