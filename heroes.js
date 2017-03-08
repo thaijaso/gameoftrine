@@ -42,6 +42,8 @@ function Knight(gameEngine, gameState, progressBar) {
     var jumpRightAnimationSpriteSheet = AM.getAsset("./img/knightjumpright.png");
     var jumpLeftAnimationSpriteSheet = AM.getAsset("./img/knightjumpleft.png");
     var poofImg = AM.getAsset("./img/poofspritesheet.png");
+    var skeletonImpact = AM.getAsset("./img/skeletonimpact.png");
+    var archerImpact = AM.getAsset("./img/archerImpact.png");
 
     this.gameEngine = gameEngine;
     this.gameState = gameState;
@@ -57,6 +59,8 @@ function Knight(gameEngine, gameState, progressBar) {
     this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
     this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
     this.animationPoof = new Animation(this, poofImg, 512, 512, 3, 0.06, 8, false, 0.3);
+    this.animationSkeletonImpact = new Animation(this, skeletonImpact, 192, 192, 3, .06, 6, false, .5);
+    this.animationArcherImpact = new Animation(this, archerImpact, 192, 192, 3, .06, 6, false, .7);
 
     this.animationState = "idleRight";
 
@@ -92,10 +96,11 @@ function Knight(gameEngine, gameState, progressBar) {
     //to do jump + attack, etc.
     this.jumpElapsedTime = 0;
     this.jumpIsDone = false;
-
     this.attacking = false;
     this.attacked = false;
     this.poofNow = false;
+    // this.enemyAttacking =  null;
+    this.arrowImpact = false;
 
     this.collidedWith = null; //checks to see which entity the knight collided with LAST
 
@@ -284,6 +289,14 @@ Knight.prototype.update = function() {
 
     var gameEngine = this.gameEngine;
     var gameState = this.gameState;
+
+    if (this.animationSkeletonImpact.isDone()) {
+        this.animationSkeletonImpact.elapsedTime = 0;
+        this.attacked = false;
+    } else if (this.animationArcherImpact.isDone()) {
+        this.animationArcherImpact.elapsedTime = 0;
+        this.arrowImpact = false;
+    }
 
     if (this.jumping) {
 
@@ -474,10 +487,13 @@ Knight.prototype.update = function() {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.gameEngine.entities[i];
         if (this.collide(entity) && entity.name === "potion") {
-
             this.gameState.restoreHealth(this);
             gameEngine.removeEntity(entity);
+        }
 
+        if (this.collide(entity) && entity.name === "coin") {
+            this.gameState.updateScore();
+            gameEngine.removeEntity(entity);
         }
 
 
@@ -738,9 +754,10 @@ Knight.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
 };
 
 Knight.prototype.draw = function() {
-    this.ctx.fillStyle = "black";
-    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
-    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    // this.ctx.fillStyle = "blue";
+    // this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    // this.ctx.fillStyle = "black";
+    // this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
     if (this.animationState === "idleRight") {
 
@@ -778,6 +795,14 @@ Knight.prototype.draw = function() {
     if (this.poofNow) {
         //this.animationPoof.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 35, this.canvasY - 60);
     }
+
+    if (this.attacked) {
+        this.animationSkeletonImpact.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 40, this.canvasY);
+    }
+
+    if (this.arrowImpact) {
+        this.animationArcherImpact.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 40, this.canvasY);
+    }
 }
 
 //Constructor for mage
@@ -794,6 +819,8 @@ function Mage(gameEngine, gameState, progressBar) {
     var jumpRightAnimationSpriteSheet = AM.getAsset("./img/mageJumpRight.png");
     var jumpLeftAnimationSpriteSheet = AM.getAsset("./img/magejumpleft.png");
     var boxImpactImg = AM.getAsset("./img/mageimpact.png");
+    var skeletonImpact = AM.getAsset("./img/skeletonimpact.png");
+    var archerImpact = AM.getAsset("./img/archerImpact.png");
 
 
     this.gameEngine = gameEngine;
@@ -810,13 +837,16 @@ function Mage(gameEngine, gameState, progressBar) {
     this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 2, 0.015, 17, false, 0.5);
     this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 10, false, 0.5);
     this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 10, false, 0.5);
+    this.animationSkeletonImpact = new Animation(this, skeletonImpact, 192, 192, 3, .06, 6, false, .5);
+    this.animationArcherImpact = new Animation(this, archerImpact, 192, 192, 3, .06, 6, false, .7);
+
     this.animationState = "idleRight";
 
     this.direction = "right";
     this.health = 50;
     this.progressBar.updateHealth(this.health);
     this.impact = false;
-
+    this.arrowImpact = false;
 
     //for direction of collision
     this.oldX = 34 * TILE_SIZE;
@@ -1000,7 +1030,13 @@ Mage.prototype.jump = function(totalHeight, timeSinceJump, maxJumpTime) {
 Mage.prototype.update = function() {
     var gameEngine = this.gameEngine;
     var gameState = this.gameState;
-
+    if (this.animationSkeletonImpact.isDone()) {
+        this.animationSkeletonImpact.elapsedTime = 0;
+        this.attacked = false;
+    } else if (this.animationArcherImpact.isDone()) {
+        this.animationArcherImpact.elapsedTime = 0;
+        this.arrowImpact = false;
+    }
     //handle jumping
     if (this.jumping) {
 
@@ -1041,6 +1077,11 @@ Mage.prototype.update = function() {
             // console.log("collided with potion");
             // this.
             this.gameState.restoreHealth(this);
+            gameEngine.removeEntity(entity);
+
+        }
+        if (this.collide(entity) && entity.name === "coin") {
+            this.gameState.updateScore();
             gameEngine.removeEntity(entity);
 
         }
@@ -1179,7 +1220,7 @@ Mage.prototype.update = function() {
 
     }
 
-    if(this.impactAnimation.isDone()) {
+    if (this.impactAnimation.isDone()) {
         this.impact = false;
         this.impactAnimation.elapsedTime = 0;
     }
@@ -1316,8 +1357,13 @@ Mage.prototype.draw = function() {
     }
     if (this.impact) {
         this.impactAnimation.drawFrame(this.gameEngine.clockTick, this.ctx, this.gameEngine.clickX - 20, this.gameEngine.clickY);
-        // this.impact = false;
+    }
+    if (this.attacked) {
+        this.animationSkeletonImpact.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 40, this.canvasY);
+    }
 
+    if (this.arrowImpact) {
+        this.animationArcherImpact.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 40, this.canvasY);
     }
 
 
@@ -1566,7 +1612,8 @@ function Gunwoman(gameEngine, gameState, progressBar) {
 
     var jumpRightAnimationSpriteSheet = AM.getAsset("./img/gunwomanjumpright.png");
     var jumpLeftAnimationSpriteSheet = AM.getAsset("./img/gunwomanjumpleft.png");
-
+    var skeletonImpact = AM.getAsset("./img/skeletonimpact.png");
+    var archerImpact = AM.getAsset("./img/archerImpact.png");
 
     this.gameEngine = gameEngine;
     this.gameState = gameState
@@ -1584,6 +1631,8 @@ function Gunwoman(gameEngine, gameState, progressBar) {
     this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 384, 192, 4, 0.015, 19, false, 0.5);
     this.animationJumpRight = new Animation(this, jumpRightAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
     this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 11, false, 0.5);
+    this.animationSkeletonImpact = new Animation(this, skeletonImpact, 192, 192, 3, .06, 6, false, .5);
+    this.animationArcherImpact = new Animation(this, archerImpact, 192, 192, 3, .06, 6, false, .7);
     this.animationState = "idleRight";
 
     this.direction = "right";
@@ -1591,6 +1640,7 @@ function Gunwoman(gameEngine, gameState, progressBar) {
     this.oldX = 34 * TILE_SIZE;
     this.oldY = 14 * TILE_SIZE;
 
+    this.arrowImpact = false;
     this.width = 2 * TILE_SIZE;
     this.height = 4 * TILE_SIZE - 5;
     this.health = 50;
@@ -1790,6 +1840,15 @@ Gunwoman.prototype.update = function() {
     var gameEngine = this.gameEngine;
     var gameState = this.gameState;
 
+    if (this.animationSkeletonImpact.isDone()) {
+        this.animationSkeletonImpact.elapsedTime = 0;
+        this.attacked = false;
+    } else if (this.animationArcherImpact.isDone()) {
+        this.animationArcherImpact.elapsedTime = 0;
+        this.arrowImpact = false;
+    }
+
+
     //handle jumping
     if (this.jumping) {
         this.collidedBottom = false;
@@ -1833,14 +1892,17 @@ Gunwoman.prototype.update = function() {
             gameEngine.removeEntity(entity);
 
         }
+        if (this.collide(entity) && entity.name === "coin") {
+            this.gameState.updateScore();
+            gameEngine.removeEntity(entity);
 
-
+        }
 
         if (entity.name === "platform" ||
             entity.name === "skeleton" ||
             entity.name === "box" ||
             entity.name === "skeletonArcher" ||
-            entity.name === "spike") {
+            entity.name === "spike" || entity.name === "coin") {
 
             if (this != entity && this.collide(entity)) {
                 //console.log('colliding');
@@ -2153,6 +2215,14 @@ Gunwoman.prototype.draw = function() {
             this.animationState = "attackLeft";
         }
     }
+
+    if (this.attacked) {
+        this.animationSkeletonImpact.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 40, this.canvasY);
+    }
+
+    if (this.arrowImpact) {
+        this.animationArcherImpact.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 40, this.canvasY);
+    }
 }
 
 function Bullet(gameEngine, gameState) {
@@ -2395,37 +2465,37 @@ Wolf.prototype.update = function() {
             this.direction = "right";
         }
 
-        if (gameEngine.keyMap["KeyM"]) {
+        // if (gameEngine.keyMap["KeyM"]) {
 
-            if (this.direction === "left") {
+        //     if (this.direction === "left") {
 
-                this.animationState = "attackLeft";
+        //         this.animationState = "attackLeft";
 
-            } else {
+        //     } else {
 
-                this.animationState = "attackRight";
-            }
+        //         this.animationState = "attackRight";
+        //     }
 
 
-            this.attacking = true;
+        //     this.attacking = true;
 
-        } else if (gameEngine.keyMap["ArrowLeft"] && !this.collidedLeft && !this.attacking) {
+        // } else if (gameEngine.keyMap["ArrowLeft"] && !this.collidedLeft && !this.attacking) {
 
-            this.direction = "left";
-            this.animationState = "walkLeft";
-            this.oldX = this.x;
-            this.x -= 2;
-            this.canvasX -= 3;
+        //     this.direction = "left";
+        //     this.animationState = "walkLeft";
+        //     this.oldX = this.x;
+        //     this.x -= 2;
+        //     this.canvasX -= 3;
 
-        } else if (gameEngine.keyMap["ArrowRight"] && !this.collidedRight && !this.attacking) {
+        // } else if (gameEngine.keyMap["ArrowRight"] && !this.collidedRight && !this.attacking) {
 
-            this.direction = "right";
-            this.animationState = "walkRight";
-            this.oldX = this.x;
-            this.x += 2;
-            this.canvasX += 3;
+        //     this.direction = "right";
+        //     this.animationState = "walkRight";
+        //     this.oldX = this.x;
+        //     this.x += 2;
+        //     this.canvasX += 3;
 
-        }
+        // }
     }
 }
 

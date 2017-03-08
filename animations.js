@@ -63,9 +63,8 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
 
             }
 
-            if (this.entity.name === "skeleton" 
-                || this.entity.name === "skeletonArcher") {
-                
+            if (this.entity.name === "skeleton" || this.entity.name === "skeletonArcher") {
+
 
                 if (this.entity.direction === "right") {
                     this.entity.animationState = "idleRight";
@@ -130,9 +129,9 @@ Background.prototype.update = function() {
 
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
-           
+
             this.x = this.x - 1;
-        
+
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
             if (this.x !== 0) {
@@ -450,10 +449,58 @@ Potion.prototype.update = function() {
 
 Potion.prototype.draw = function() {
     // this.ctx.globalAlpha = 0.2;
-
     this.ctx.drawImage(this.img, this.canvasX, this.canvasY, this.width, this.height);
 
     // this.ctx.fillStyle = "#00ff00";
     // this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     // this.ctx.globalAlpha = 1.0;
+};
+
+
+function Coin(gameEngine, gameState, entity) {
+
+    this.gameEngine = gameEngine;
+    var img = AM.getAsset("./img/coin.png");
+    this.animation = new Animation(this, img, 18, 20, 6, 0.05, 6, true, 1);
+    this.ctx = gameEngine.ctx;
+    this.gameState = gameState;
+    this.canvasX = entity.canvasX ;
+    this.canvasY = entity.canvasY ;
+    this.x = entity.x;
+    this.y = entity.y;
+    this.initialCanvasX = this.x;
+    this.width = 20;
+    this.height = 20;
+
+    this.name = "coin";
+
+
+}
+
+Coin.prototype.update = function() {
+    var gameEngine = this.gameEngine;
+    var currentCharacter = this.gameState.getCurrentCharacter();
+    if (currentCharacter) {
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+
+            this.canvasX -= 3;
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+            this.canvasX += 3;
+        }
+    }
+    // body...
+};
+
+Coin.prototype.draw = function() {
+    // this.ctx.fillStyle = "blue";
+    // this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    //     this.ctx.fillStyle = "black";
+
+    // this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+
+    
+    this.animation.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX + 19.5, this.canvasY + 25);
+
+    // body...
 };

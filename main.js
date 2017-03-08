@@ -281,12 +281,15 @@ AM.queueDownload("./img/skeleton-walk-left.png");
 AM.queueDownload("./img/skeleton-walk-right.png");
 AM.queueDownload("./img/skeleton-attack-right.png");
 AM.queueDownload("./img/skeleton-attack-left.png");
+AM.queueDownload("./img/skeletonimpact.png");
+
 
 //skeleton archer
 AM.queueDownload("./img/skeletonarcheridleleft.png");
 AM.queueDownload("./img/skeleton-archer-idle-right.png");
 AM.queueDownload("./img/skeletonarcherattackleft.png");
 AM.queueDownload("./img/skeletonarcherattackright.png");
+AM.queueDownload("./img/archerImpact.png");
 
 //robot
 AM.queueDownload("./img/robotidleright.png");
@@ -313,6 +316,9 @@ AM.queueDownload("./img/poofspritesheet.png");
 
 //health potion
 AM.queueDownload("./img/healthpotion.png");
+
+//coin
+AM.queueDownload("./img/coin.png");
 
 AM.downloadAll(function() {
     var canvas = document.getElementById("gameWorld");
@@ -539,7 +545,10 @@ function createGame(gameEngine, gameMenu, gameState) {
     var potion = new Potion(gameEngine, gameState, 107, 14.5);
     var potion1 = new Potion(gameEngine, gameState, 400, 2);
 
+    // var testcoin = new Coin(gameEngine, gameState, 20, 400);
+    var score = new Score(gameEngine, gameState);
 
+    gameEngine.addEntity(score);
 
     //Tutorial Platform
     gameEngine.addEntity(tutorialPlatform0);
@@ -654,6 +663,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(spike15); // bottom spikes 
     gameEngine.addEntity(potion);
     // gameEngine.addEntity(potion1);
+    // gameEngine.addEntity(testcoin);
 
 
     // var robot = new Robot(gameEngine, 20, 38);

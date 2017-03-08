@@ -76,7 +76,7 @@ GameEngine.prototype.startInput = function() {
         var rect = that.ctx.canvas.getBoundingClientRect();
         that.clickX = e.clientX - rect.left;
         that.clickY = e.clientY - rect.top;
-        console.log(that.clickX + " " + that.clickY);
+        // console.log(that.clickX + " " + that.clickY);
 
     }, false);
 
@@ -248,7 +248,8 @@ GameEngine.prototype.addEntity = function(entity) {
         entity.name === "arrow" || 
         entity.name === "wolf" || 
         entity.name === "skeletonArcher" ||
-        entity.name === "skeleton") {
+        entity.name === "skeleton" ||
+        entity.name === "coin") {
 
         this.entities.splice(1, 0, entity); //add entity after hero index, ie index 1
 
