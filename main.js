@@ -4,19 +4,17 @@ function Portrait(ctx, spritesheet, x, y) {
     this.y = y;
     this.spritesheet = spritesheet;
     this.ctx = ctx;
+    this.width = 130;
+    this.height = 101;
 }
 
 Portrait.prototype.draw = function() {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y, 130, 101);
+    this.ctx.drawImage(this.spritesheet, this.x, this.y, this.width, this.height);
 };
 
+Portrait.prototype.update = function() {
 
-Portrait.prototype.update = function() {};
-
-function ProgressBar(ctx, x, y) {
-    this.ctx = ctx;
-
-}
+};
 
 function ProgressBar(ctx, x, y) {
     this.ctx = ctx;
@@ -221,7 +219,7 @@ AM.queueDownload("./img/controlsmenu.png");
 
 
 AM.queueDownload("./img/background.png");
-AM.queueDownload("./img/foreground.png");
+AM.queueDownload("./img/foreground2.png");
 
 //knight
 AM.queueDownload("./img/knightidleright.png");
@@ -295,6 +293,7 @@ AM.queueDownload("./img/robotattackright.png");
 AM.queueDownload("./img/robotidleleft.png");
 AM.queueDownload("./img/robotwalkleft.png");
 AM.queueDownload("./img/robotattackleft.png");
+AM.queueDownload("./img/robotportraitleft.png");
 // AM.queueDownload("./img/robotjumpright.png");
 // AM.queueDownload("./img/robotjumpleft.png");
 
@@ -347,13 +346,14 @@ function createGame(gameEngine, gameMenu, gameState) {
 
     this.audio = new Sound();
 
-    var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground.png"));
+    var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground2.png"));
     var background = new Background(gameEngine, gameState, AM.getAsset("./img/background.png"));
     var midground = new Midground(gameEngine, gameState, AM.getAsset("./img/midground.png"));
 
     var progressKnight = new ProgressBar(ctx, 74, 72);
     var progressGunwoman = new ProgressBar(ctx, 205, 72);
     var progressMage = new ProgressBar(ctx, 335, 72);
+    var progressRobot = new ProgressBar(ctx, 800, 72);
 
     var knight = new Knight(gameEngine, gameState, progressKnight);
     var gunwoman = new Gunwoman(gameEngine, gameState, progressGunwoman);
@@ -382,22 +382,22 @@ function createGame(gameEngine, gameMenu, gameState) {
     var skeleton18 = new Skeleton(gameEngine, gameState, 540, 32); //GUYS INSIDE THE SQURE SHAPE
     var skeleton19 = new Skeleton(gameEngine, gameState, 528, 32);
     var skeleton20 = new Skeleton(gameEngine, gameState, 580, 7); //SINGLE GUY BY TREE
-    var skeleton21 = new Skeleton(gameEngine, gameState, 650, 22); 
+    var skeleton21 = new Skeleton(gameEngine, gameState, 650, 22);
     var skeleton22 = new Skeleton(gameEngine, gameState, 685, 22);
 
-    var skeleton23 = new Skeleton(gameEngine, gameState, 807, 6); 
+    var skeleton23 = new Skeleton(gameEngine, gameState, 807, 6);
     var skeleton24 = new Skeleton(gameEngine, gameState, 827, 6); //top two inside the shape
 
-    var skeleton25 = new Skeleton(gameEngine, gameState, 805, 18); 
+    var skeleton25 = new Skeleton(gameEngine, gameState, 805, 18);
     var skeleton26 = new Skeleton(gameEngine, gameState, 829, 18); //bottom two inside the shape
 
-    var skeleton27 = new Skeleton(gameEngine, gameState, 918, 35); 
+    var skeleton27 = new Skeleton(gameEngine, gameState, 918, 35);
     var skeleton28 = new Skeleton(gameEngine, gameState, 956, 35); // last two 
 
     var skeleton29 = new Skeleton(gameEngine, gameState, 855, 14) // the guy on stairs
 
 
-                                             //   x   y
+    //   x   y
     var archer1 = new SkeletonArcher(gameEngine, gameState, 96, 0);
     var archer2 = new SkeletonArcher(gameEngine, gameState, 107, 24);
     var archer3 = new SkeletonArcher(gameEngine, gameState, 170, 0);
@@ -419,6 +419,9 @@ function createGame(gameEngine, gameMenu, gameState) {
     var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"), 4.9, 20);
     var gunwomanPortraitRight = new Portrait(ctx, AM.getAsset("./img/gunwomanPORTRAITright.png"), 155, 20);
     var magePortraitRight = new Portrait(ctx, AM.getAsset("./img/magePORTRAITright.png"), 265, 20);
+    var robotPortraitLeft = new Portrait(ctx, AM.getAsset("./img/robotportraitleft.png"), ctx.canvas.width - 200, 20);
+    robotPortraitLeft.width = 120;
+    robotPortraitLeft.height= 110;
 
     //an entity is any element drawn on the map
     gameEngine.addEntity(knight);
@@ -433,12 +436,12 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(archer8);
     gameEngine.addEntity(archer9);
 
-    
+
     gameEngine.addEntity(archer10);
     gameEngine.addEntity(archer11);
     gameEngine.addEntity(archer12);
-    
-  
+
+
     // gameEngine.addEntity(skeleton0);
     gameEngine.addEntity(skeleton1);
     gameEngine.addEntity(skeleton2);
@@ -462,8 +465,8 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(skeleton20);
     gameEngine.addEntity(skeleton21);
     gameEngine.addEntity(skeleton22);
-	
-	
+
+
 
     gameEngine.addEntity(skeleton23);
     gameEngine.addEntity(skeleton24);
@@ -554,7 +557,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     var platform88 = new Platform(gameEngine, gameState, 642, 26, 15, 1.5);
     var platform89 = new Platform(gameEngine, gameState, 667, 26, 31.5, 1.5);
     var platform90 = new Platform(gameEngine, gameState, 662, 8, 3, 2);
-    
+
 
     var platform91 = new Platform(gameEngine, gameState, 711.5, 38, 2, 2);
     var platform92 = new Platform(gameEngine, gameState, 722.5, 38, 2, 2);
@@ -571,20 +574,20 @@ function createGame(gameEngine, gameMenu, gameState) {
     var platform100 = new Platform(gameEngine, gameState, 776.5, 29.5, 14, 1);
     var platform101 = new Platform(gameEngine, gameState, 798.5, 29.5, 19, 1); //opening bottom 2
 
-    var platform102 = new Platform(gameEngine, gameState, 798.5, 23, 42.5, 1);//long top walking
+    var platform102 = new Platform(gameEngine, gameState, 798.5, 23, 42.5, 1); //long top walking
 
-    var platform103 = new Platform(gameEngine, gameState, 798.5, 23.5, 1, 7);//right wall side
-    var platform104 = new Platform(gameEngine, gameState, 790, 22.5, 1, 7);//left wall side
-    var platform105 = new Platform(gameEngine, gameState, 787, 16, 1, 7);//left far wall side
+    var platform103 = new Platform(gameEngine, gameState, 798.5, 23.5, 1, 7); //right wall side
+    var platform104 = new Platform(gameEngine, gameState, 790, 22.5, 1, 7); //left wall side
+    var platform105 = new Platform(gameEngine, gameState, 787, 16, 1, 7); //left far wall side
 
-    var platform106 = new Platform(gameEngine, gameState, 799.5, 2.5, 1, 7.5);//up top left wall side
+    var platform106 = new Platform(gameEngine, gameState, 799.5, 2.5, 1, 7.5); //up top left wall side
 
-    var platform107 = new Platform(gameEngine, gameState, 788, 16, 46.5, 1);//mid top wall
-    var platform108 = new Platform(gameEngine, gameState, 834, 10, 1, 7);//mid left side wall
-    var platform109 = new Platform(gameEngine, gameState, 841, 2.5, 1, 21.5);//mid right side wall
-    var platform110 = new Platform(gameEngine, gameState, 800, 2, 41, 1);//highest top wall
-    var platform111 = new Platform(gameEngine, gameState, 800, 10, 33.5, 1);//highest walking bottom wall
-    var platform112 = new Platform(gameEngine, gameState, 785, 22.5, 5, 1);//little left side.
+    var platform107 = new Platform(gameEngine, gameState, 788, 16, 46.5, 1); //mid top wall
+    var platform108 = new Platform(gameEngine, gameState, 834, 10, 1, 7); //mid left side wall
+    var platform109 = new Platform(gameEngine, gameState, 841, 2.5, 1, 21.5); //mid right side wall
+    var platform110 = new Platform(gameEngine, gameState, 800, 2, 41, 1); //highest top wall
+    var platform111 = new Platform(gameEngine, gameState, 800, 10, 33.5, 1); //highest walking bottom wall
+    var platform112 = new Platform(gameEngine, gameState, 785, 22.5, 5, 1); //little left side.
 
     var platform113 = new Platform(gameEngine, gameState, 861, 11.5, 2, 2); //small spot for archer
     var platform114 = new Platform(gameEngine, gameState, 873, 32.5, 4, 4); //first step up
@@ -592,14 +595,14 @@ function createGame(gameEngine, gameMenu, gameState) {
     var platform116 = new Platform(gameEngine, gameState, 883, 16, 6.5, 1); //left walking platfrom
     var platform117 = new Platform(gameEngine, gameState, 896, 16, 6.5, 1); //right walking paltform
     var platform118 = new Platform(gameEngine, gameState, 849, 42, 16, 1); //bottom walking stairs
-    var platform119 = new Platform(gameEngine, gameState, 905, 41, 90, 1);// last walking platform
+    var platform119 = new Platform(gameEngine, gameState, 905, 41, 90, 1); // last walking platform
 
-    var platform120 = new Platform(gameEngine, gameState, 945.5, 7, 8, 1);// top left standing platform
-    var platform121 = new Platform(gameEngine, gameState, 963.5, 18, 8, 1);// top right standing platform
-    var platform122 = new Platform(gameEngine, gameState, 980.5, 7, 8, 1);// top middle standing platform
+    var platform120 = new Platform(gameEngine, gameState, 945.5, 7, 8, 1); // top left standing platform
+    var platform121 = new Platform(gameEngine, gameState, 963.5, 18, 8, 1); // top right standing platform
+    var platform122 = new Platform(gameEngine, gameState, 980.5, 7, 8, 1); // top middle standing platform
 
-    var platform123 = new Platform(gameEngine, gameState, 818, 40, 32, 1);// bottom little corner piece
-    var platform124 = new Platform(gameEngine, gameState, 847.5, 0, 1, 29.5);// left closing side wall
+    var platform123 = new Platform(gameEngine, gameState, 818, 40, 32, 1); // bottom little corner piece
+    var platform124 = new Platform(gameEngine, gameState, 847.5, 0, 1, 29.5); // left closing side wall
 
 
     var spike1 = new Spike(gameEngine, gameState, 715, 43, 6, 2);
@@ -616,9 +619,16 @@ function createGame(gameEngine, gameMenu, gameState) {
     var spike12 = new Spike(gameEngine, gameState, 881, 16, 2, 12);
     var spike13 = new Spike(gameEngine, gameState, 890, 14, 6, 2);
     var spike14 = new Spike(gameEngine, gameState, 903, 16, 2, 29);
-    var spike15 = new Spike(gameEngine, gameState, 909, 43, 35, 2);
+    var spike15 = new Spike(gameEngine, gameState, 994, 0, 2, 42);
     var potion = new Potion(gameEngine, gameState, 107, 14.5);
-    var potion1 = new Potion(gameEngine, gameState, 400, 2);
+    var potion1 = new Potion(gameEngine, gameState, 174, 1.5);
+    var potion2 = new Potion(gameEngine, gameState, 296, 34.5);
+    var potion3 = new Potion(gameEngine, gameState, 350, 4.5);
+    var potion4 = new Potion(gameEngine, gameState, 479, 32.5);
+    var potion5 = new Potion(gameEngine, gameState, 693, 22.5);
+    var potion6 = new Potion(gameEngine, gameState, 805, 7);
+    var potion7 = new Potion(gameEngine, gameState, 847, 38);
+    var potion8 = new Potion(gameEngine, gameState, 967, 15);
 
     // var testcoin = new Coin(gameEngine, gameState, 20, 400);
     var score = new Score(gameEngine, gameState);
@@ -629,9 +639,9 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(tutorialPlatform0);
     gameEngine.addEntity(tutorialPlatform1);
 
-//   Major Platform 1
+    //   Major Platform 1
     gameEngine.addEntity(platform1);
-    
+
     gameEngine.addEntity(platform2);
     gameEngine.addEntity(platform3);
     gameEngine.addEntity(platform4);
@@ -720,18 +730,18 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(platform88); // ladder
     gameEngine.addEntity(platform89); // ladder
     gameEngine.addEntity(platform90); // mini platform
-    
-    gameEngine.addEntity(platform91); 
-    gameEngine.addEntity(platform92); 
+
+    gameEngine.addEntity(platform91);
+    gameEngine.addEntity(platform92);
     gameEngine.addEntity(platform93); // skinny platform
     gameEngine.addEntity(platform94); // skinny platform
     gameEngine.addEntity(platform95); // skinny platform
     gameEngine.addEntity(platform96); // skinny platform
     gameEngine.addEntity(platform97); // skinny platform
     gameEngine.addEntity(platform98);
-    
-    gameEngine.addEntity(platform99); 
-    gameEngine.addEntity(platform100); 
+
+    gameEngine.addEntity(platform99);
+    gameEngine.addEntity(platform100);
     gameEngine.addEntity(platform101); // skinny platform
     gameEngine.addEntity(platform102); // skinny platform
     gameEngine.addEntity(platform103); // skinny platform
@@ -739,13 +749,13 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(platform105); // skinny platform
     gameEngine.addEntity(platform106); // skinny platform
 
-    gameEngine.addEntity(platform107); 
-    gameEngine.addEntity(platform108); 
+    gameEngine.addEntity(platform107);
+    gameEngine.addEntity(platform108);
     gameEngine.addEntity(platform109); // skinny platform
     gameEngine.addEntity(platform110); // skinny platform
     gameEngine.addEntity(platform111); // skinny platform
     gameEngine.addEntity(platform112); // skinny platform
-    
+
     gameEngine.addEntity(platform113); // skinny platform
     gameEngine.addEntity(platform114);
     gameEngine.addEntity(platform115);
@@ -760,7 +770,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(platform123);
     gameEngine.addEntity(platform124);
 
-       // Lead up to big boss 
+    // Lead up to big boss 
     gameEngine.addEntity(spike1); // spikes between rocks
     gameEngine.addEntity(spike2);
     gameEngine.addEntity(spike3);
@@ -775,11 +785,17 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(spike12); // side spikes
     gameEngine.addEntity(spike13); // top spikes
     gameEngine.addEntity(spike14); // side spikes
-    gameEngine.addEntity(spike15); // bottom spikes 
-    
-    gameEngine.addEntity(potion);
+    gameEngine.addEntity(spike15); // side wall spikes 
 
+    gameEngine.addEntity(potion);
     gameEngine.addEntity(potion1);
+    gameEngine.addEntity(potion2);
+    gameEngine.addEntity(potion3);
+    gameEngine.addEntity(potion4);
+    gameEngine.addEntity(potion5);
+    gameEngine.addEntity(potion6);
+    gameEngine.addEntity(potion7);
+    gameEngine.addEntity(potion8);
 
 
     var robot = new Robot(gameEngine, gameState, 5, 20);
@@ -792,10 +808,12 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(knightPortraitRight);
     gameEngine.addEntity(gunwomanPortraitRight);
     gameEngine.addEntity(magePortraitRight);
+    gameEngine.addEntity(robotPortraitLeft)
 
     gameEngine.addEntity(progressKnight);
     gameEngine.addEntity(progressGunwoman);
     gameEngine.addEntity(progressMage);
+    gameEngine.addEntity(progressRobot);
 
     gameState.addPlayableCharacter(knight);
     gameState.addPlayableCharacter(gunwoman);

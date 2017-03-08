@@ -293,9 +293,9 @@ function Platform(gameEngine, gameState, x, y, width, height) {
 }
 
 Platform.prototype.draw = function() {
-    this.ctx.fillStyle = "#ff0000";
+    // this.ctx.fillStyle = "#ff0000";
     // this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
-    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    // this.ctx.fillRect(this.x, this.y, this.width, this.height);
 }
 
 Platform.prototype.update = function() {
@@ -334,12 +334,12 @@ function Spike(gameEngine, gameState, x, y, width, height) {
 }
 
 Spike.prototype.draw = function() {
-    this.ctx.globalAlpha = 0.2;
+    // this.ctx.globalAlpha = 0.2;
 
-    this.ctx.fillStyle = "#0000ff ";
-    //console.log(this.canvasX);
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
-    this.ctx.globalAlpha = 1.0;
+    // this.ctx.fillStyle = "#0000ff ";
+    // //console.log(this.canvasX);
+    // this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    // this.ctx.globalAlpha = 1.0;
 
     //console.log(this.canvasX);
     //this.ctx.fillRect(this.x, this.y, this.width, this.height);

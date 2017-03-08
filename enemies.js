@@ -1335,9 +1335,10 @@ Arrow.prototype.draw = function() {
     //     this.animationArcherImpact.drawFrame(this.gameEngine.clockTick, this.ctx, this.player.canvasX - 30, this.player.canvasY - 20);
     // }
     if (!this.collidedWith) {
-        this.ctx.fillStyle = "#000000";
-        this.ctx.fillRect(this.canvasX, this.canvasY, 20, 3);
-        //this.ctx.drawImage(this.arrowImage, this.canvasX - 30, this.canvasY, 100, 16);
+        // this.ctx.fillStyle = "#000000";
+        // this.ctx.fillRect(this.canvasX, this.canvasY, 20, 3);
+        // this.rotateAndCache(this.arrowImage, this.angle);
+        this.ctx.drawImage(this.arrowImage, this.canvasX - 30, this.canvasY, 50, 16);
     }
 
 };
@@ -1389,7 +1390,7 @@ function Robot(gameEngine, gameState, x, y) {
 
     this.canvasX = x * TILE_SIZE;
     this.canvasY = y * TILE_SIZE;
-
+    this.health = 50;
     this.initialCanvasX = x * TILE_SIZE;
     this.initialCanvasY = y * TILE_SIZE;
 
