@@ -59,6 +59,7 @@ Animation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
                     gameEngine.keyMap["1"] = false;
                     currentCharacter.jumping = false;
                     currentCharacter.attacking = false;
+                    // currentCharacter.destroyBox = false;
                 }
 
             }
@@ -105,10 +106,73 @@ Animation.prototype.isDone = function() {
     return (this.elapsedTime >= this.totalTime);
 }
 
+function EffectAnimation(entity, spriteSheet, frameWidth, frameHeight, sheetWidth, frameDuration, frames, loop, scale) {
+    this.assetManager = AM;
+    this.entity = entity;
+    this.spriteSheet = spriteSheet;
+    this.frameWidth = frameWidth;
+    this.frameDuration = frameDuration;
+    this.frameHeight = frameHeight;
+    this.sheetWidth = sheetWidth;
+    this.frames = frames;
+    this.totalTime = frameDuration * frames;
+    this.elapsedTime = 0; //used for jumping as well as various other animations
+    this.loop = loop;
+    this.scale = scale;
+}
+
+EffectAnimation.prototype.drawFrame = function(tick, ctx, canvasX, canvasY) {
+    var gameEngine = this.entity.gameEngine.getGameEngine();
+    var gameState = this.entity.gameState;
+    var currentCharacter = gameState.getCurrentCharacter();
+
+    this.elapsedTime += tick;
+
+    if (this.isDone()) {
+
+        if (this.loop) {
+
+            this.elapsedTime = 0;
+
+        } else {
+
+            this.entity.impact = false;
+        }
+    }
+
+    var frame = this.currentFrame();
+
+    var xindex = 0;
+    var yindex = 0;
+    xindex = frame % this.sheetWidth;
+    yindex = Math.floor(frame / this.sheetWidth);
+
+    ctx.drawImage(this.spriteSheet,
+        xindex * this.frameWidth, yindex * this.frameHeight, // source from sheet
+        this.frameWidth, this.frameHeight,
+        canvasX - 16, canvasY - 25, //-16 and -25 to offset the image and draw in correct place
+        this.frameWidth * this.scale,
+        this.frameHeight * this.scale);
+}
+
+EffectAnimation.prototype.currentFrame = function() {
+    return Math.floor(this.elapsedTime / this.frameDuration);
+}
+
+EffectAnimation.prototype.isDone = function() {
+    return (this.elapsedTime >= this.totalTime);
+}
+
 // END ENEMIES
 
 // no inheritance
+
+var BACKGROUND_ID = 0;
+
 function Background(gameEngine, gameState, spritesheet) {
+    this.id = BACKGROUND_ID
+    BACKGROUND_ID++;
+
     this.gameEngine = gameEngine;
     this.gameState = gameState;
     this.ctx = gameEngine.ctx;
@@ -125,21 +189,23 @@ Background.prototype.draw = function() {
 
 Background.prototype.update = function() {
     var gameEngine = this.gameEngine;
+    var gameState = this.gameState;
     var currentCharacter = this.gameState.getCurrentCharacter();
 
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-            this.x = this.x - 1;
+            this.x--;
 
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
             if (this.x !== 0) {
-                this.x = this.x + 1;
+                this.x++;
             }
 
         }
     }
+
 };
 
 function Foreground(gameEngine, gameState, spritesheet) {
@@ -181,7 +247,8 @@ function Midground(gameEngine, gameState, spritesheet) {
 }
 
 Midground.prototype.draw = function() {
-    this.ctx.drawImage(this.spritesheet, this.x, this.y);
+    this.ctx.drawImage(this.spritesheet,
+        this.x, this.y, window.innerWidth, window.innerHeight, 0, 0, window.innerWidth, window.innerHeight);
 
 }
 
@@ -227,7 +294,7 @@ function Platform(gameEngine, gameState, x, y, width, height) {
 
 Platform.prototype.draw = function() {
     this.ctx.fillStyle = "#ff0000";
-    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    // this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     //this.ctx.fillRect(this.x, this.y, this.width, this.height);
 }
 
@@ -464,8 +531,8 @@ function Coin(gameEngine, gameState, entity) {
     this.animation = new Animation(this, img, 18, 20, 6, 0.05, 6, true, 1);
     this.ctx = gameEngine.ctx;
     this.gameState = gameState;
-    this.canvasX = entity.canvasX ;
-    this.canvasY = entity.canvasY ;
+    this.canvasX = entity.canvasX;
+    this.canvasY = entity.canvasY;
     this.x = entity.x;
     this.y = entity.y;
     this.initialCanvasX = this.x;
@@ -499,7 +566,7 @@ Coin.prototype.draw = function() {
 
     // this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
-    
+
     this.animation.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX + 19.5, this.canvasY + 25);
 
     // body...
