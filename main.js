@@ -249,8 +249,6 @@ AM.queueDownload("./img/gunwomanPORTRAITright.png");
 AM.queueDownload("./img/gunimpact.png");
 
 
-
-
 //wolf
 AM.queueDownload("./img/wolfidleright.png");
 AM.queueDownload("./img/wolfattackright.png");
@@ -292,9 +290,6 @@ AM.queueDownload("./img/robotattackright.png");
 AM.queueDownload("./img/robotidleleft.png");
 AM.queueDownload("./img/robotwalkleft.png");
 AM.queueDownload("./img/robotattackleft.png");
-// AM.queueDownload("./img/robotjumpright.png");
-// AM.queueDownload("./img/robotjumpleft.png");
-
 
 //tree
 AM.queueDownload("./img/treeleaffall.png");
@@ -354,7 +349,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     var mage = new Mage(gameEngine, gameState, progressMage);
     //var wolf = new Wolf(gameEngine);
 
-    //   x   y
+                                                    //   x   y
     var skeleton0 = new Skeleton(gameEngine, gameState, 25, 27);
     var skeleton1 = new Skeleton(gameEngine, gameState, 72, 24);
     var skeleton2 = new Skeleton(gameEngine, gameState, 75, 24);
@@ -412,7 +407,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(archer8);
     gameEngine.addEntity(archer9);
 
-    gameEngine.addEntity(skeleton0);
+    //gameEngine.addEntity(skeleton0);
     gameEngine.addEntity(skeleton1);
     gameEngine.addEntity(skeleton2);
     gameEngine.addEntity(skeleton3);
@@ -654,7 +649,7 @@ function createGame(gameEngine, gameMenu, gameState) {
 
 
     var robot = new Robot(gameEngine, gameState, 5, 20);
-    //gameEngine.addEntity(robot);
+    gameEngine.addEntity(robot);
 
     gameEngine.addEntity(tooltip);
     gameEngine.addEntity(foreground);

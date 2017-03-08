@@ -1326,12 +1326,7 @@ Arrow.prototype.draw = function() {
     }
 };
 
-
-
-
 // BIG BOSS
-
-
 function Robot(gameEngine, gameState, x, y) {
     var idleRightAnimationSpriteSheet =  AM.getAsset("./img/robotidleright.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/robotwalkright.png");
@@ -1347,17 +1342,16 @@ function Robot(gameEngine, gameState, x, y) {
     
     this.name = "robot";
    
-    this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 3, 0.05, 8, true, 1);
-    this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 4, 0.035, 12, true, 1);
-    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 288, 192, 4, 0.015, 16, true, 1);
     this.animationIdleLeft = new Animation(this, idleLeftAnimationSpriteSheet, 192, 192, 3, 0.1, 8, true, 1);
-    this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 2, 0.07, 12, true, 1);
+    this.animationIdleRight = new Animation(this, idleRightAnimationSpriteSheet, 192, 192, 3, 0.1, 8, true, 1);
+    this.animationWalkLeft = new Animation(this, walkLeftAnimationSpriteSheet, 192, 192, 3, 0.035, 8, true, 1);
+    this.animationWalkRight = new Animation(this, walkRightAnimationSpriteSheet, 192, 192, 3, 0.035, 9, true, 1);
     this.animationAttackLeft = new Animation(this, attackLeftAnimationSpriteSheet, 288, 192, 4, 0.05, 16, true, 1);
+    this.animationAttackRight = new Animation(this, attackRightAnimationSpriteSheet, 288, 192, 4, 0.015, 16, true, 1);
 
     this.animationState = "idleLeft";
 
     this.direction = "left";
-    // var currentCharacter = game.getCurrentCharacter();
 
     this.x = x * TILE_SIZE;
     this.y = y * TILE_SIZE;
@@ -1634,67 +1628,96 @@ Robot.prototype.update = function() {
         distanceFromHero = Math.abs(currentCharacter.x - this.x);
     }
 
-    if (distanceFromHero <= 600) {
+    // if (distanceFromHero <= 600) {
 
 
-        if (distanceFromHero <= 80) {
+    //     if (distanceFromHero <= 80) {
+
+    //         if (!this.attacking) {
+
+    //             if (this.direction === "right") {
+
+    //                 this.animationState = "attackRight";
+
+    //             } else {
+
+    //                 this.animationState = "attackLeft";
+
+    //             }
+
+    //             this.attacking = true;
+
+    //         }
+
+    //     } else if (currentCharacter.x < this.x && !this.collidedLeft && !this.attacking) {
+
+    //         var colidEntity = this.collidedBottomEntity;
 
 
-
-            if (!this.attacking) {
-
-                if (this.direction === "right") {
-
-                    this.animationState = "attackRight";
-
-                } else {
-
-                    this.animationState = "attackLeft";
-
-                }
-
-                this.attacking = true;
-
-            }
-
-        } else if (currentCharacter.x < this.x && !this.collidedLeft && !this.attacking) {
-
-            var colidEntity = this.collidedBottomEntity;
+    //         this.direction = "left";
+    //         this.animationState = "walkLeft";
+    //         if (colidEntity !== null && this.x / 16 > colidEntity.x / 16) {
+    //             //console.log("come here");
+    //             this.oldX = this.x;
+    //             this.x -= 2;
+    //             this.canvasX -= 2;
+    //         }
 
 
-            this.direction = "left";
-            this.animationState = "walkLeft";
-            if (colidEntity !== null && this.x / 16 > colidEntity.x / 16) {
-                //console.log("come here");
-                this.oldX = this.x;
-                this.x -= 2;
-                this.canvasX -= 2;
-            }
+    //     } else if (currentCharacter.x > this.x && !this.collidedRight && !this.attacking) {
 
 
-        } else if (currentCharacter.x > this.x && !this.collidedRight && !this.attacking) {
+    //         var colidEntity = this.collidedBottomEntity;
+
+    //         if (colidEntity !== null) {
+    //             var colidX = colidEntity.x / 16 + colidEntity.width / 16;
+    //         }
 
 
-            var colidEntity = this.collidedBottomEntity;
+    //         this.direction = "right";
+    //         this.animationState = "walkRight";
 
-            if (colidEntity !== null) {
-                var colidX = colidEntity.x / 16 + colidEntity.width / 16;
-            }
+    //         if (this.x / 16 + 2 < colidX) {
 
+    //             this.oldX = this.x;
+    //             this.x += 2;
+    //             this.canvasX += 2;
+    //         }
 
-            this.direction = "right";
-            this.animationState = "walkRight";
+    //     }
 
-            if (this.x / 16 + 2 < colidX) {
+    // }
+    if (gameEngine.keyMap["KeyV"]) {
 
-                this.oldX = this.x;
-                this.x += 2;
-                this.canvasX += 2;
-            }
+        if (this.direction === "left") {
 
+            this.animationState = "attackLeft";
+
+        } else {
+
+            this.animationState = "attackRight";
         }
 
+        this.attacking = true;
+
+    } else if (gameEngine.keyMap["KeyZ"] && !this.collidedLeft && !this.attacking) {
+
+        this.direction = "left";
+        this.animationState = "walkLeft";
+        this.oldX = this.x;
+        this.x -= 2;
+        this.canvasX -= 2;
+
+    } else if (gameEngine.keyMap["KeyC"] && !this.collidedRight && !this.attacking) {
+
+        this.direction = "right";
+        this.animationState = "walkRight";
+        this.oldX = this.x;
+        this.x += 2;
+        this.canvasX += 2;
+
     }
+
 
 };
 
