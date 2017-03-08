@@ -793,7 +793,7 @@ function createGame(gameEngine, gameMenu, gameState) {
 
 
     var robot = new Robot(gameEngine, gameState, 5, 20);
-    gameEngine.addEntity(robot);
+    //gameEngine.addEntity(robot);
 
     gameEngine.addEntity(tooltip);
     gameEngine.addEntity(foreground);
