@@ -406,7 +406,10 @@ GameState.prototype.updateHealth = function(entity) {
             this.charactersAlive--;
         }
 
-    } else if (entity.name === "skeleton" || entity.name === "skeletonArcher") {
+    
+    } else if (entity.name === "skeleton" || 
+        entity.name === "skeletonArcher" ||
+        entity.name === "robot") {
 
         for (var i = 0; i < this.gameEngine.entities.length; i++) {
 
@@ -414,7 +417,7 @@ GameState.prototype.updateHealth = function(entity) {
             if (entity === this.gameEngine.entities[i]) {
                 entity.health = entity.health - 1;
 
-                if (entity.id === 0) {
+                if (entity.name === "robot") {
                     console.log(entity.health);
                 }
             }

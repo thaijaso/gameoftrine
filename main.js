@@ -109,6 +109,13 @@ function GameMenu(gameEngine) {
     this.controlsImg = AM.getAsset("./img/controlsImg.png");
     this.skeletonImg = AM.getAsset("./img/skeletonforstart.png");
 
+
+    this.audio = new Howl({
+        src: ['./sound/KingdomHearts.webm', './sound/KingdomHearts.mp3']
+    });
+
+    this.audio.play();
+
     this.width = this.ctx.canvas.width;
     this.height = this.ctx.canvas.height;
     this.mouseX = 0;
@@ -125,7 +132,6 @@ function GameMenu(gameEngine) {
     this.skeletonVisible1 = false;
     this.skeletonVisible2 = false;
 
-
 }
 
 GameMenu.prototype.update = function() {
@@ -135,6 +141,7 @@ GameMenu.prototype.update = function() {
     var mouseHoverY = this.game.mouseHoverY;
     if (this.mouseX >= this.buttonX[1] && this.mouseX <= this.buttonX[1] + 100 && this.mouseY >= this.buttonY[1] && this.mouseY <= this.buttonY[1] + 75) {
         createGame(this.game, this, this.game.gameState);
+        this.audio.stop();
         this.game.startMenu = false;
 
     } else if (this.mouseX >= this.buttonX[2] && this.mouseX <= this.buttonX[2] + 100 && this.mouseY >= this.buttonY[2] && this.mouseY <= this.buttonY[2] + 75) {
@@ -247,8 +254,6 @@ AM.queueDownload("./img/gunwomanPORTRAITright.png");
 AM.queueDownload("./img/gunimpact.png");
 
 
-
-
 //wolf
 AM.queueDownload("./img/wolfidleright.png");
 AM.queueDownload("./img/wolfattackright.png");
@@ -284,7 +289,7 @@ AM.queueDownload("./img/skeletonarcheridleleft.png");
 AM.queueDownload("./img/skeleton-archer-idle-right.png");
 AM.queueDownload("./img/skeletonarcherattackleft.png");
 AM.queueDownload("./img/skeletonarcherattackright.png");
-AM.queueDownload("./img/archerImpact.png");
+AM.queueDownload("./img/archerimpact.png");
 
 //robot
 AM.queueDownload("./img/robotidleright.png");
@@ -294,9 +299,6 @@ AM.queueDownload("./img/robotidleleft.png");
 AM.queueDownload("./img/robotwalkleft.png");
 AM.queueDownload("./img/robotattackleft.png");
 AM.queueDownload("./img/robotportraitleft.png");
-// AM.queueDownload("./img/robotjumpright.png");
-// AM.queueDownload("./img/robotjumpleft.png");
-
 
 //tree
 AM.queueDownload("./img/treeleaffall.png");
@@ -347,8 +349,6 @@ AM.downloadAll(function() {
 function createGame(gameEngine, gameMenu, gameState) {
     var ctx = gameEngine.ctx;
 
-    this.audio = new Sound();
-
     var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground2.png"));
     var background = new Background(gameEngine, gameState, AM.getAsset("./img/background.png"));
     var midground = new Midground(gameEngine, gameState, AM.getAsset("./img/midground.png"));
@@ -363,7 +363,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     var mage = new Mage(gameEngine, gameState, progressMage);
     //var wolf = new Wolf(gameEngine);
 
-    //   x   y
+                                                    //   x   y
     var skeleton0 = new Skeleton(gameEngine, gameState, 25, 27);
     var skeleton1 = new Skeleton(gameEngine, gameState, 72, 24);
     var skeleton2 = new Skeleton(gameEngine, gameState, 75, 24);
@@ -438,12 +438,9 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(archer7);
     gameEngine.addEntity(archer8);
     gameEngine.addEntity(archer9);
-
-
     gameEngine.addEntity(archer10);
     gameEngine.addEntity(archer11);
     gameEngine.addEntity(archer12);
-
 
     // gameEngine.addEntity(skeleton0);
     gameEngine.addEntity(skeleton1);
@@ -468,9 +465,6 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(skeleton20);
     gameEngine.addEntity(skeleton21);
     gameEngine.addEntity(skeleton22);
-
-
-
     gameEngine.addEntity(skeleton23);
     gameEngine.addEntity(skeleton24);
     gameEngine.addEntity(skeleton25);
