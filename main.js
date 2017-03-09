@@ -139,7 +139,7 @@ GameMenu.prototype.update = function() {
     this.mouseY = this.game.clickY;
     var mouseHoverX = this.game.mouseHoverX;
     var mouseHoverY = this.game.mouseHoverY;
-    if (this.mouseX >= this.buttonX[1] && this.mouseX <= this.buttonX[1] + 100 && this.mouseY >= this.buttonY[1] && this.mouseY <= this.buttonY[1] + 75) {
+    if (this.mouseX >= this.buttonX[1] && this.mouseX <= this.buttonX[1] + 200 && this.mouseY >= this.buttonY[1] && this.mouseY <= this.buttonY[1] + 50) {
         createGame(this.game, this, this.game.gameState);
         this.audio.stop();
         this.game.startMenu = false;
@@ -226,7 +226,7 @@ AM.queueDownload("./img/controlsmenu.png");
 
 
 AM.queueDownload("./img/background.png");
-AM.queueDownload("./img/foreground2-min.png");
+AM.queueDownload("./img/foreground.png");
 
 //knight
 AM.queueDownload("./img/knightidleright.png");
@@ -349,14 +349,14 @@ AM.downloadAll(function() {
 function createGame(gameEngine, gameMenu, gameState) {
     var ctx = gameEngine.ctx;
 
-    var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground2-min.png"));
+    var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground.png"));
     var background = new Background(gameEngine, gameState, AM.getAsset("./img/background.png"));
 
     var progressKnight = new ProgressBar(ctx, 74, 72);
     var progressGunwoman = new ProgressBar(ctx, 205, 72);
     var progressMage = new ProgressBar(ctx, 335, 72);
     
-    var progressRobot = new ProgressBar(ctx, 1140, 72);
+    var progressRobot = new ProgressBar(ctx, ctx.canvas.width - 139.5 , 72);
 
     var knight = new Knight(gameEngine, gameState, progressKnight);
     var gunwoman = new Gunwoman(gameEngine, gameState, progressGunwoman);
@@ -367,7 +367,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     var skeleton0 = new Skeleton(gameEngine, gameState, 25, 27);
     var skeleton1 = new Skeleton(gameEngine, gameState, 72, 24);
     var skeleton2 = new Skeleton(gameEngine, gameState, 75, 24);
-    var skeleton3 = new Skeleton(gameEngine, gameState, 85, 24);
+    var skeleton3 = new Skeleton(gameEngine, gameState, 85, 24);.5
     var skeleton4 = new Skeleton(gameEngine, gameState, 144, 32); //BOTTOM TWO
     var skeleton5 = new Skeleton(gameEngine, gameState, 174, 32);
     var skeleton6 = new Skeleton(gameEngine, gameState, 168, 17); //SINGLE TOP ONE
@@ -440,46 +440,46 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(progressMage);
     gameEngine.addEntity(progressRobot);
 
-    // gameEngine.addEntity(archer1);
-    // //gameEngine.addEntity(archer2);
-    // gameEngine.addEntity(archer3);
-    // gameEngine.addEntity(archer4);
-    // gameEngine.addEntity(archer5);
-    // gameEngine.addEntity(archer6);
-    // gameEngine.addEntity(archer7);
-    // gameEngine.addEntity(archer8);
-    // gameEngine.addEntity(archer9);
-    // gameEngine.addEntity(archer10);
-    // gameEngine.addEntity(archer11);
-    // gameEngine.addEntity(archer12);
+    gameEngine.addEntity(archer1);
+    //gameEngine.addEntity(archer2);
+    gameEngine.addEntity(archer3);
+    gameEngine.addEntity(archer4);
+    gameEngine.addEntity(archer5);
+    gameEngine.addEntity(archer6);
+    gameEngine.addEntity(archer7);
+    gameEngine.addEntity(archer8);
+    gameEngine.addEntity(archer9);
+    gameEngine.addEntity(archer10);
+    gameEngine.addEntity(archer11);
+    gameEngine.addEntity(archer12);
 
-    // gameEngine.addEntity(skeleton3);
-    // gameEngine.addEntity(skeleton4);
-    // gameEngine.addEntity(skeleton5);
-    // gameEngine.addEntity(skeleton6);
-    // gameEngine.addEntity(skeleton7);
-    // gameEngine.addEntity(skeleton8);
-    // gameEngine.addEntity(skeleton9);
-    // gameEngine.addEntity(skeleton10);
-    // gameEngine.addEntity(skeleton11);
-    // gameEngine.addEntity(skeleton12);
-    // gameEngine.addEntity(skeleton13);
-    // gameEngine.addEntity(skeleton14);
-    // gameEngine.addEntity(skeleton15);
-    // gameEngine.addEntity(skeleton16);
-    // gameEngine.addEntity(skeleton17);
-    // gameEngine.addEntity(skeleton18);
-    // gameEngine.addEntity(skeleton19);
-    // gameEngine.addEntity(skeleton20);
-    // gameEngine.addEntity(skeleton21);
-    // gameEngine.addEntity(skeleton22);
-    // gameEngine.addEntity(skeleton23);
-    // gameEngine.addEntity(skeleton24);
-    // gameEngine.addEntity(skeleton25);
-    // gameEngine.addEntity(skeleton26);
-    // gameEngine.addEntity(skeleton27);
-    // gameEngine.addEntity(skeleton28);
-    // gameEngine.addEntity(skeleton29);
+    gameEngine.addEntity(skeleton3);
+    gameEngine.addEntity(skeleton4);
+    gameEngine.addEntity(skeleton5);
+    gameEngine.addEntity(skeleton6);
+    gameEngine.addEntity(skeleton7);
+    gameEngine.addEntity(skeleton8);
+    gameEngine.addEntity(skeleton9);
+    gameEngine.addEntity(skeleton10);
+    gameEngine.addEntity(skeleton11);
+    gameEngine.addEntity(skeleton12);
+    gameEngine.addEntity(skeleton13);
+    gameEngine.addEntity(skeleton14);
+    gameEngine.addEntity(skeleton15);
+    gameEngine.addEntity(skeleton16);
+    gameEngine.addEntity(skeleton17);
+    gameEngine.addEntity(skeleton18);
+    gameEngine.addEntity(skeleton19);
+    gameEngine.addEntity(skeleton20);
+    gameEngine.addEntity(skeleton21);
+    gameEngine.addEntity(skeleton22);
+    gameEngine.addEntity(skeleton23);
+    gameEngine.addEntity(skeleton24);
+    gameEngine.addEntity(skeleton25);
+    gameEngine.addEntity(skeleton26);
+    gameEngine.addEntity(skeleton27);
+    gameEngine.addEntity(skeleton28);
+    gameEngine.addEntity(skeleton29);
 
 
     var robot = new Robot(gameEngine, gameState, progressRobot, 984, 15);
@@ -790,7 +790,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(spike7); // side
     gameEngine.addEntity(spike8);
     gameEngine.addEntity(spike9); // by ladder
-    gameEngine.addEntity(spike10); // by ladder ceiling
+    // gameEngine.addEntity(spike10); // by ladder ceiling
     gameEngine.addEntity(spike11); // side spikes
     gameEngine.addEntity(spike12); // side spikes
     gameEngine.addEntity(spike13); // top spikes

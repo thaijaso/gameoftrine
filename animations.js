@@ -401,7 +401,7 @@ Spike.prototype.draw = function() {
 
     this.ctx.fillStyle = "#0000ff ";
     // //console.log(this.canvasX);
-    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     // this.ctx.globalAlpha = 1.0;
 
     //console.log(this.canvasX);
