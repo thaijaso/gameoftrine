@@ -401,7 +401,7 @@ Spike.prototype.draw = function() {
 
     //this.ctx.fillStyle = "#0000ff ";
     // //console.log(this.canvasX);
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     // this.ctx.globalAlpha = 1.0;
 
     //console.log(this.canvasX);
@@ -534,6 +534,7 @@ Tooltip.prototype.draw = function() {
     }
 
     if (gameState.gameIsOver && gameState.didWin) {
+        this.ctx.fillStyle = "white";
         this.ctx.fillText("You win. Thanks for playing.", this.canvasX, this.canvasY);
     }
 }
