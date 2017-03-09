@@ -118,7 +118,7 @@ function GameMenu(gameEngine, gameState) {
     this.logoImg = AM.getAsset("./img/logoimg1.png");
     this.playImg = AM.getAsset("./img/playImg.png");
     this.controlsImg = AM.getAsset("./img/controlsImg.png");
-    this.skeletonImg = AM.getAsset("./img/skeletonforstart.png");
+    this.skeletonImg = AM.getAsset("./img/skeletonforstart-min.png");
 
 
     
@@ -243,14 +243,14 @@ AM.queueDownload("./img/gamemenubackground.jpg");
 AM.queueDownload("./img/logoimg1.png");
 AM.queueDownload("./img/playImg.png");
 AM.queueDownload("./img/controlsImg.png");
-AM.queueDownload("./img/skeletonforstart.png");
+AM.queueDownload("./img/skeletonforstart-min.png");
 AM.queueDownload("./img/controlsmenu.png");
 
 
 //mute button
 AM.queueDownload("./img/mute.png");
 
-AM.queueDownload("./img/background.png");
+AM.queueDownload("./img/background-min.png");
 AM.queueDownload("./img/foreground.png");
 
 //knight
@@ -378,7 +378,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     var ctx = gameEngine.ctx;
 
     var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground.png"));
-    var background = new Background(gameEngine, gameState, AM.getAsset("./img/background.png"));
+    var background = new Background(gameEngine, gameState, AM.getAsset("./img/background-min.png"));
 
     var progressKnight = new ProgressBar(ctx, 74, 72);
     var progressGunwoman = new ProgressBar(ctx, 205, 72);
