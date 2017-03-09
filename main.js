@@ -351,12 +351,12 @@ function createGame(gameEngine, gameMenu, gameState) {
 
     var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground2-min.png"));
     var background = new Background(gameEngine, gameState, AM.getAsset("./img/background.png"));
-    var midground = new Midground(gameEngine, gameState, AM.getAsset("./img/midground.png"));
 
     var progressKnight = new ProgressBar(ctx, 74, 72);
     var progressGunwoman = new ProgressBar(ctx, 205, 72);
     var progressMage = new ProgressBar(ctx, 335, 72);
-    var progressRobot = new ProgressBar(ctx, 800, 72);
+    
+    var progressRobot = new ProgressBar(ctx, 1140, 72);
 
     var knight = new Knight(gameEngine, gameState, progressKnight);
     var gunwoman = new Gunwoman(gameEngine, gameState, progressGunwoman);
@@ -422,6 +422,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"), 4.9, 20);
     var gunwomanPortraitRight = new Portrait(ctx, AM.getAsset("./img/gunwomanPORTRAITright.png"), 155, 20);
     var magePortraitRight = new Portrait(ctx, AM.getAsset("./img/magePORTRAITright.png"), 265, 20);
+    
     var robotPortraitLeft = new Portrait(ctx, AM.getAsset("./img/robotportraitleft.png"), ctx.canvas.width - 200, 20);
     robotPortraitLeft.width = 120;
     robotPortraitLeft.height= 110;
@@ -429,8 +430,18 @@ function createGame(gameEngine, gameMenu, gameState) {
     //an entity is any element drawn on the map
     gameEngine.addEntity(knight);
 
+    gameEngine.addEntity(knightPortraitRight);
+    gameEngine.addEntity(gunwomanPortraitRight);
+    gameEngine.addEntity(magePortraitRight);
+    gameEngine.addEntity(robotPortraitLeft)
+
+    gameEngine.addEntity(progressKnight);
+    gameEngine.addEntity(progressGunwoman);
+    gameEngine.addEntity(progressMage);
+    gameEngine.addEntity(progressRobot);
+
     gameEngine.addEntity(archer1);
-    gameEngine.addEntity(archer2);
+    //gameEngine.addEntity(archer2);
     gameEngine.addEntity(archer3);
     gameEngine.addEntity(archer4);
     gameEngine.addEntity(archer5);
@@ -442,9 +453,6 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(archer11);
     gameEngine.addEntity(archer12);
 
-    // gameEngine.addEntity(skeleton0);
-    gameEngine.addEntity(skeleton1);
-    gameEngine.addEntity(skeleton2);
     gameEngine.addEntity(skeleton3);
     gameEngine.addEntity(skeleton4);
     gameEngine.addEntity(skeleton5);
@@ -471,7 +479,12 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(skeleton26);
     gameEngine.addEntity(skeleton27);
     gameEngine.addEntity(skeleton28);
-    gameEngine.addEntity(skeleton29);
+    // gameEngine.addEntity(skeleton29);
+
+
+    var robot = new Robot(gameEngine, gameState, progressRobot, 984, 15);
+    //var robot = new Robot(gameEngine, gameState, progressRobot, 10, 15);
+    gameEngine.addEntity(robot);
 
     //x,  y, width, height
     var tutorialPlatform0 = new Platform(gameEngine, gameState, -50, 39, 92, 1)
@@ -794,23 +807,9 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(potion7);
     gameEngine.addEntity(potion8);
 
-
-    var robot = new Robot(gameEngine, gameState, 5, 20);
-    //gameEngine.addEntity(robot);
-
     gameEngine.addEntity(tooltip);
     gameEngine.addEntity(foreground);
     gameEngine.addEntity(tree);
-
-    gameEngine.addEntity(knightPortraitRight);
-    gameEngine.addEntity(gunwomanPortraitRight);
-    gameEngine.addEntity(magePortraitRight);
-    gameEngine.addEntity(robotPortraitLeft)
-
-    gameEngine.addEntity(progressKnight);
-    gameEngine.addEntity(progressGunwoman);
-    gameEngine.addEntity(progressMage);
-    gameEngine.addEntity(progressRobot);
 
     gameState.addPlayableCharacter(knight);
     gameState.addPlayableCharacter(gunwoman);
@@ -818,7 +817,7 @@ function createGame(gameEngine, gameMenu, gameState) {
 
     gameState.setCurrentCharacter(knight);
 
-    gameEngine.setCurrentBackground(background);
+    gameState.setCurrentBackground(background);
     gameState.setCurrentForeground(foreground);
 
     gameEngine.addEntity(background);

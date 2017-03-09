@@ -14,6 +14,7 @@ function GameState(ctx, gameEngine) {
     this.wolfSummoned = false;
 
     this.currentForeground = null;
+    this.currentBackground = null;
 
     this.gameIsOver = false;
     this.playAgainClicked = false;
@@ -56,7 +57,7 @@ GameState.prototype.update = function() {
 
             if (currentCharacter.x >= 10839 && currentCharacter.y === 357) { //check to see if at the end of level
 
-                window.alert("Next level");
+                //window.alert("Next level");
 
             } else if (currentCharacter.y > 700) { //fell off map
 
@@ -418,7 +419,9 @@ GameState.prototype.updateHealth = function(entity) {
                 entity.health = entity.health - 1;
 
                 if (entity.name === "robot") {
-                    console.log(entity.health);
+                    //console.log(entity.health);
+                    entity.progressBar.updateHealth(entity.health);
+                    entity.progressBar.hasBeenHit(true);
                 }
             }
 
@@ -468,6 +471,14 @@ GameState.prototype.getCurrentForeground = function() {
     return this.currentForeground;
 }
 
+GameState.prototype.setCurrentBackground = function(background) {
+    this.currentBackground = background;
+}
+
+GameState.prototype.getCurrentBackground = function() {
+    return this.currentBackground;
+}
+
 GameState.prototype.restoreHealth = function(entity) {
 
     this.playableCharacters[0].health = 50;
@@ -506,6 +517,7 @@ GameState.prototype.reset = function() {
     this.currentCharacter.canvasY = canvasY;
 
     this.currentForeground.canvasX = 0;
+    this.currentBackground.canvasX = 0;
 
     this.gameIsOver = false;
     this.playAgainClicked = false;
