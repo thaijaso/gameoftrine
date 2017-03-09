@@ -318,6 +318,9 @@ AM.queueDownload("./img/healthpotion.png");
 //coin
 AM.queueDownload("./img/coin.png");
 
+//pot of gold
+AM.queueDownload("./img/potofgold.png");
+
 AM.downloadAll(function() {
     var canvas = document.getElementById("gameWorld");
 
@@ -352,7 +355,8 @@ function createGame(gameEngine, gameMenu, gameState) {
     var progressKnight = new ProgressBar(ctx, 74, 72);
     var progressGunwoman = new ProgressBar(ctx, 205, 72);
     var progressMage = new ProgressBar(ctx, 335, 72);
-    var progressRobot = new ProgressBar(ctx, 800, 72);
+    
+    var progressRobot = new ProgressBar(ctx, 1140, 72);
 
     var knight = new Knight(gameEngine, gameState, progressKnight);
     var gunwoman = new Gunwoman(gameEngine, gameState, progressGunwoman);
@@ -418,6 +422,7 @@ function createGame(gameEngine, gameMenu, gameState) {
     var knightPortraitRight = new Portrait(ctx, AM.getAsset("./img/knightportraitright.png"), 4.9, 20);
     var gunwomanPortraitRight = new Portrait(ctx, AM.getAsset("./img/gunwomanPORTRAITright.png"), 155, 20);
     var magePortraitRight = new Portrait(ctx, AM.getAsset("./img/magePORTRAITright.png"), 265, 20);
+    
     var robotPortraitLeft = new Portrait(ctx, AM.getAsset("./img/robotportraitleft.png"), ctx.canvas.width - 200, 20);
     robotPortraitLeft.width = 120;
     robotPortraitLeft.height= 110;
@@ -435,53 +440,50 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(progressMage);
     gameEngine.addEntity(progressRobot);
 
-    // gameEngine.addEntity(archer1);
-    // //gameEngine.addEntity(archer2);
-    // gameEngine.addEntity(archer3);
-    // gameEngine.addEntity(archer4);
-    // gameEngine.addEntity(archer5);
-    // gameEngine.addEntity(archer6);
-    // gameEngine.addEntity(archer7);
-    // gameEngine.addEntity(archer8);
-    // gameEngine.addEntity(archer9);
-    // gameEngine.addEntity(archer10);
-    // gameEngine.addEntity(archer11);
-    // gameEngine.addEntity(archer12);
+    gameEngine.addEntity(archer1);
+    //gameEngine.addEntity(archer2);
+    gameEngine.addEntity(archer3);
+    gameEngine.addEntity(archer4);
+    gameEngine.addEntity(archer5);
+    gameEngine.addEntity(archer6);
+    gameEngine.addEntity(archer7);
+    gameEngine.addEntity(archer8);
+    gameEngine.addEntity(archer9);
+    gameEngine.addEntity(archer10);
+    gameEngine.addEntity(archer11);
+    gameEngine.addEntity(archer12);
 
-    // // gameEngine.addEntity(skeleton0);
-    // gameEngine.addEntity(skeleton1);
-    // gameEngine.addEntity(skeleton2);
-    // gameEngine.addEntity(skeleton3);
-    // gameEngine.addEntity(skeleton4);
-    // gameEngine.addEntity(skeleton5);
-    // gameEngine.addEntity(skeleton6);
-    // gameEngine.addEntity(skeleton7);
-    // gameEngine.addEntity(skeleton8);
-    // gameEngine.addEntity(skeleton9);
-    // gameEngine.addEntity(skeleton10);
-    // gameEngine.addEntity(skeleton11);
-    // gameEngine.addEntity(skeleton12);
-    // gameEngine.addEntity(skeleton13);
-    // gameEngine.addEntity(skeleton14);
-    // gameEngine.addEntity(skeleton15);
-    // gameEngine.addEntity(skeleton16);
-    // gameEngine.addEntity(skeleton17);
-    // gameEngine.addEntity(skeleton18);
-    // gameEngine.addEntity(skeleton19);
-    // gameEngine.addEntity(skeleton20);
-    // gameEngine.addEntity(skeleton21);
-    // gameEngine.addEntity(skeleton22);
-    // gameEngine.addEntity(skeleton23);
-    // gameEngine.addEntity(skeleton24);
-    // gameEngine.addEntity(skeleton25);
-    // gameEngine.addEntity(skeleton26);
-    // gameEngine.addEntity(skeleton27);
-    // gameEngine.addEntity(skeleton28);
+    gameEngine.addEntity(skeleton3);
+    gameEngine.addEntity(skeleton4);
+    gameEngine.addEntity(skeleton5);
+    gameEngine.addEntity(skeleton6);
+    gameEngine.addEntity(skeleton7);
+    gameEngine.addEntity(skeleton8);
+    gameEngine.addEntity(skeleton9);
+    gameEngine.addEntity(skeleton10);
+    gameEngine.addEntity(skeleton11);
+    gameEngine.addEntity(skeleton12);
+    gameEngine.addEntity(skeleton13);
+    gameEngine.addEntity(skeleton14);
+    gameEngine.addEntity(skeleton15);
+    gameEngine.addEntity(skeleton16);
+    gameEngine.addEntity(skeleton17);
+    gameEngine.addEntity(skeleton18);
+    gameEngine.addEntity(skeleton19);
+    gameEngine.addEntity(skeleton20);
+    gameEngine.addEntity(skeleton21);
+    gameEngine.addEntity(skeleton22);
+    gameEngine.addEntity(skeleton23);
+    gameEngine.addEntity(skeleton24);
+    gameEngine.addEntity(skeleton25);
+    gameEngine.addEntity(skeleton26);
+    gameEngine.addEntity(skeleton27);
+    gameEngine.addEntity(skeleton28);
     // gameEngine.addEntity(skeleton29);
 
 
-    var robot = new Robot(gameEngine, gameState, 984, 15);
-    //var robot = new Robot(gameEngine, gameState, 10, 15);
+    var robot = new Robot(gameEngine, gameState, progressRobot, 984, 15);
+    //var robot = new Robot(gameEngine, gameState, progressRobot, 10, 15);
     gameEngine.addEntity(robot);
 
     //x,  y, width, height

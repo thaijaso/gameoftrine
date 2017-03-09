@@ -60,7 +60,7 @@ function Knight(gameEngine, gameState, progressBar) {
     this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 12, false, 0.5);
     this.animationSkeletonImpact = new EffectAnimation(this, skeletonImpact, 192, 192, 3, .06, 6, false, .5);
     this.animationArcherImpact = new EffectAnimation(this, archerImpact, 192, 192, 3, .06, 6, false, .7);    
-    this.animationPoof = new EffectAnimation(this, poofImg, 512, 512, 3, 0.06, 8, false, 0.3);
+    this.animationPoof = new EffectAnimation(this, poofImg, 64, 64, 4, 0.06, 8, false, 2);
 
     this.animationState = "idleRight";
 
@@ -673,11 +673,19 @@ Knight.prototype.update = function() {
         this.oldX = this.x;
         this.x += 3;
 
+        if (this.x > 15283) {
+            this.canvasX += 3;
+        }
+
     } else if (gameEngine.keyMap["KeyA"] && !this.collidedLeft) {
 
         this.direction = "left";
         this.oldX = this.x;
         this.x -= 3;
+
+        if (this.x > 15283) {
+            this.canvasX -= 3;
+        }
 
     }
 
@@ -823,7 +831,7 @@ Knight.prototype.draw = function() {
     }
 
     if (this.showPoof) {
-        this.animationPoof.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 50, this.canvasY - 60);
+        this.animationPoof.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 35, this.canvasY - 30);
     }
 
     if (this.attacked) {
@@ -872,7 +880,7 @@ function Mage(gameEngine, gameState, progressBar) {
     this.animationSkeletonImpact = new EffectAnimation(this, skeletonImpact, 192, 192, 3, .06, 6, false, .5);
     this.animationArcherImpact = new EffectAnimation(this, archerImpact, 192, 192, 3, .06, 6, false, .7);
     this.animationBoxEffect = new EffectAnimation(this, boxImpactSpriteSheet, 192, 192, 4, 0.02, 11, false, 0.6);
-    this.animationPoof = new EffectAnimation(this, poofSpriteSheet, 512, 512, 3, 0.06, 8, false, 0.3);
+    this.animationPoof = new EffectAnimation(this, poofSpriteSheet, 64, 64, 4, 0.06, 8, false, 2);
     
 
     this.animationState = "idleRight";
@@ -1418,9 +1426,9 @@ Mage.prototype.update = function() {
 }
 
 Mage.prototype.draw = function() {
-    this.ctx.fillStyle = "black";
-    this.ctx.fillRect(this.x, this.y, this.width, this.height);
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillStyle = "black";
+    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
     if (this.animationState === "idleRight") {
 
@@ -1470,7 +1478,7 @@ Mage.prototype.draw = function() {
 
     if (this.showPoof) {
 
-        this.animationPoof.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 50, this.canvasY - 60);
+        this.animationPoof.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 35, this.canvasY - 30);
     }
 
 
@@ -1744,7 +1752,7 @@ function Gunwoman(gameEngine, gameState, progressBar) {
     this.animationJumpLeft = new Animation(this, jumpLeftAnimationSpriteSheet, 192, 192, 4, 0.04, 11, false, 0.5);
     this.animationSkeletonImpact = new EffectAnimation(this, skeletonImpact, 192, 192, 3, .06, 6, false, .5);
     this.animationArcherImpact = new EffectAnimation(this, archerImpact, 192, 192, 3, .06, 6, false, .7);
-    this.animationPoof = new EffectAnimation(this, poofAnimationSpriteSheet, 512, 512, 3, 0.06, 8, false, 0.3);
+    this.animationPoof = new EffectAnimation(this, poofAnimationSpriteSheet, 64, 64, 4, 0.06, 8, false, 2);
     
     this.showPoof = false;
 
@@ -2152,11 +2160,19 @@ Gunwoman.prototype.update = function() {
         this.oldX = this.x;
         this.x += 3;
 
+        if (this.x > 15283) {
+            this.canvasX += 3;
+        }
+
     } else if (gameEngine.keyMap["KeyA"] && !this.collidedLeft) {
 
         this.direction = "left";
         this.oldX = this.x;
         this.x -= 3;
+
+        if (this.x > 15283) {
+            this.canvasX -= 3;
+        }
 
     }
 
@@ -2164,7 +2180,7 @@ Gunwoman.prototype.update = function() {
     if (gameEngine.keyMap["3"] && !gameState.wolfSummoned) { 
         gameState.wolfSummoned = true;
         var wolf = new Wolf(gameEngine, gameState);
-        gameEngine.addEntity(wolf);
+        //gameEngine.addEntity(wolf);
     }
 
     //poof effect
@@ -2366,7 +2382,7 @@ Gunwoman.prototype.draw = function() {
 
     if (this.showPoof) {
 
-        this.animationPoof.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 50, this.canvasY - 60);
+        this.animationPoof.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX - 35, this.canvasY - 30);
     }
 }
 

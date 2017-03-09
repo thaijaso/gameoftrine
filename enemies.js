@@ -1351,7 +1351,7 @@ Arrow.prototype.draw = function() {
 };
 
 // BIG BOSS
-function Robot(gameEngine, gameState, x, y) {
+function Robot(gameEngine, gameState, progressBar, x, y) {
     var idleRightAnimationSpriteSheet =  AM.getAsset("./img/robotidleright.png");
     var walkRightAnimationSpriteSheet = AM.getAsset("./img/robotwalkright.png");
     var attackRightAnimationSpriteSheet = AM.getAsset("./img/robotattackright.png");
@@ -1380,6 +1380,7 @@ function Robot(gameEngine, gameState, x, y) {
     this.direction = "left";
 
     this.health = 50;
+    this.progressBar = progressBar;
 
     this.x = x * TILE_SIZE;
     this.y = y * TILE_SIZE;
@@ -1532,6 +1533,8 @@ Robot.prototype.update = function() {
     var currentCharacter = gameState.getCurrentCharacter();
     var foreground = gameState.getCurrentForeground();
     var background = gameState.getCurrentBackground();
+
+    this.progressBar.updateHealth(this.health);
 
     if (this.attacking) {
         for (var i = 0; i < gameEngine.entities.length; i++) {
@@ -2006,7 +2009,7 @@ Robot.prototype.update = function() {
     if (distanceFromHero <= 800) {
 
 
-        if (distanceFromHero <= 60) {
+        if (distanceFromHero <= 40) {
 
             if (!this.attacking) {
 
@@ -2099,7 +2102,7 @@ Robot.prototype.update = function() {
 };
 
 Robot.prototype.draw = function() {
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
 
     if (this.animationState === "idleLeft") {
 

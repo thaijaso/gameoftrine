@@ -179,6 +179,9 @@ function Background(gameEngine, gameState, spritesheet) {
     this.spritesheet = spritesheet;
     this.canvasX = 0;
     this.canvasY = 0;
+
+    this.initialCanvasX = 0;
+    this.initialCanvasY = 0;
 }
 
 Background.prototype.draw = function() {
@@ -398,7 +401,7 @@ Spike.prototype.draw = function() {
 
     this.ctx.fillStyle = "#0000ff ";
     // //console.log(this.canvasX);
-    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     // this.ctx.globalAlpha = 1.0;
 
     //console.log(this.canvasX);
@@ -596,8 +599,6 @@ function Coin(gameEngine, gameState, entity) {
     this.height = 20;
 
     this.name = "coin";
-
-
 }
 
 Coin.prototype.update = function() {

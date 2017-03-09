@@ -419,7 +419,9 @@ GameState.prototype.updateHealth = function(entity) {
                 entity.health = entity.health - 1;
 
                 if (entity.name === "robot") {
-                    console.log(entity.health);
+                    //console.log(entity.health);
+                    entity.progressBar.updateHealth(entity.health);
+                    entity.progressBar.hasBeenHit(true);
                 }
             }
 
@@ -515,6 +517,7 @@ GameState.prototype.reset = function() {
     this.currentCharacter.canvasY = canvasY;
 
     this.currentForeground.canvasX = 0;
+    this.currentBackground.canvasX = 0;
 
     this.gameIsOver = false;
     this.playAgainClicked = false;
@@ -573,11 +576,12 @@ function Score(gameEngine, gameState) {
     this.width = this.ctx.canvas.width;
     this.height = this.ctx.canvas.height;
     this.gameState = gameState;
-    this.x = this.width - 150;
+    this.x = 0 ;
     this.y = this.height - 75;
     this.score = gameState.score;
     this.initialCanvasX = this.x;
     this.name = "score";
+    this.potOfGold = AM.getAsset("./img/potofgold.png");
 
 }
 
@@ -586,9 +590,10 @@ Score.prototype.update = function() {
 };
 
 Score.prototype.draw = function() {
-    this.ctx.fillStyle = "black";
-    this.ctx.fillRect(this.x - 5, this.y - 30, 150, 60);
+    // this.ctx.fillStyle = "black";
+    // this.ctx.fillRect(this.x - 5, this.y - 30, 150, 60);
     this.ctx.fillStyle = "white";
     this.ctx.font = "30px Georgia";
-    this.ctx.fillText("Gold:" + this.score, this.x + 10 , this.y + 10);
+    this.ctx.drawImage(this.potOfGold, this.x , this.y - 50, 70, 70);
+    this.ctx.fillText(this.score, this.x + 25 , this.y );
 }
