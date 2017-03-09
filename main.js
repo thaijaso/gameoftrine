@@ -348,7 +348,6 @@ function createGame(gameEngine, gameMenu, gameState) {
 
     var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground2.png"));
     var background = new Background(gameEngine, gameState, AM.getAsset("./img/background.png"));
-    var midground = new Midground(gameEngine, gameState, AM.getAsset("./img/midground.png"));
 
     var progressKnight = new ProgressBar(ctx, 74, 72);
     var progressGunwoman = new ProgressBar(ctx, 205, 72);
@@ -426,49 +425,64 @@ function createGame(gameEngine, gameMenu, gameState) {
     //an entity is any element drawn on the map
     gameEngine.addEntity(knight);
 
-    gameEngine.addEntity(archer1);
-    gameEngine.addEntity(archer2);
-    gameEngine.addEntity(archer3);
-    gameEngine.addEntity(archer4);
-    gameEngine.addEntity(archer5);
-    gameEngine.addEntity(archer6);
-    gameEngine.addEntity(archer7);
-    gameEngine.addEntity(archer8);
-    gameEngine.addEntity(archer9);
-    gameEngine.addEntity(archer10);
-    gameEngine.addEntity(archer11);
-    gameEngine.addEntity(archer12);
+    gameEngine.addEntity(knightPortraitRight);
+    gameEngine.addEntity(gunwomanPortraitRight);
+    gameEngine.addEntity(magePortraitRight);
+    gameEngine.addEntity(robotPortraitLeft)
 
-    // gameEngine.addEntity(skeleton0);
-    gameEngine.addEntity(skeleton1);
-    gameEngine.addEntity(skeleton2);
-    gameEngine.addEntity(skeleton3);
-    gameEngine.addEntity(skeleton4);
-    gameEngine.addEntity(skeleton5);
-    gameEngine.addEntity(skeleton6);
-    gameEngine.addEntity(skeleton7);
-    gameEngine.addEntity(skeleton8);
-    gameEngine.addEntity(skeleton9);
-    gameEngine.addEntity(skeleton10);
-    gameEngine.addEntity(skeleton11);
-    gameEngine.addEntity(skeleton12);
-    gameEngine.addEntity(skeleton13);
-    gameEngine.addEntity(skeleton14);
-    gameEngine.addEntity(skeleton15);
-    gameEngine.addEntity(skeleton16);
-    gameEngine.addEntity(skeleton17);
-    gameEngine.addEntity(skeleton18);
-    gameEngine.addEntity(skeleton19);
-    gameEngine.addEntity(skeleton20);
-    gameEngine.addEntity(skeleton21);
-    gameEngine.addEntity(skeleton22);
-    gameEngine.addEntity(skeleton23);
-    gameEngine.addEntity(skeleton24);
-    gameEngine.addEntity(skeleton25);
-    gameEngine.addEntity(skeleton26);
-    gameEngine.addEntity(skeleton27);
-    gameEngine.addEntity(skeleton28);
-    gameEngine.addEntity(skeleton29);
+    gameEngine.addEntity(progressKnight);
+    gameEngine.addEntity(progressGunwoman);
+    gameEngine.addEntity(progressMage);
+    gameEngine.addEntity(progressRobot);
+
+    // gameEngine.addEntity(archer1);
+    // //gameEngine.addEntity(archer2);
+    // gameEngine.addEntity(archer3);
+    // gameEngine.addEntity(archer4);
+    // gameEngine.addEntity(archer5);
+    // gameEngine.addEntity(archer6);
+    // gameEngine.addEntity(archer7);
+    // gameEngine.addEntity(archer8);
+    // gameEngine.addEntity(archer9);
+    // gameEngine.addEntity(archer10);
+    // gameEngine.addEntity(archer11);
+    // gameEngine.addEntity(archer12);
+
+    // // gameEngine.addEntity(skeleton0);
+    // gameEngine.addEntity(skeleton1);
+    // gameEngine.addEntity(skeleton2);
+    // gameEngine.addEntity(skeleton3);
+    // gameEngine.addEntity(skeleton4);
+    // gameEngine.addEntity(skeleton5);
+    // gameEngine.addEntity(skeleton6);
+    // gameEngine.addEntity(skeleton7);
+    // gameEngine.addEntity(skeleton8);
+    // gameEngine.addEntity(skeleton9);
+    // gameEngine.addEntity(skeleton10);
+    // gameEngine.addEntity(skeleton11);
+    // gameEngine.addEntity(skeleton12);
+    // gameEngine.addEntity(skeleton13);
+    // gameEngine.addEntity(skeleton14);
+    // gameEngine.addEntity(skeleton15);
+    // gameEngine.addEntity(skeleton16);
+    // gameEngine.addEntity(skeleton17);
+    // gameEngine.addEntity(skeleton18);
+    // gameEngine.addEntity(skeleton19);
+    // gameEngine.addEntity(skeleton20);
+    // gameEngine.addEntity(skeleton21);
+    // gameEngine.addEntity(skeleton22);
+    // gameEngine.addEntity(skeleton23);
+    // gameEngine.addEntity(skeleton24);
+    // gameEngine.addEntity(skeleton25);
+    // gameEngine.addEntity(skeleton26);
+    // gameEngine.addEntity(skeleton27);
+    // gameEngine.addEntity(skeleton28);
+    // gameEngine.addEntity(skeleton29);
+
+
+    var robot = new Robot(gameEngine, gameState, 984, 15);
+    //var robot = new Robot(gameEngine, gameState, 10, 15);
+    gameEngine.addEntity(robot);
 
     //x,  y, width, height
     var tutorialPlatform0 = new Platform(gameEngine, gameState, -50, 39, 92, 1)
@@ -791,23 +805,9 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(potion7);
     gameEngine.addEntity(potion8);
 
-
-    var robot = new Robot(gameEngine, gameState, 5, 20);
-    //gameEngine.addEntity(robot);
-
     gameEngine.addEntity(tooltip);
     gameEngine.addEntity(foreground);
     gameEngine.addEntity(tree);
-
-    gameEngine.addEntity(knightPortraitRight);
-    gameEngine.addEntity(gunwomanPortraitRight);
-    gameEngine.addEntity(magePortraitRight);
-    gameEngine.addEntity(robotPortraitLeft)
-
-    gameEngine.addEntity(progressKnight);
-    gameEngine.addEntity(progressGunwoman);
-    gameEngine.addEntity(progressMage);
-    gameEngine.addEntity(progressRobot);
 
     gameState.addPlayableCharacter(knight);
     gameState.addPlayableCharacter(gunwoman);
@@ -815,7 +815,7 @@ function createGame(gameEngine, gameMenu, gameState) {
 
     gameState.setCurrentCharacter(knight);
 
-    gameEngine.setCurrentBackground(background);
+    gameState.setCurrentBackground(background);
     gameState.setCurrentForeground(foreground);
 
     gameEngine.addEntity(background);

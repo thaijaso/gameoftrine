@@ -14,6 +14,7 @@ function GameState(ctx, gameEngine) {
     this.wolfSummoned = false;
 
     this.currentForeground = null;
+    this.currentBackground = null;
 
     this.gameIsOver = false;
     this.playAgainClicked = false;
@@ -56,7 +57,7 @@ GameState.prototype.update = function() {
 
             if (currentCharacter.x >= 10839 && currentCharacter.y === 357) { //check to see if at the end of level
 
-                window.alert("Next level");
+                //window.alert("Next level");
 
             } else if (currentCharacter.y > 700) { //fell off map
 
@@ -468,6 +469,14 @@ GameState.prototype.getCurrentForeground = function() {
     return this.currentForeground;
 }
 
+GameState.prototype.setCurrentBackground = function(background) {
+    this.currentBackground = background;
+}
+
+GameState.prototype.getCurrentBackground = function() {
+    return this.currentBackground;
+}
+
 GameState.prototype.restoreHealth = function(entity) {
 
     this.playableCharacters[0].health = 50;
@@ -581,5 +590,5 @@ Score.prototype.draw = function() {
     this.ctx.fillRect(this.x - 5, this.y - 30, 150, 60);
     this.ctx.fillStyle = "white";
     this.ctx.font = "30px Georgia";
-    this.ctx.fillText("Coins:" + this.score, this.x + 10 , this.y + 10);
+    this.ctx.fillText("Gold:" + this.score, this.x + 10 , this.y + 10);
 }

@@ -203,7 +203,7 @@ Skeleton.prototype.update = function() {
     var gameEngine = this.gameEngine;
     var gameState = this.gameState;
     var currentCharacter = gameState.getCurrentCharacter();
-    var background = gameEngine.getCurrentBackground();
+    var background = gameState.getCurrentBackground();
     var foreground = gameState.getCurrentForeground();
 
     if (this.attacking) {
@@ -256,7 +256,7 @@ Skeleton.prototype.update = function() {
 
                                                 var potentialKnockBackDistance = entity.x - (potentialCollision.x + potentialCollision.width);
 
-                                                console.log('potentialKnockBackDistance: ' + potentialKnockBackDistance);
+                                                //console.log('potentialKnockBackDistance: ' + potentialKnockBackDistance);
 
                                                 if (potentialKnockBackDistance < currentKnockBackDistance) { //this collision distance is shorter
 
@@ -283,6 +283,7 @@ Skeleton.prototype.update = function() {
                             entity.x += distanceFromCollision;
                             entity.oldX = entity.x;
                             foreground.canvasX -= distanceFromCollision;
+                            background.canvasX -= distanceFromCollision / 3;
                             this.canvasX -= distanceFromCollision;
 
                         } else {
@@ -290,8 +291,8 @@ Skeleton.prototype.update = function() {
                             //going to have to flip this when doing attacked animation
                             entity.x = entity.x + 15;
                             entity.oldX = entity.x;
-
                             foreground.canvasX -= 15;
+                            background.canvasX -= 15 / 3;
                             this.canvasX -= 15;
                         }
 
@@ -307,6 +308,8 @@ Skeleton.prototype.update = function() {
                                 if (gameEngine.entities[j].name === "platform" ||
                                     gameEngine.entities[j].name === "tree" ||
                                     gameEngine.entities[j].name === "skeleton" ||
+                                    gameEngine.entities[j].name === "skeletonArcher" ||
+                                    gameEngine.entities[j].name === "robot" ||
                                     gameEngine.entities[j].name === "box" ||
                                     gameEngine.entities[j].name === "spike" ||
                                     gameEngine.entities[j].name === "potion" || 
@@ -366,7 +369,7 @@ Skeleton.prototype.update = function() {
 
                                                 var potentialKnockBackDistance = entity.x - (potentialCollision.x + potentialCollision.width);
 
-                                                console.log('potentialKnockBackDistance: ' + potentialKnockBackDistance);
+                                                //console.log('potentialKnockBackDistance: ' + potentialKnockBackDistance);
 
                                                 if (potentialKnockBackDistance < currentKnockBackDistance) { //this collision distance is shorter
 
@@ -390,6 +393,7 @@ Skeleton.prototype.update = function() {
                             entity.x -= distanceFromCollision;
                             entity.oldX = entity.x;
                             foreground.canvasX += distanceFromCollision;
+                            background.canvasX += distanceFromCollision / 3;
                             this.canvasX += distanceFromCollision;
 
                         } else { //nothing to knock back collide with so knock back full distance
@@ -397,6 +401,7 @@ Skeleton.prototype.update = function() {
                             entity.x = entity.x - 15;
                             entity.oldX = entity.x;
                             foreground.canvasX += 15;
+                            background.canvasX += 15 / 3;
                             this.canvasX += 15;
                         }
 
@@ -412,6 +417,8 @@ Skeleton.prototype.update = function() {
                                 if (gameEngine.entities[j].name === "platform" ||
                                     gameEngine.entities[j].name === "tree" ||
                                     gameEngine.entities[j].name === "skeleton" ||
+                                    gameEngine.entities[j].name === "skeletonArcher" ||
+                                    gameEngine.entities[j].name === "robot" ||
                                     gameEngine.entities[j].name === "box" ||
                                     gameEngine.entities[j].name === "spike" ||
                                     gameEngine.entities[j].name === "potion" || 
@@ -761,8 +768,6 @@ Skeleton.prototype.update = function() {
     }
 };
 
-
-
 Skeleton.prototype.draw = function() {
     //this.ctx.fillRect(this.x, this.y, this.width, this.height);
     //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
@@ -861,6 +866,8 @@ function SkeletonArcher(gameEngine, gameState, x, y) {
     this.collidedRightEntity = null;
     this.collidedTopEntity = null;
     this.collidedBottomEntity = null;
+
+    this.jumping = false;
 }
 
 SkeletonArcher.prototype.collide = function(other) {
@@ -1494,11 +1501,334 @@ Robot.prototype.knockBackRightCollide = function(other) {
         attackBoxBottom >= other.y;    
 }
 
+Robot.prototype.collideAttackRight = function(other) {
+    var attackBoxLeft = this.x + this.width;
+    var attackBoxRight = attackBoxLeft + 92;
+    var attackBoxTop = this.y;
+    var attackBoxBottom = this.y + this.height;
+
+    return attackBoxLeft <= other.x + other.width &&
+        attackBoxRight >= other.x &&
+        attackBoxTop <= other.y + other.height &&
+        attackBoxBottom >= other.y;
+}
+
+
+Robot.prototype.collideAttackLeft = function(other) {
+    var attackBoxLeft = this.x - 92;
+    var attackBoxRight = this.x;
+    var attackBoxTop = this.y;
+    var attackBoxBottom = this.y + this.height;
+
+    return attackBoxRight >= other.x &&
+        attackBoxLeft <= other.x + other.width &&
+        attackBoxTop <= other.y + other.height &&
+        attackBoxBottom >= other.y;
+}
+
 Robot.prototype.update = function() {
     var gameEngine = this.gameEngine;
-    var currentCharacter = this.gameState.getCurrentCharacter();
+    var gameState = this.gameState;
+    var currentCharacter = gameState.getCurrentCharacter();
+    var foreground = gameState.getCurrentForeground();
+    var background = gameState.getCurrentBackground();
 
-     //check if enemy collided with any platforms
+    if (this.attacking) {
+        for (var i = 0; i < gameEngine.entities.length; i++) {
+            var entity = this.gameEngine.entities[i];
+
+            if (entity.name === "knight" ||
+                entity.name === "gunwoman" ||
+                entity.name === "mage" ||
+                entity.name === "wolf") {
+
+                if (this.direction === "right" && this.collideAttackRight(entity)) {
+
+                    var frame = this.animationAttackRight.currentFrame();
+
+
+                    if (this.animationAttackRight.currentFrame() === 10 && !this.doDamage) {
+
+                        this.doDamage = true;
+
+                        this.gameState.updateHealth(entity);
+
+                        var knockBackCollidedWith = null;
+
+                        for (var j = 0; j < gameEngine.entities.length; j++) {
+                            var potentialCollision = gameEngine.entities[j];
+
+                            if (potentialCollision !== this && //player can't knock back into this skeleton 
+                                potentialCollision !== entity && //player can't knock back into iteself
+                                potentialCollision !== entity.collidedBottomEntity) { //cant knock back onto the ground platform
+
+                                if (entity.knockBackRightCollide(potentialCollision)) {
+
+                                    if (potentialCollision.x >= entity.x) { //must be to the right of the knight
+
+                                        if (!knockBackCollidedWith) {
+
+                                            knockBackCollidedWith = potentialCollision;
+
+                                            if (potentialCollision.name === "platform") {
+                                                //debugger;
+                                            }
+
+                                        } else {
+
+                                            var currentKnockBackDistance = knockBackCollidedWith.x - (entity.x + entity.width);
+
+                                            //dont knock back into something behind the knight
+                                            if (potentialCollision.x + potentialCollision.width < entity.x + entity.width) {
+
+                                                var potentialKnockBackDistance = entity.x - (potentialCollision.x + potentialCollision.width);
+
+                                                console.log('potentialKnockBackDistance: ' + potentialKnockBackDistance);
+
+                                                if (potentialKnockBackDistance < currentKnockBackDistance) { //this collision distance is shorter
+
+                                                    //set new entity to collide into
+                                                    knockBackCollidedWith = potentialCollision;
+
+                                                    if (potentialCollision.name === "platform") {
+                                                        //debugger;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (knockBackCollidedWith) {
+
+                            //bug where touching wall but distanceFromCollision is not 0 ?? - 1 fixes it thooo 
+                            var distanceFromCollision = Math.abs((entity.x + entity.width - 1) - knockBackCollidedWith.x);
+                            //console.log(distanceFromCollision);
+
+                            entity.x += distanceFromCollision;
+                            entity.oldX = entity.x;
+
+                            if (currentCharacter.x < 15283) { //end of level, dont knock back foreground, bacgkround
+
+                                foreground.canvasX -= distanceFromCollision;
+                                background.canvasX -= distanceFromCollision / 3;
+                                this.canvasX -= distanceFromCollision;
+
+                            } else {
+
+                                currentCharacter.canvasX += distanceFromCollision;
+                            }
+                            
+
+                        } else {
+
+                            //going to have to flip this when doing attacked animation
+                            entity.x = entity.x + 15;
+                            entity.oldX = entity.x;
+                            
+                            if (currentCharacter.x < 15283) {
+                                foreground.canvasX -= 15;
+                                background.canvasX -= 15 / 3;
+                                this.canvasX -= 15;
+
+                            } else {
+
+                                currentCharacter.canvasX += 15;
+                            }
+
+                        }
+
+                        entity.attacked = true;
+
+                        //for knockback effect, since hero canvas position stays the same
+                        //have everything else move forward relative to the hero to make
+                        //it seem like the hero has been knocked back
+                        for (var j = 0; j < gameEngine.entities.length; j++) {
+
+                            if (this !== gameEngine.entities[j]) {
+
+                                if (gameEngine.entities[j].name === "platform" ||
+                                    gameEngine.entities[j].name === "tree" ||
+                                    gameEngine.entities[j].name === "skeleton" ||
+                                    gameEngine.entities[j].name === "skeletonArcher" ||
+                                    gameEngine.entities[j].name === "robot" ||
+                                    gameEngine.entities[j].name === "box" ||
+                                    gameEngine.entities[j].name === "spike" ||
+                                    gameEngine.entities[j].name === "potion" || 
+                                    gameEngine.entities[j].name === "coin") {
+
+                                    var other = gameEngine.entities[j];
+
+                                    if (knockBackCollidedWith) {
+
+                                        if (currentCharacter.x < 15283) {
+                                            other.canvasX -= distanceFromCollision;
+                                        }
+                                        
+
+                                    } else {
+
+                                        if (currentCharacter.x < 15283) {
+                                            other.canvasX -= 15;
+                                        }
+                                        
+                                    }
+
+
+                                }
+                            }
+                        }
+                    }
+
+                } else if (this.direction === "left" && this.collideAttackLeft(entity)) {
+
+                    var skeletonAttackFrame = this.animationAttackLeft.currentFrame();
+
+                    if (skeletonAttackFrame === 10 && !this.doDamage) {
+
+                        this.doDamage = true;
+
+                        this.gameState.updateHealth(entity);
+
+                        var knockBackCollidedWith = null;
+
+                        for (var j = 0; j < gameEngine.entities.length; j++) {
+                            var potentialCollision = gameEngine.entities[j];
+
+                            if (potentialCollision !== entity && //player can't knock back into iteself
+                                potentialCollision !== entity.collidedBottomEntity && //cant knock back onto the ground platform
+                                potentialCollision !== this) { //player can't knock back into this skeleton 
+
+                                if (entity.knockBackLeftCollide(potentialCollision)) {
+
+                                    if (potentialCollision.x + potentialCollision.width <= entity.x) { //must be to the left of the knight
+
+                                        if (!knockBackCollidedWith) {
+
+                                            knockBackCollidedWith = potentialCollision;
+
+                                        } else {
+
+                                            var currentKnockBackDistance = entity.x - (knockBackCollidedWith.x + knockBackCollidedWith.width);
+
+                                            //dont knock back into something behind the knight
+                                            if (potentialCollision.x + potentialCollision.width < entity.x) {
+
+                                                var potentialKnockBackDistance = entity.x - (potentialCollision.x + potentialCollision.width);
+
+                                                console.log('potentialKnockBackDistance: ' + potentialKnockBackDistance);
+
+                                                if (potentialKnockBackDistance < currentKnockBackDistance) { //this collision distance is shorter
+
+                                                    //set new entity to collide into
+                                                    knockBackCollidedWith = potentialCollision;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        //set knock back canvasX
+                        if (knockBackCollidedWith) {
+
+                            var distanceFromCollision = Math.abs(entity.x - (knockBackCollidedWith.x + knockBackCollidedWith.width));
+                            //console.log(distanceFromCollision);
+
+
+                            entity.x -= distanceFromCollision;
+                            entity.oldX = entity.x;
+
+                            if (currentCharacter.x < 15283) {
+
+                                foreground.canvasX += distanceFromCollision;
+
+                                 //dont knock back background if we are at the beginning of the background
+                                if (!(background.canvasX >= 0)) {
+                                    background.canvasX += distanceFromCollision / 3;
+                                }
+                                
+                                this.canvasX += distanceFromCollision;
+
+                            } else  {
+
+                                currentCharacter -= distanceFromCollision;
+                            }
+                            
+                        } else { //nothing to knock back collide with so knock back full distance
+
+                            entity.x = entity.x - 15;
+                            entity.oldX = entity.x;
+                            
+
+                            if (currentCharacter.x < 15283) {
+
+                                foreground.canvasX += 15;
+                            
+                                //dont knock back background if we are at the beginning of the background
+                                if (!(background.canvasX >= 0)) {
+                                    
+                                    background.canvasX += 15 / 3;
+                                }
+                                
+                                this.canvasX += 15;
+                            
+                            } else {
+                                currentCharacter.canvasX -= 15;
+                            }
+                        }
+
+                        entity.attacked = true;
+
+                        //for knockback effect, since hero canvas position stays the same
+                        //have everything else move forward relative to the hero to make
+                        //it seem like the hero has been knocked back
+                        for (var j = 0; j < gameEngine.entities.length; j++) {
+
+                            if (this !== gameEngine.entities[j]) {
+
+                                if (gameEngine.entities[j].name === "platform" ||
+                                    gameEngine.entities[j].name === "tree" ||
+                                    gameEngine.entities[j].name === "skeleton" ||
+                                    gameEngine.entities[j].name === "skeletonArcher" ||
+                                    gameEngine.entities[j].name === "robot" ||
+                                    gameEngine.entities[j].name === "box" ||
+                                    gameEngine.entities[j].name === "spike" ||
+                                    gameEngine.entities[j].name === "potion" || 
+                                    gameEngine.entities[j].name === "coin") {
+
+                                    //other entities in the game
+                                    var other = gameEngine.entities[j];
+
+                                    if (knockBackCollidedWith) {
+
+                                        if (currentCharacter.x < 15283) {
+
+                                             other.canvasX += distanceFromCollision;
+                                        
+                                        } 
+
+                                    } else {
+
+                                        if (currentCharacter.x < 15283) {
+
+                                            other.canvasX += 15;
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+     //check if enemy collided with any entities
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var entity = this.gameEngine.entities[i];
 
@@ -1515,41 +1845,51 @@ Robot.prototype.update = function() {
 
                 this.collidedWith = entity;
 
-                if (this.collideLeft(entity)) {
+                if (this.collidedWith.name === "box") {
+
+                    gameEngine.removeEntity(this.collidedWith);
+                    this.collidedWith = null;
+
+                } else {
+
                     
-                    this.collidedLeft = true;
-                    this.collidedLeftEntity = entity;
                     
-                    //fall after colliding left
-                    if (!this.collidedBottom && !this.jumping) {
-                        this.oldY = this.y;
+                    if (this.collideLeft(entity)) {
+                        
+                        this.collidedLeft = true;
+                        this.collidedLeftEntity = entity;
+                        
+                        //fall after colliding left
+                        if (!this.collidedBottom && !this.jumping) {
+                            this.oldY = this.y;
+                            this.canvasY += 3;
+                            this.y += 3;
+                        } 
+
+                    } else if (this.collideRight(entity)) {
+
+                        this.collidedRight = true;
+                        this.collidedRightEntity = entity;
+
+                        if (!this.collidedBottom && !this.jumping) {
+                            this.oldY = this.y;
+                            this.y += 3;
+                            this.canvasY += 3;
+                        } 
+
+                    } else if (this.collideBottom(entity)) {
+                        this.collidedBottom = true;
+                        this.lastGroundY = this.collidedWith.y;
+                        this.collidedBottomEntity = entity;
+
+                    } else if (this.collideTop(entity)) {
+
+                        this.collidedTop = true;
+                        this.collidedTopEntity = entity;
                         this.canvasY += 3;
                         this.y += 3;
                     } 
-
-                } else if (this.collideRight(entity)) {
-
-                    this.collidedRight = true;
-                    this.collidedRightEntity = entity;
-
-                    if (!this.collidedBottom && !this.jumping) {
-                        this.oldY = this.y;
-                        this.y += 3;
-                        this.canvasY += 3;
-                    } 
-
-                } else if (this.collideBottom(entity)) {
-                    this.collidedBottom = true;
-                    this.lastGroundY = this.collidedWith.y;
-                    this.collidedBottomEntity = entity;
-
-                } else if (this.collideTop(entity)) {
-
-                    this.collidedTop = true;
-                    this.collidedTopEntity = entity;
-                    this.canvasY += 3;
-                    this.y += 3;
-                } 
+                }
             }
         }
     }
@@ -1634,11 +1974,17 @@ Robot.prototype.update = function() {
         
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-            this.canvasX -= 3;
+            if (currentCharacter.x < 15283) {
+                this.canvasX -= 3;
+            }
+            
 
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
-            this.canvasX += 3;
+            if (currentCharacter.x < 15283) {
+                this.canvasX += 3;
+            }
+            
         }    
     }
 
@@ -1646,68 +1992,78 @@ Robot.prototype.update = function() {
 
     if (currentCharacter) {
 
-        distanceFromHero = Math.abs(currentCharacter.x - this.x);
+        if (this.direction === "right") {
+
+            distanceFromHero = Math.abs(currentCharacter.x - (this.x + this.width));
+
+        } else {
+
+            distanceFromHero = Math.abs(currentCharacter.x - this.x);
+        }
+        
     }
 
-    // if (distanceFromHero <= 600) {
+    if (distanceFromHero <= 800) {
 
 
-    //     if (distanceFromHero <= 80) {
+        if (distanceFromHero <= 60) {
 
-    //         if (!this.attacking) {
+            if (!this.attacking) {
 
-    //             if (this.direction === "right") {
+                if (this.direction === "right") {
 
-    //                 this.animationState = "attackRight";
+                    this.animationState = "attackRight";
 
-    //             } else {
+                } else {
 
-    //                 this.animationState = "attackLeft";
+                    this.animationState = "attackLeft";
 
-    //             }
+                }
 
-    //             this.attacking = true;
+                this.attacking = true;
 
-    //         }
+            }
 
-    //     } else if (currentCharacter.x < this.x && !this.collidedLeft && !this.attacking) {
+        } else if (currentCharacter.x < this.x && !this.collidedLeft && !this.attacking) {
 
-    //         var colidEntity = this.collidedBottomEntity;
-
-
-    //         this.direction = "left";
-    //         this.animationState = "walkLeft";
-    //         if (colidEntity !== null && this.x / 16 > colidEntity.x / 16) {
-    //             //console.log("come here");
-    //             this.oldX = this.x;
-    //             this.x -= 2;
-    //             this.canvasX -= 2;
-    //         }
+            var colidEntity = this.collidedBottomEntity;
 
 
-    //     } else if (currentCharacter.x > this.x && !this.collidedRight && !this.attacking) {
+            this.direction = "left";
+            this.animationState = "walkLeft";
+            
+            if (colidEntity !== null && this.x > colidEntity.x) {
+              
+                this.oldX = this.x;
+                this.x -= 3;
+                this.canvasX -= 3;
+            }
 
 
-    //         var colidEntity = this.collidedBottomEntity;
-
-    //         if (colidEntity !== null) {
-    //             var colidX = colidEntity.x / 16 + colidEntity.width / 16;
-    //         }
+        } else if (currentCharacter.x > this.x && !this.collidedRight && !this.attacking) {
 
 
-    //         this.direction = "right";
-    //         this.animationState = "walkRight";
+            var colidEntity = this.collidedBottomEntity;
 
-    //         if (this.x / 16 + 2 < colidX) {
+            if (colidEntity !== null) {
+                var colidX = colidEntity.x + colidEntity.width;
+            }
 
-    //             this.oldX = this.x;
-    //             this.x += 2;
-    //             this.canvasX += 2;
-    //         }
 
-    //     }
+            this.direction = "right";
+            this.animationState = "walkRight";
 
-    // }
+            if (this.x < colidX) {
+
+                this.oldX = this.x;
+                this.x += 3;
+                this.canvasX += 3;
+            }
+
+        }
+
+    }
+    
     if (gameEngine.keyMap["KeyV"]) {
 
         if (this.direction === "left") {

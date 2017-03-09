@@ -167,10 +167,6 @@ EffectAnimation.prototype.isDone = function() {
     return (this.elapsedTime >= this.totalTime);
 }
 
-// END ENEMIES
-
-// no inheritance
-
 var BACKGROUND_ID = 0;
 
 function Background(gameEngine, gameState, spritesheet) {
@@ -181,13 +177,13 @@ function Background(gameEngine, gameState, spritesheet) {
     this.gameState = gameState;
     this.ctx = gameEngine.ctx;
     this.spritesheet = spritesheet;
-    this.x = 0;
-    this.y = 0;
+    this.canvasX = 0;
+    this.canvasY = 0;
 }
 
 Background.prototype.draw = function() {
     this.ctx.drawImage(this.spritesheet,
-        this.x, this.y);
+        this.canvasX, this.canvasY);
 };
 
 
@@ -199,12 +195,12 @@ Background.prototype.update = function() {
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-            this.x--;
+            this.canvasX--;
 
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
-            if (this.x !== 0) {
-                this.x++;
+            if (this.canvasX !== 0) {
+                this.canvasX++;
             }
 
         }
@@ -232,39 +228,19 @@ Foreground.prototype.update = function() {
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-            this.canvasX -= 3;
+
+            //end of the level, dont move foreground
+            if (currentCharacter.x < 15283) {
+                this.canvasX -= 3;
+            }
+            
 
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
-            this.canvasX += 3;
-        }
-    }
-}
-
-function Midground(gameEngine, gameState, spritesheet) {
-    this.gameEngine = gameEngine;
-    this.ctx = gameEngine.ctx;
-    this.gameState = gameState;
-    this.spritesheet = spritesheet;
-    this.x = 0;
-    this.y = 0;
-}
-
-Midground.prototype.draw = function() {
-    this.ctx.drawImage(this.spritesheet,
-        this.x, this.y, window.innerWidth, window.innerHeight, 0, 0, window.innerWidth, window.innerHeight);
-
-}
-
-Midground.prototype.update = function() {
-    var gameEngine = this.gameEngine;
-    var currentCharacter = this.gameState.getCurrentCharacter();
-
-    if (currentCharacter) {
-        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
-            this.x -= 0.8;
-        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
-            this.x += 0.8;
+            if (currentCharacter.x < 15283) {
+                this.canvasX += 3;
+            }
+            
         }
     }
 }
@@ -297,9 +273,9 @@ function Platform(gameEngine, gameState, x, y, width, height) {
 }
 
 Platform.prototype.draw = function() {
-    // this.ctx.fillStyle = "#ff0000";
-    // this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
-    // this.ctx.fillRect(this.x, this.y, this.width, this.height);
+    this.ctx.fillStyle = "#ff0000";
+    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
 }
 
 Platform.prototype.update = function() {
@@ -310,11 +286,15 @@ Platform.prototype.update = function() {
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-            this.canvasX -= 3;
+            if (currentCharacter.x < 15283) {
+                this.canvasX -= 3;
+            }
 
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
-            this.canvasX += 3;
+            if (currentCharacter.x < 15283) {
+                this.canvasX += 3;
+            }
         }
     }
 }
@@ -337,16 +317,59 @@ function Spike(gameEngine, gameState, x, y, width, height) {
     this.height = height * TILE_SIZE;
 }
 
-Spike.prototype.draw = function() {
-    // this.ctx.globalAlpha = 0.2;
+//checks for all sides collision
+Spike.prototype.collide = function(other) {
+    return this.x <= other.x + other.width &&
+        this.x + this.width >= other.x &&
+        this.y <= other.y + other.height &&
+        this.height + this.y >= other.y;
+};
 
-    // this.ctx.fillStyle = "#0000ff ";
-    // //console.log(this.canvasX);
-    // this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
-    // this.ctx.globalAlpha = 1.0;
+//Returns true if Knight collided on his bottom 
+//This function assumes there was a collision
+//Should not be called if there was no collision
+Spike.prototype.collideBottom = function(other) {
+    if (this.oldY + this.height < other.y &&
+        this.y + this.height >= other.y) {
 
-    //console.log(this.canvasX);
-    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
+        //console.log('box collided bottom');
+    }
+
+    return this.oldY + this.height < other.y &&
+        this.y + this.height >= other.y;
+}
+
+Spike.prototype.collideLeft = function(other) {
+    if (this.oldX > other.x + other.width && //was not colliding
+        this.x <= other.x + other.width) {
+
+        //console.log('collide left');
+    }
+
+    return this.oldX > other.x + other.width && //was not colliding
+        this.x <= other.x + other.width;
+}
+
+Spike.prototype.collideRight = function(other) {
+    if (this.oldX + this.width < other.x &&
+        this.x + this.width >= other.x) {
+
+        //console.log('colided right');
+    }
+
+    return this.oldX + this.width < other.x &&
+        this.x + this.width >= other.x;
+}
+
+Spike.prototype.collideTop = function(other) {
+    if (this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height) {
+
+        //console.log('colided top');
+    }
+
+    return this.oldY > other.y + other.height &&
+        this.y <= other.y + other.height;
 }
 
 Spike.prototype.update = function() {
@@ -355,15 +378,32 @@ Spike.prototype.update = function() {
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-            this.canvasX -= 3;
+            //end of the level, dont move foreground
+            if (currentCharacter.x < 15283) {
+                this.canvasX -= 3;
+            }
 
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
-            this.canvasX += 3;
+            if (currentCharacter.x < 15283) {
+                this.canvasX += 3;
+            }
+        
         }
     }
 }
 
+Spike.prototype.draw = function() {
+    // this.ctx.globalAlpha = 0.2;
+
+    this.ctx.fillStyle = "#0000ff ";
+    // //console.log(this.canvasX);
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    // this.ctx.globalAlpha = 1.0;
+
+    //console.log(this.canvasX);
+    //this.ctx.fillRect(this.x, this.y, this.width, this.height);
+}
 
 function Tree(gameEngine, gameState) {
     this.gameEngine = gameEngine;
@@ -397,11 +437,16 @@ Tree.prototype.update = function() {
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-            this.canvasX -= 3;
+            //end of the level, dont move foreground
+            if (currentCharacter.x < 15283) {
+                this.canvasX -= 3;
+            }
 
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
-            this.canvasX += 3;
+            if (currentCharacter.x < 15283) {
+                this.canvasX += 3;
+            }
         }
     }
 }
@@ -510,11 +555,17 @@ Potion.prototype.update = function() {
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-            this.canvasX -= 3;
+
+            //end of the level, dont move foreground
+            if (currentCharacter.x < 15283) {
+                this.canvasX -= 3;
+            }
 
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
-            this.canvasX += 3;
+            if (currentCharacter.x < 15283) {
+                this.canvasX += 3;
+            }
         }
     }
 };
@@ -555,10 +606,16 @@ Coin.prototype.update = function() {
     if (currentCharacter) {
         if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
 
-            this.canvasX -= 3;
+            //end of the level, dont move foreground
+            if (currentCharacter.x < 15283) {
+                this.canvasX -= 3;
+            }
+        
         } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
 
-            this.canvasX += 3;
+            if (currentCharacter.x < 15283) {
+                this.canvasX += 3;
+            }
         }
     }
     // body...
