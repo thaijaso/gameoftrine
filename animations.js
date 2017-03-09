@@ -401,7 +401,7 @@ Spike.prototype.draw = function() {
 
     //this.ctx.fillStyle = "#0000ff ";
     // //console.log(this.canvasX);
-    //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
+    this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     // this.ctx.globalAlpha = 1.0;
 
     //console.log(this.canvasX);
@@ -638,4 +638,38 @@ Coin.prototype.draw = function() {
     this.animation.drawFrame(this.gameEngine.clockTick, this.ctx, this.canvasX + 19.5, this.canvasY + 25);
 
     // body...
+};
+
+function Mute(game, gameState, x, y) {
+    this.gameEngine = game;
+    this.img = AM.getAsset("./img/mute.png");
+    this.ctx = game.ctx;
+    this.gameState = gameState;
+    this.canvasX = x * TILE_SIZE;
+    this.canvasY = y * TILE_SIZE;
+    this.x = x * TILE_SIZE;
+    this.y = y * TILE_SIZE;
+    // this.initialCanvasX = x * TILE_SIZE;
+    this.width = 30;
+    this.height = 30;
+    this.mute = false;
+    this.name = "mute";
+}
+
+Mute.prototype.update = function() {
+    var gameEngine = this.gameEngine;
+    var currentCharacter = this.gameState.getCurrentCharacter();
+    if (currentCharacter) {
+        if (gameEngine.keyMap["KeyD"] && !currentCharacter.collidedRight) {
+
+            // this.canvasX -= 3;
+        } else if (gameEngine.keyMap["KeyA"] && !currentCharacter.collidedLeft) {
+
+            // this.canvasX += 3;
+        }
+    }
+};
+
+Mute.prototype.draw = function() {
+    this.ctx.drawImage(this.img, this.canvasX, this.canvasY, this.width, this.height);
 };

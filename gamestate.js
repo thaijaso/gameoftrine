@@ -25,6 +25,56 @@ function GameState(ctx, gameEngine) {
     //for all the dead enemies
     //used to restore dead enemy positions
     this.graveYard = [];
+
+    this.mutePressed = false;
+
+    this.backgroundMusic = new Howl({
+        src: ['./sound/Background.mp3'],
+        // music: [0, 195600, true]
+         loop: true,
+    });
+    this.ocean = new Howl({
+        src: ['./sound/alkaibeach.mp3'],
+            loop: true,
+            volume: 0.5,
+    });
+
+    this.isWalking = false;
+    this.walk = new Howl({
+        src: ['./sound/walk.mp3'],
+            volume: 0.5,
+    });
+
+    this.isAttack = false;
+    this.shot = new Howl({
+        src: ['./sound/shot1.wav'],
+            volume: 0.5,
+        sprite: {
+            shot: [0, 1800],
+        }
+    });
+
+    this.sword = new Howl({
+        src: ['./sound/steelsword.mp3'],
+         volume: 0.5,
+        sprite: {
+            sword: [0, 1000],
+        }
+       
+    });
+
+    this.addBox = new Howl({
+        src: ['./sound/addBox.ogg'],
+        volume: 0.5,
+    });
+
+    this.battle = new Howl({
+        src: ['./sound/BattleMusic.mp3'],
+        loop: true,
+        volume: 1,
+    });
+
+    this.battleOn = false;
 }
 
 GameState.prototype.draw = function() {}
@@ -389,6 +439,70 @@ GameState.prototype.update = function() {
             }
         }
     }
+
+     if (gameEngine.keyMap["KeyD"] || gameEngine.keyMap["KeyA"]) {
+
+        if (!this.isWalking && !this.mutePressed) {
+            this.isWalking = true;
+            this.walk.play();
+        }
+    } else if (!gameEngine.keyMap["KeyD"]) {
+
+        this.isWalking = false;
+        this.walk.stop();
+    }
+
+    if (gameEngine.keyMap["1"] ) {
+        var mouseX = gameEngine.clickX;
+        var mouseY = gameEngine.clickY;
+        if(mouseX >= (93 * 16) && mouseX <= (93 *16) + 30 
+            && mouseY >= 16 && mouseY <= 16 + 30) {
+            this.mutePressed = true;
+        }
+    }
+
+    if (gameEngine.keyMap["1"] && currentCharacter != undefined) {
+        var newX = gameEngine.clickX;
+        var newY = gameEngine.clickY;
+        if (!this.isAttack) {
+            this.isAttack = true;
+            if(!this.mutePressed){
+                if(currentCharacter.name === "knight") {
+                    this.sword.play('sword');
+                } else if(currentCharacter.name === "gunwoman") {
+                    this.shot.play('shot');
+                } else if(currentCharacter.name === "mage") {
+                    this.addBox.play();
+                }
+            }   
+        }
+    } else if (!gameEngine.keyMap["1"] && currentCharacter != undefined) {
+
+        this.isAttack = false;
+        this.shot.stop();
+    }
+
+    if (this.mutePressed) {
+        this.sword.stop();
+        this.shot.stop();
+        this.addBox.stop();
+        this.walk.stop();
+        this.backgroundMusic.stop();
+        this.ocean.stop();
+        this.battle.stop();
+    }
+
+    if (currentCharacter != undefined && !this.mutePressed) {
+        var curX = currentCharacter.x;
+        var curY = currentCharacter.canvasY;
+
+        if (curX > (903 * 16) && !this.battleOn) {
+            this.backgroundMusic.stop();
+            this.battle.play();
+            this.battleOn = true;
+        }
+    }
+    
 
 };
 
