@@ -820,6 +820,6 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameState.setCurrentBackground(background);
     gameState.setCurrentForeground(foreground);
 
-    //gameEngine.addEntity(background);
+    gameEngine.addEntity(background);
     gameEngine.removeEntity(gameMenu);
 }
