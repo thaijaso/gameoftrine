@@ -850,4 +850,6 @@ function createGame(gameEngine, gameMenu, gameState) {
 
     gameEngine.addEntity(background);
     gameEngine.removeEntity(gameMenu);
+
+    window.alert('If the game is laggy, try Mozilla. :)');
 }
