@@ -1145,6 +1145,10 @@ Mage.prototype.update = function() {
                 //console.log('colliding');
 
                 this.collidedWith = entity;
+                
+                if (entity.name === "spike") {
+                    this.gameState.updateHealth(this);
+                }
 
                 if (this.collideBottom(entity)) {
                     this.collidedBottom = true;
@@ -2036,9 +2040,11 @@ Gunwoman.prototype.update = function() {
                 //console.log('colliding');
 
                 this.collidedWith = entity;
+                
                 if (entity.name === "spike") {
                     this.gameState.updateHealth(this);
                 }
+                
                 if (this.collideBottom(entity) && !this.collideRight(entity)) {
                     this.collidedBottom = true;
                     this.lastGroundY = this.collidedWith.y;

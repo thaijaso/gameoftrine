@@ -17,6 +17,8 @@ function GameState(ctx, gameEngine) {
     this.currentBackground = null;
 
     this.gameIsOver = false;
+    this.didLose = false;
+    this.didWin = false;
     this.playAgainClicked = false;
     this.score = 0;
 
@@ -40,6 +42,8 @@ GameState.prototype.update = function() {
 
         if (this.charactersAlive === 0) {
             this.gameIsOver = true;
+            this.didLose = true;
+
         }
 
         if (this.gameIsOver && !this.playAgainClicked) {
@@ -248,6 +252,7 @@ GameState.prototype.update = function() {
                 this.currentCharacter.canvasY = canvasY;
 
                 this.currentForeground.canvasX = 0;
+                this.currentBackground.canvasX = 0;
 
                 for (var i = 0; i < gameEngine.entities.length; i++) {
 
@@ -263,7 +268,8 @@ GameState.prototype.update = function() {
                         platform.canvasX = platform.initialCanvasX;
 
                     } else if (gameEngine.entities[i].name === "skeleton" ||
-                        gameEngine.entities[i].name === "skeletonArcher") {
+                        gameEngine.entities[i].name === "skeletonArcher" ||
+                        gameEngine.entities[i].name === "robot") {
 
 
                         var skeleton = gameEngine.entities[i];
@@ -300,6 +306,7 @@ GameState.prototype.update = function() {
                 this.currentCharacter.canvasY = canvasY;
 
                 this.currentForeground.canvasX = 0;
+                this.currentBackground.canvasX = 0;
 
                 for (var i = 0; i < gameEngine.entities.length; i++) {
 
@@ -314,7 +321,8 @@ GameState.prototype.update = function() {
                         platform.canvasX = platform.initialCanvasX;
 
                     } else if (gameEngine.entities[i].name === "skeleton" ||
-                        gameEngine.entities[i].name === "skeletonArcher") {
+                        gameEngine.entities[i].name === "skeletonArcher" ||
+                        gameEngine.entities[i].name === "robot") {
 
                         var skeleton = gameEngine.entities[i];
                         skeleton.x = skeleton.initialX;
@@ -350,6 +358,7 @@ GameState.prototype.update = function() {
                 this.currentCharacter.canvasY = canvasY;
 
                 this.currentForeground.canvasX = 0;
+                this.currentBackground.canvasX = 0;
 
                 for (var i = 0; i < gameEngine.entities.length; i++) {
 
@@ -364,7 +373,8 @@ GameState.prototype.update = function() {
                         platform.canvasX = platform.initialCanvasX;
 
                     } else if (gameEngine.entities[i].name === "skeleton" ||
-                        gameEngine.entities[i].name === "skeletonArcher") {
+                        gameEngine.entities[i].name === "skeletonArcher" ||
+                        gameEngine.entities[i].name === "robot") {
 
                         var skeleton = gameEngine.entities[i];
                         skeleton.x = skeleton.initialX;
@@ -399,7 +409,16 @@ GameState.prototype.updateHealth = function(entity) {
             // this.game.removeEntity(entity.id);
 
             if (entity.name === "knight") {
+                
                 this.knightIsAlive = false;
+
+            } else if (entity.name === "gunwoman") {
+
+                this.gunwomanIsAlive = false;
+            
+            } else if (entity.name === "mage") {
+
+                this.mageIsAlive = false;
             }
 
             gameEngine.removeEntity(this.currentCharacter);
@@ -431,6 +450,12 @@ GameState.prototype.updateHealth = function(entity) {
                 this.gameEngine.entities.splice(i, 1);
                 var coin = new Coin(this.gameEngine, this, entity);
                 this.gameEngine.addEntity(coin);
+
+                // final boss
+                if (entity.name === "robot") {
+                    this.gameIsOver = true;
+                    this.didWin = true;
+                }
             }
         }
     }
@@ -520,6 +545,8 @@ GameState.prototype.reset = function() {
     this.currentBackground.canvasX = 0;
 
     this.gameIsOver = false;
+    this.didLose = false;
+    this.didWin = false;
     this.playAgainClicked = false;
 
     this.playableCharacters[0].health = 50;
@@ -551,15 +578,26 @@ GameState.prototype.reset = function() {
             var platform = gameEngine.entities[i];
             platform.canvasX = platform.initialCanvasX;
 
-        } else if (gameEngine.entities[i].name === "skeleton" || gameEngine.entities[i].name === "skeletonArcher") {
+        } else if (gameEngine.entities[i].name === "skeleton" || 
+            gameEngine.entities[i].name === "skeletonArcher" ||
+            gameEngine.entities[i].name === "robot") {
 
-            var skeleton = gameEngine.entities[i];
-            skeleton.health = 3;
-            skeleton.x = skeleton.initialX;
-            skeleton.canvasX = skeleton.initialCanvasX;
-            skeleton.animationAttackRight.elapsedTime = 0;
-            skeleton.animationAttackLeft.elapsedTime = 0;
-            skeleton.attacking = false;
+            var enemy = gameEngine.entities[i];
+            
+            if (enemy.name === "skeleton" || enemy.name === "skeletonArcher") {
+
+                enemy.health = 3;
+            
+            } else {
+
+                enemy.health = 50;
+            }
+            
+            enemy.x = enemy.initialX;
+            enemy.canvasX = enemy.initialCanvasX;
+            enemy.animationAttackRight.elapsedTime = 0;
+            enemy.animationAttackLeft.elapsedTime = 0;
+            enemy.attacking = false;
 
 
         } else if (gameEngine.entities[i].name === "box") {

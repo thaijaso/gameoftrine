@@ -487,6 +487,7 @@ function Tooltip(gameEngine, gameState) {
 
 Tooltip.prototype.update = function() {
     var gameEngine = this.gameEngine;
+    var gameState = this.gameState;
 
     if ((gameEngine.keyMap["KeyA"] || gameEngine.keyMap["KeyD"]) && !this.showedMovementTip) {
 
@@ -527,9 +528,13 @@ Tooltip.prototype.draw = function() {
         }
     }
 
-    if (gameState.gameIsOver) {
-        this.ctx.fillText("Play Again?", this.canvasX, this.canvasY);
+    if (gameState.gameIsOver && gameState.didLose) {
+        this.ctx.fillText("You lose. Play Again?", this.canvasX, this.canvasY);
         //this.ctx.fillRect(this.canvasX, this.canvasY - 30, this.width, this.height);
+    }
+
+    if (gameState.gameIsOver && gameState.didWin) {
+        this.ctx.fillText("You win. Thanks for playing.", this.canvasX, this.canvasY);
     }
 }
 
