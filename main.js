@@ -99,9 +99,20 @@ ProgressBar.prototype.hasBeenHit = function(isHit) {
 var bar;
 var pressedPlay = false;
 
-function GameMenu(gameEngine) {
+function GameMenu(gameEngine, gameState) {
     this.game = gameEngine;
     this.ctx = gameEngine.ctx;
+    this.gameState = gameState;
+
+    this.audio = new Howl({
+        src: ['./sound/KingdomHearts.mp3'],
+        loop: true,
+    });
+
+    if(!this.gameState.mutePressed){
+        playingId = this.audio.play();
+    }
+
     this.canvas = this.ctx.canvas;
     this.backgroundImg = AM.getAsset("./img/gamemenubackground.jpg");
     this.logoImg = AM.getAsset("./img/logoimg1.png");
@@ -110,9 +121,7 @@ function GameMenu(gameEngine) {
     this.skeletonImg = AM.getAsset("./img/skeletonforstart.png");
 
 
-    this.audio = new Howl({
-        src: ['./sound/KingdomHearts.webm', './sound/KingdomHearts.mp3']
-    });
+    
 
     this.audio.play();
 
@@ -139,10 +148,22 @@ GameMenu.prototype.update = function() {
     this.mouseY = this.game.clickY;
     var mouseHoverX = this.game.mouseHoverX;
     var mouseHoverY = this.game.mouseHoverY;
+
+    if(this.gameState.mutePressed){
+        this.audio.stop();
+    } 
+    
     if (this.mouseX >= this.buttonX[1] && this.mouseX <= this.buttonX[1] + 200 && this.mouseY >= this.buttonY[1] && this.mouseY <= this.buttonY[1] + 50) {
         createGame(this.game, this, this.game.gameState);
-        this.audio.stop();
+
         this.game.startMenu = false;
+        this.audio.stop();
+
+        if(!this.gameState.mutePressed){
+            this.gameState.backgroundMusic.play();
+            this.gameState.ocean.play();
+        } 
+        
 
     } else if (this.mouseX >= this.buttonX[2] && this.mouseX <= this.buttonX[2] + 100 && this.mouseY >= this.buttonY[2] && this.mouseY <= this.buttonY[2] + 75) {
         this.game.removeEntity(this);
@@ -182,8 +203,9 @@ GameMenu.prototype.draw = function() {
 };
 
 
-function GameControls(gameEngine) {
+function GameControls(gameEngine, gameState) {
     this.game = gameEngine;
+    this.gameState = gameState;
     this.ctx = gameEngine.ctx;
     this.canvas = this.ctx.canvas;
     this.width = this.ctx.canvas.width;
@@ -198,7 +220,7 @@ GameControls.prototype.update = function() {
     // console.log(mouseX + " " + mouseY);
     if (mouseX >= 30 && mouseX <= 300 && mouseY >= this.height - 200 & mouseY < this.height) {
         this.game.removeEntity(this);
-        var gameMenu = new GameMenu(this.game);
+        var gameMenu = new GameMenu(this.game, this.gameState);
         this.game.addEntity(gameMenu);
 
     }
@@ -224,6 +246,9 @@ AM.queueDownload("./img/controlsImg.png");
 AM.queueDownload("./img/skeletonforstart.png");
 AM.queueDownload("./img/controlsmenu.png");
 
+
+//mute button
+AM.queueDownload("./img/mute.png");
 
 AM.queueDownload("./img/background.png");
 AM.queueDownload("./img/foreground.png");
@@ -337,7 +362,10 @@ AM.downloadAll(function() {
 
     gameEngine.init(ctx, AM, gameState);
 
-    var gameMenu = new GameMenu(gameEngine);
+    var mute = new Mute(gameEngine, gameState, 93, 1);
+    gameEngine.addEntity(mute);
+    
+    var gameMenu = new GameMenu(gameEngine, gameState);
     gameEngine.addEntity(gameMenu);
 
     gameEngine.start();
