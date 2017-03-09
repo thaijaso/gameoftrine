@@ -399,7 +399,7 @@ Spike.prototype.update = function() {
 Spike.prototype.draw = function() {
     // this.ctx.globalAlpha = 0.2;
 
-    this.ctx.fillStyle = "#0000ff ";
+    //this.ctx.fillStyle = "#0000ff ";
     // //console.log(this.canvasX);
     //this.ctx.fillRect(this.canvasX, this.canvasY, this.width, this.height);
     // this.ctx.globalAlpha = 1.0;
