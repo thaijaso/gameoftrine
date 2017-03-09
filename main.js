@@ -226,7 +226,7 @@ AM.queueDownload("./img/controlsmenu.png");
 
 
 AM.queueDownload("./img/background.png");
-AM.queueDownload("./img/foreground2.png");
+AM.queueDownload("./img/foreground2-min.png");
 
 //knight
 AM.queueDownload("./img/knightidleright.png");
@@ -349,7 +349,7 @@ AM.downloadAll(function() {
 function createGame(gameEngine, gameMenu, gameState) {
     var ctx = gameEngine.ctx;
 
-    var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground2.png"));
+    var foreground = new Foreground(gameEngine, gameState, AM.getAsset("./img/foreground2-min.png"));
     var background = new Background(gameEngine, gameState, AM.getAsset("./img/background.png"));
 
     var progressKnight = new ProgressBar(ctx, 74, 72);

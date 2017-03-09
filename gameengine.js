@@ -90,7 +90,7 @@ GameEngine.prototype.startInput = function() {
             for (var i = that.entities.length - 1; i >= 0; i--) {
                 var entity = that.entities[i];
 
-                console.log("The name is " + entity.name);   
+                // console.log("The name is " + entity.name);   
                 // var canX = that.entities[i].canvasX;
                 if(entity.name === "box") {
                     var entityX = (currentCharacter.x - currentCharacter.canvasX) + entity.canvasX;
@@ -98,7 +98,7 @@ GameEngine.prototype.startInput = function() {
                     if(mouseX >= entityX && mouseX <= entityX + 32 
                         && mouseY >= entityY && mouseY <= entityY + 32){
                         that.entities.splice(i, 1);
-                        console.log("this is the box");
+                        // console.log("this is the box");
                     }
                 }
             }
