@@ -167,7 +167,7 @@ GameMenu.prototype.update = function() {
 
     } else if (this.mouseX >= this.buttonX[2] && this.mouseX <= this.buttonX[2] + 100 && this.mouseY >= this.buttonY[2] && this.mouseY <= this.buttonY[2] + 75) {
         this.game.removeEntity(this);
-        var gameControls = new GameControls(this.game);
+        var gameControls = new GameControls(this.game, this.gameState);
         this.game.addEntity(gameControls);
 
     }
@@ -217,7 +217,7 @@ GameControls.prototype.update = function() {
     var mouseX = this.game.clickX;
     var mouseY = this.game.clickY;
 
-    // console.log(mouseX + " " + mouseY);
+    console.log(mouseX + " " + mouseY);
     if (mouseX >= 30 && mouseX <= 300 && mouseY >= this.height - 200 & mouseY < this.height) {
         this.game.removeEntity(this);
         var gameMenu = new GameMenu(this.game, this.gameState);
@@ -506,8 +506,8 @@ function createGame(gameEngine, gameMenu, gameState) {
     gameEngine.addEntity(skeleton25);
     gameEngine.addEntity(skeleton26);
     gameEngine.addEntity(skeleton27);
-    gameEngine.addEntity(skeleton28);
-    gameEngine.addEntity(skeleton29);
+   // gameEngine.addEntity(skeleton28);
+    //gameEngine.addEntity(skeleton29);
 
 
     var robot = new Robot(gameEngine, gameState, progressRobot, 984, 15);

@@ -109,11 +109,7 @@ GameState.prototype.update = function() {
 
         if (currentCharacter) {
 
-            if (currentCharacter.x >= 10839 && currentCharacter.y === 357) { //check to see if at the end of level
-
-                //window.alert("Next level");
-
-            } else if (currentCharacter.y > 700) { //fell off map
+            if (currentCharacter.y > 700) { //fell off map
 
                 if (currentCharacter === this.playableCharacters[0]) { //currentCharacter is knight
 
