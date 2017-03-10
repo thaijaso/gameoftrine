@@ -109,7 +109,7 @@ function GameMenu(gameEngine, gameState) {
         loop: true,
     });
 
-    if(!this.gameState.mutePressed){
+    if(!this.gameState.mutePressed && gameState != undefined){
         playingId = this.audio.play();
     }
 
